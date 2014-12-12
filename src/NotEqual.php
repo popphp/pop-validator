@@ -46,7 +46,7 @@ class NotEqual extends AbstractValidator
             $this->message = 'The value must not be equal to ' . $this->value . '.';
         }
 
-        return ($this->input == $this->value);
+        return ($this->input != $this->value);
     }
 
 }
