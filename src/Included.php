@@ -52,8 +52,8 @@ class Included extends AbstractValidator
                 $this->value = [$this->value];
             }
             $result = true;
-            foreach ($this->value as $value) {
-                if (!in_array($value, $this->input)) {
+            foreach ($this->input as $input) {
+                if (!in_array($input, $this->value)) {
                     $result = false;
                 }
             }
@@ -61,7 +61,7 @@ class Included extends AbstractValidator
         } else {
             $result = (is_array($this->value)) ?
                 (in_array($this->input, $this->value)) :
-                (strpos((string)$this->input, (string)$this->value) !== false);
+                (strpos((string)$this->value, (string)$this->input) !== false);
         }
 
         return $result;

@@ -46,7 +46,7 @@ class RegEx extends AbstractValidator
             $this->message = 'The format is not correct.';
         }
 
-        return (preg_match($this->value, $this->input));
+        return (bool)(preg_match($this->value, $this->input));
     }
 
 }

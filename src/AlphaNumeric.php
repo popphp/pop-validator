@@ -46,7 +46,7 @@ class AlphaNumeric extends AbstractValidator
             $this->message = 'The value must only contain alphanumeric characters.';
         }
 
-        return (preg_match('/^\w+$/', $this->input));
+        return (bool)(preg_match('/^\w+$/', $this->input));
     }
 
 }

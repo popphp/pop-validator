@@ -61,7 +61,7 @@ class Excluded extends AbstractValidator
         } else {
             $result = (is_array($this->value)) ?
                 (!in_array($this->input, $this->value)) :
-                (strpos((string)$this->input, (string)$this->value) !== false);
+                (strpos((string)$this->value, (string)$this->input) === false);
         }
 
         return $result;

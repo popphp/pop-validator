@@ -46,7 +46,7 @@ class Url extends AbstractValidator
             $this->message = 'The value is not a valid URL.';
         }
 
-        return filter_var($this->input, FILTER_VALIDATE_URL);
+        return (filter_var($this->input, FILTER_VALIDATE_URL) !== false);
     }
 
 }

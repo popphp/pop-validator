@@ -46,7 +46,7 @@ class Alpha extends AbstractValidator
             $this->message = 'The value must only contain characters of the alphabet.';
         }
 
-        return (preg_match('/^[a-zA-Z]+$/', $this->input));
+        return (bool)(preg_match('/^[a-zA-Z]+$/', $this->input));
     }
 
 }

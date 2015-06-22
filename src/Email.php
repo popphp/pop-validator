@@ -46,7 +46,7 @@ class Email extends AbstractValidator
             $this->message = 'The value must be a valid email format.';
         }
 
-        return (preg_match('/[a-zA-Z0-9\.\-\_+%]+@[a-zA-Z0-9\-\_\.]+\.[a-zA-Z]{2,4}/', $this->input));
+        return (bool)(preg_match('/[a-zA-Z0-9\.\-\_+%]+@[a-zA-Z0-9\-\_\.]+\.[a-zA-Z]{2,4}/', $this->input));
     }
 
 }
