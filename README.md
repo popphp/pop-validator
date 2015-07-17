@@ -65,7 +65,10 @@ if ($validator->evaluate(8)) { } // Returns true
 ### Set a custom message
 
 ```php
-$validator = new Pop\Validator\RegEx('/^.*\.(jpg|jpeg|png|gif)$/i', 'You must only submit JPG, PNG or GIF images.');
+$validator = new Pop\Validator\RegEx(
+    '/^.*\.(jpg|jpeg|png|gif)$/i',
+    'You must only submit JPG, PNG or GIF images.'
+);
 
 // Returns false
 if ($validator->evaluate('image.bad')) {
