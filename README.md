@@ -7,9 +7,8 @@ pop-validator
 OVERVIEW
 --------
 `pop-validator` is a component for validating values and returning the appropriate result messaging.
-The component comes with 30 built-in evaluation objects and also the ability to extend the component
-and build your own.
-
+The component comes with a set of built-in evaluation objects and also the ability to extend the
+component and build your own.
 
 `pop-validator` is a component of the [Pop PHP Framework](http://www.popphp.org/).
 
@@ -22,6 +21,21 @@ Install `pop-validator` using Composer.
 
 BASIC USAGE
 -----------
+
+Here's a list of the available built-in validators:
+
+|                   | Built-in Validators  |               |
+|-------------------|----------------------|---------------|
+| AlphaNumeric      | Included             | Length        |
+| Alpha             | Ipv4                 | LessThanEqual |
+| BetweenInclude    | Ipv6                 | LessThan      |
+| Between           | IsSubnetOf           | NotEmpty      |
+| CreditCard        | LengthBetweenInclude | NotEqual      |
+| Email             | LengthBetween        | Numeric       |
+| Equal             | LengthGte            | RegEx         |
+| Excluded          | LengthGt             | Subnet        |
+| GreaterThanEqual  | LengthLte            | Url           |
+| GreaterThan       | LengthLt             |               |
 
 ### Check an email value 
 
