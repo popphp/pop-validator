@@ -128,9 +128,11 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($validator->evaluate('hel'));
         $this->assertFalse($validator->evaluate('qz'));
 
-        $validator = new Validator\Included([1, 2, 3]);
-        $this->assertTrue($validator->evaluate([2, 3]));
-        $this->assertFalse($validator->evaluate([4, 5]));
+        $validator = new Validator\Included([2, 3]);
+        $this->assertTrue($validator->evaluate([1, 2, 3]));
+
+        $validator = new Validator\Included([4, 5]);
+        $this->assertFalse($validator->evaluate([1, 2, 3]));
 
         $validator = new Validator\Included(1);
         $this->assertTrue($validator->evaluate([1]));

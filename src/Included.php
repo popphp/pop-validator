@@ -50,8 +50,8 @@ class Included extends AbstractValidator
                 $this->value = [$this->value];
             }
             $result = true;
-            foreach ($this->input as $input) {
-                if (!in_array($input, $this->value)) {
+            foreach ($this->value as $value) {
+                if (!in_array($value, $this->input)) {
                     $result = false;
                 }
             }
