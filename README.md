@@ -2,7 +2,7 @@ pop-validator
 =============
 
 [![Build Status](https://travis-ci.org/popphp/pop-validator.svg?branch=master)](https://travis-ci.org/popphp/pop-validator)
-[![Coverage Status](http://www.popphp.org/cc/coverage.php?comp=pop-validator)](http://www.popphp.org/cc/pop-validator/)
+[![Coverage Status](http://cc.popphp.org/coverage.php?comp=pop-validator)](http://cc.popphp.org/pop-validator/)
 
 OVERVIEW
 --------
@@ -37,7 +37,7 @@ Here's a list of the available built-in validators:
 | GreaterThanEqual  | LengthLte            | Url           |
 | GreaterThan       | LengthLt             |               |
 
-### Check an email value 
+### Check an email value
 
 ```php
 $validator = new Pop\Validator\Email();
