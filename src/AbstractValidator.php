@@ -17,11 +17,11 @@ namespace Pop\Validator;
  * Validator class
  *
  * @category   Pop
- * @package    Pop_Validator
+ * @package    Pop\Validator
  * @author     Nick Sagona, III <dev@nolainteractive.com>
  * @copyright  Copyright (c) 2009-2016 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    2.1.0
+ * @version    3.0.0
  */
 abstract class AbstractValidator implements ValidatorInterface
 {
@@ -51,7 +51,6 @@ abstract class AbstractValidator implements ValidatorInterface
      *
      * @param  mixed  $value
      * @param  string $message
-     * @return AbstractValidator
      */
     public function __construct($value = null, $message = null)
     {

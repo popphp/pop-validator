@@ -37,14 +37,14 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
 
     public function testBetweenNotAnArrayException()
     {
-        $this->setExpectedException('Pop\Validator\Exception');
+        $this->expectException('Pop\Validator\Exception');
         $validator = new Validator\Between('bad');
         $this->assertTrue($validator->evaluate(5));
     }
 
     public function testBetweenTooManyValuesException()
     {
-        $this->setExpectedException('Pop\Validator\Exception');
+        $this->expectException('Pop\Validator\Exception');
         $validator = new Validator\Between([1, 10, 15]);
         $this->assertTrue($validator->evaluate(5));
     }
@@ -58,14 +58,14 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
 
     public function testBetweenIncludeNotAnArrayException()
     {
-        $this->setExpectedException('Pop\Validator\Exception');
+        $this->expectException('Pop\Validator\Exception');
         $validator = new Validator\BetweenInclude('bad');
         $this->assertTrue($validator->evaluate(5));
     }
 
     public function testBetweenIncludeTooManyValuesException()
     {
-        $this->setExpectedException('Pop\Validator\Exception');
+        $this->expectException('Pop\Validator\Exception');
         $validator = new Validator\BetweenInclude([1, 10, 15]);
         $this->assertTrue($validator->evaluate(5));
     }
@@ -162,7 +162,7 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
 
     public function testIsSubnetOfException()
     {
-        $this->setExpectedException('Pop\Validator\Exception');
+        $this->expectException('Pop\Validator\Exception');
         $validator = new Validator\IsSubnetOf('192.168.1');
         $this->assertTrue($validator->evaluate('badipv4'));
     }
@@ -183,14 +183,14 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
 
     public function testLengthBetweenNotAnArrayException()
     {
-        $this->setExpectedException('Pop\Validator\Exception');
+        $this->expectException('Pop\Validator\Exception');
         $validator = new Validator\LengthBetween('bad');
         $this->assertTrue($validator->evaluate('no'));
     }
 
     public function testLengthBetweenTooManyValuesException()
     {
-        $this->setExpectedException('Pop\Validator\Exception');
+        $this->expectException('Pop\Validator\Exception');
         $validator = new Validator\LengthBetween([1, 10, 15]);
         $this->assertTrue($validator->evaluate('no'));
     }
@@ -204,14 +204,14 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
 
     public function testLengthBetweenIncludeNotAnArrayException()
     {
-        $this->setExpectedException('Pop\Validator\Exception');
+        $this->expectException('Pop\Validator\Exception');
         $validator = new Validator\LengthBetweenInclude('bad');
         $this->assertTrue($validator->evaluate('no'));
     }
 
     public function testLengthBetweenIncludeTooManyValuesException()
     {
-        $this->setExpectedException('Pop\Validator\Exception');
+        $this->expectException('Pop\Validator\Exception');
         $validator = new Validator\LengthBetweenInclude([1, 10, 15]);
         $this->assertTrue($validator->evaluate('no'));
     }
