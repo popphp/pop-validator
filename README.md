@@ -1,9 +1,6 @@
 pop-validator
 =============
 
-[![Build Status](https://travis-ci.org/popphp/pop-validator.svg?branch=master)](https://travis-ci.org/popphp/pop-validator)
-[![Coverage Status](http://cc.popphp.org/coverage.php?comp=pop-validator)](http://cc.popphp.org/pop-validator/)
-
 OVERVIEW
 --------
 `pop-validator` is a component for validating values and returning the appropriate result messaging.
