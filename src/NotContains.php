@@ -14,7 +14,7 @@
 namespace Pop\Validator;
 
 /**
- * Excluded validator class
+ * Does not contain validator class
  *
  * @category   Pop
  * @package    Pop\Validator
@@ -23,7 +23,7 @@ namespace Pop\Validator;
  * @license    http://www.popphp.org/license     New BSD License
  * @version    3.0.0
  */
-class Excluded extends AbstractValidator
+class NotContains extends AbstractValidator
 {
 
     /**
@@ -41,25 +41,25 @@ class Excluded extends AbstractValidator
 
         // Set the default message
         if (null === $this->message) {
-            $this->message = 'The value must be excluded.';
+            $this->message = 'The input must be not contained in the value.';
         }
 
-        // If input check is an array
-        if (is_array($this->input)) {
-            if (!is_array($this->value)) {
-                $this->value = [$this->value];
-            }
+        $result   = false;
+        $needle   = $this->value;
+        $haystack = $this->input;
+
+        if (is_string($needle) && is_string($haystack)) {
+            $result = (strpos($haystack, $needle) === false);
+        } else if (!is_array($needle) && is_array($haystack)) {
+            $result = (!in_array($needle, $haystack));
+        } else if (is_array($needle) && is_array($haystack)) {
             $result = true;
-            foreach ($this->value as $value) {
-                if (in_array($value, $this->input)) {
+            foreach ($needle as $n) {
+                if (in_array($n, $haystack)) {
                     $result = false;
+                    break;
                 }
             }
-        // Else, if input check is a string
-        } else {
-            $result = (is_array($this->value)) ?
-                (!in_array($this->input, $this->value)) :
-                (strpos((string)$this->value, (string)$this->input) === false);
         }
 
         return $result;

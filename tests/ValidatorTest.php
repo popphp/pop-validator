@@ -93,19 +93,21 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($validator->evaluate(15));
     }
 
-    public function testExcluded()
+    public function testNotContains()
     {
-        $validator = new Validator\Excluded('hello');
+        $validator = new Validator\NotContains('hel');
+        $this->assertFalse($validator->evaluate('hello'));
         $this->assertTrue($validator->evaluate('qz'));
-        $this->assertFalse($validator->evaluate('hel'));
 
-        $validator = new Validator\Excluded([1, 2, 3]);
-        $this->assertTrue($validator->evaluate([4, 5]));
-        $this->assertFalse($validator->evaluate([2, 3]));
+        $validator = new Validator\NotContains([2, 3]);
+        $this->assertFalse($validator->evaluate([1, 2, 3]));
 
-        $validator = new Validator\Excluded(1);
-        $this->assertTrue($validator->evaluate([2]));
+        $validator = new Validator\NotContains([4, 5]);
+        $this->assertTrue($validator->evaluate([1, 2, 3]));
+
+        $validator = new Validator\NotContains(1);
         $this->assertFalse($validator->evaluate([1]));
+        $this->assertTrue($validator->evaluate([2]));
     }
 
     public function testGreaterThan()
@@ -122,19 +124,19 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($validator->evaluate(9));
     }
 
-    public function testIncluded()
+    public function testContains()
     {
-        $validator = new Validator\Included('hello');
-        $this->assertTrue($validator->evaluate('hel'));
+        $validator = new Validator\Contains('hel');
+        $this->assertTrue($validator->evaluate('hello'));
         $this->assertFalse($validator->evaluate('qz'));
 
-        $validator = new Validator\Included([2, 3]);
+        $validator = new Validator\Contains([2, 3]);
         $this->assertTrue($validator->evaluate([1, 2, 3]));
 
-        $validator = new Validator\Included([4, 5]);
+        $validator = new Validator\Contains([4, 5]);
         $this->assertFalse($validator->evaluate([1, 2, 3]));
 
-        $validator = new Validator\Included(1);
+        $validator = new Validator\Contains(1);
         $this->assertTrue($validator->evaluate([1]));
         $this->assertFalse($validator->evaluate([2]));
     }
