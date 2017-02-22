@@ -1,6 +1,9 @@
 pop-validator
 =============
 
+[![Build Status](https://travis-ci.org/popphp/pop-validator.svg?branch=master)](https://travis-ci.org/popphp/pop-validator)
+[![Coverage Status](http://cc.popphp.org/coverage.php?comp=pop-validator)](http://cc.popphp.org/pop-validator/)
+
 OVERVIEW
 --------
 `pop-validator` is a component for validating values and returning the appropriate result messaging.
@@ -23,16 +26,16 @@ Here's a list of the available built-in validators:
 
 |                   | Built-in Validators  |               |
 |-------------------|----------------------|---------------|
-| AlphaNumeric      | Included             | Length        |
-| Alpha             | Ipv4                 | LessThanEqual |
-| BetweenInclude    | Ipv6                 | LessThan      |
-| Between           | IsSubnetOf           | NotEmpty      |
-| CreditCard        | LengthBetweenInclude | NotEqual      |
-| Email             | LengthBetween        | Numeric       |
-| Equal             | LengthGte            | RegEx         |
-| Excluded          | LengthGt             | Subnet        |
-| GreaterThanEqual  | LengthLte            | Url           |
-| GreaterThan       | LengthLt             |               |
+| AlphaNumeric      | Ipv4                 | LessThanEqual |
+| Alpha             | Ipv6                 | LessThan      |
+| BetweenInclude    | IsSubnetOf           | NotContains   |
+| Between           | LengthBetweenInclude | NotEmpty      |
+| Contains          | LengthBetween        | NotEqual      |
+| CreditCard        | LengthGte            | Numeric       |
+| Email             | LengthGt             | RegEx         |
+| Equal             | LengthLte            | Subnet        |
+| GreaterThanEqual  | LengthLt             | Url           |
+| GreaterThan       | Length               |               |
 
 ### Check an email value
 
