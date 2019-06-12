@@ -295,6 +295,27 @@ class ValidatorTest extends TestCase
         $validator = new Validator\RegEx('/^\w+$/');
         $this->assertTrue($validator->evaluate('hello123'));
         $this->assertFalse($validator->evaluate('$%^#ascx'));
+
+        $regex1 = new Validator\RegEx([
+            '/[A-Z]/',
+            '/[a-z]/',
+            '/[0-9]/',
+            '/[\$|\?|\!|\_|\-|\#|\%|\&|\@]/'  // $ ? ! _ - # % & @
+        ]);
+
+        $this->assertTrue($regex1->evaluate('Hello123$'));
+        $this->assertFalse($regex1->evaluate('hello'));
+
+        $regex1 = new Validator\RegEx([
+            '/[A-Z]/',
+            '/[a-z]/',
+            '/[0-9]/',
+            '/[\$|\?|\!|\_|\-|\#|\%|\&|\@]/'  // $ ? ! _ - # % & @
+        ], "You didn't satisfy the requirements", 3);
+
+        $this->assertEquals(3, $regex1->getNumberToSatisfy());
+        $this->assertTrue($regex1->evaluate('Hello123'));
+        $this->assertFalse($regex1->evaluate('hello'));
     }
 
     public function testSubnet()

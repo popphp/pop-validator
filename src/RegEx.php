@@ -27,6 +27,52 @@ class RegEx extends AbstractValidator
 {
 
     /**
+     * Number of regex's that need to be satisgied
+     * @var int
+     */
+    protected $numberToSatisfy = null;
+
+    /**
+     * Constructor
+     *
+     * Instantiate the validator object
+     *
+     * @param  mixed  $value
+     * @param  string $message
+     * @param  int    $numberToSatisfy
+     */
+    public function __construct($value = null, $message = null, $numberToSatisfy = null)
+    {
+        parent::__construct($value, $message);
+
+        if (null !== $numberToSatisfy) {
+            $this->setNumberToSatisfy($numberToSatisfy);
+        }
+    }
+
+    /**
+     * Get the number to satisfy
+     *
+     * @return int
+     */
+    public function getNumberToSatisfy()
+    {
+        return $this->numberToSatisfy;
+    }
+
+    /**
+     * Set the number to satisfy
+     *
+     * @param  int $numberToSatisfy
+     * @return RegEx
+     */
+    public function setNumberToSatisfy($numberToSatisfy)
+    {
+        $this->numberToSatisfy = (int)$numberToSatisfy;
+        return $this;
+    }
+
+    /**
      * Method to evaluate the validator
      *
      * @param  mixed $input
@@ -44,7 +90,26 @@ class RegEx extends AbstractValidator
             $this->message = 'The format is not correct.';
         }
 
-        return (bool)(preg_match($this->value, $this->input));
+        if (is_array($this->value)) {
+            if ((int)$this->numberToSatisfy == 0) {
+                $result = true;
+                foreach ($this->value as $value) {
+                    if (!preg_match($value, $this->input)) {
+                        $result = false;
+                        break;
+                    }
+                }
+                return $result;
+            } else {
+                $satisfied = 0;
+                foreach ($this->value as $value) {
+                    $satisfied += (int)preg_match($value, $this->input);
+                }
+                return ($satisfied >= (int)$this->numberToSatisfy);
+            }
+        } else {
+            return (bool)(preg_match($this->value, $this->input));
+        }
     }
 
 }
