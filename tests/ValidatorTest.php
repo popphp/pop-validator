@@ -109,6 +109,11 @@ class ValidatorTest extends TestCase
         $validator = new Validator\NotContains(1);
         $this->assertFalse($validator->evaluate([1]));
         $this->assertTrue($validator->evaluate([2]));
+
+        $validator = new Validator\NotContains(['$', '?']);
+        $this->assertFalse($validator->evaluate('test$ing'));
+        $this->assertFalse($validator->evaluate('test?ing'));
+        $this->assertTrue($validator->evaluate('testing'));
     }
 
     public function testGreaterThan()
@@ -140,6 +145,10 @@ class ValidatorTest extends TestCase
         $validator = new Validator\Contains(1);
         $this->assertTrue($validator->evaluate([1]));
         $this->assertFalse($validator->evaluate([2]));
+
+        $validator = new Validator\Contains(['$', '?']);
+        $this->assertTrue($validator->evaluate('test$i?ng'));
+        $this->assertFalse($validator->evaluate('testing'));
     }
 
     public function testIpv4()

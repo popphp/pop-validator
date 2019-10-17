@@ -52,10 +52,15 @@ class NotContains extends AbstractValidator
             $result = (strpos($haystack, $needle) === false);
         } else if (!is_array($needle) && is_array($haystack)) {
             $result = (!in_array($needle, $haystack));
-        } else if (is_array($needle) && is_array($haystack)) {
+        } else if (is_array($needle)) {
             $result = true;
             foreach ($needle as $n) {
-                if (in_array($n, $haystack)) {
+                if (is_array($haystack)) {
+                    if (in_array($n, $haystack)) {
+                        $result = false;
+                        break;
+                    }
+                } else if (strpos($haystack, $n) !== false) {
                     $result = false;
                     break;
                 }
