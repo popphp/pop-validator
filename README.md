@@ -26,16 +26,16 @@ Here's a list of the available built-in validators:
 
 |                   | Built-in Validators  |               |
 |-------------------|----------------------|---------------|
-| AlphaNumeric      | Ipv4                 | LessThanEqual |
-| Alpha             | Ipv6                 | LessThan      |
-| BetweenInclude    | IsSubnetOf           | NotContains   |
-| Between           | LengthBetweenInclude | NotEmpty      |
+| Alpha             | Ipv4                 | LessThan      |
+| AlphaNumeric      | Ipv6                 | LessThanEqual |
+| Between           | IsSubnetOf           | NotContains   |
+| BetweenInclude    | Length               | NotEmpty      |
 | Contains          | LengthBetween        | NotEqual      |
-| CreditCard        | LengthGte            | Numeric       |
+| CreditCard        | LengthBetweenInclude | Numeric       |
 | Email             | LengthGt             | RegEx         |
-| Equal             | LengthLte            | Subnet        |
-| GreaterThanEqual  | LengthLt             | Url           |
-| GreaterThan       | Length               |               |
+| Equal             | LengthGte            | Subnet        |
+| GreaterThan       | LengthLt             | Url           |
+| GreaterThanEqual  | LengthLte            |               |
 
 ### Check an email value
 
