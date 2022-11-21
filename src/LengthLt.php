@@ -44,7 +44,7 @@ class LengthLt extends AbstractValidator
             $this->message = 'The value length must be less than ' . $this->value . '.';
         }
 
-        return (strlen($this->input) < $this->value);
+        return (strlen((string)$this->input) < $this->value);
     }
 
 }

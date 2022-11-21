@@ -50,7 +50,7 @@ class IsSubnetOf extends AbstractValidator
             $this->message = 'The value must be part of the subnet ' . $this->value . '.';
         }
 
-        return (substr($this->input, 0, strrpos($this->input, '.')) == $this->value);
+        return (substr((string)$this->input, 0, strrpos((string)$this->input, '.')) == $this->value);
     }
 
 }

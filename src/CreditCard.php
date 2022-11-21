@@ -37,10 +37,10 @@ class CreditCard extends AbstractValidator
         // Set the input, if passed
         if (null !== $input) {
             $this->input = $input;
-            if (strpos($this->input, ' ') !== false) {
+            if (strpos((string)$this->input, ' ') !== false) {
                 $this->input = str_replace(' ', '', $this->input);
             }
-            if (strpos($this->input, '-') !== false) {
+            if (strpos((string)$this->input, '-') !== false) {
                 $this->input = str_replace('-', '', $this->input);
             }
         }
@@ -51,7 +51,7 @@ class CreditCard extends AbstractValidator
         }
 
         // Evaluate the input against the validator
-        $nums   = str_split($this->input);
+        $nums   = str_split((string)$this->input);
         $check  = $nums[count($nums) - 1];
         $start  = count($nums) - 2;
         $sum    = 0;

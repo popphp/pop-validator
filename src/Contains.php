@@ -60,7 +60,7 @@ class Contains extends AbstractValidator
                         $result = false;
                         break;
                     }
-                } else if (strpos($haystack, $n) === false) {
+                } else if (strpos((string)$haystack, $n) === false) {
                     $result = false;
                     break;
                 }

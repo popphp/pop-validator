@@ -44,7 +44,7 @@ class Length extends AbstractValidator
             $this->message = 'The value length must be equal to ' . $this->value . '.';
         }
 
-        return (strlen($this->input) == $this->value);
+        return (strlen((string)$this->input) == $this->value);
     }
 
 }

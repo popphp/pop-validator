@@ -44,7 +44,7 @@ class LengthGte extends AbstractValidator
             $this->message = 'The value length must be greater than or equal to ' . $this->value . '.';
         }
 
-        return (strlen($this->input) >= $this->value);
+        return (strlen((string)$this->input) >= $this->value);
     }
 
 }

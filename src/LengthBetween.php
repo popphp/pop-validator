@@ -51,7 +51,7 @@ class LengthBetween extends AbstractValidator
             $this->message = 'The value length must be between ' . $this->value[0] . ' and ' . $this->value[1] . '.';
         }
 
-        return ((strlen($this->input) > $this->value[0]) && (strlen($this->input) < $this->value[1]));
+        return ((strlen((string)$this->input) > $this->value[0]) && (strlen((string)$this->input) < $this->value[1]));
     }
 
 }
