@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  */
 
@@ -19,9 +19,9 @@ namespace Pop\Validator;
  * @category   Pop
  * @package    Pop\Validator
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    3.2.0
+ * @version    4.0.0
  */
 class RegEx extends AbstractValidator
 {
@@ -37,15 +37,15 @@ class RegEx extends AbstractValidator
      *
      * Instantiate the validator object
      *
-     * @param  mixed  $value
-     * @param  string $message
-     * @param  int    $numberToSatisfy
+     * @param  mixed   $value
+     * @param  ?string $message
+     * @param  ?int    $numberToSatisfy
      */
-    public function __construct($value = null, $message = null, $numberToSatisfy = null)
+    public function __construct(mixed $value = null, ?string $message = null, ?int $numberToSatisfy = null)
     {
         parent::__construct($value, $message);
 
-        if (null !== $numberToSatisfy) {
+        if ($numberToSatisfy !== null) {
             $this->setNumberToSatisfy($numberToSatisfy);
         }
     }
@@ -53,9 +53,9 @@ class RegEx extends AbstractValidator
     /**
      * Get the number to satisfy
      *
-     * @return int
+     * @return int|null
      */
-    public function getNumberToSatisfy()
+    public function getNumberToSatisfy(): int|null
     {
         return $this->numberToSatisfy;
     }
@@ -66,9 +66,9 @@ class RegEx extends AbstractValidator
      * @param  int $numberToSatisfy
      * @return RegEx
      */
-    public function setNumberToSatisfy($numberToSatisfy)
+    public function setNumberToSatisfy(int $numberToSatisfy): Regex
     {
-        $this->numberToSatisfy = (int)$numberToSatisfy;
+        $this->numberToSatisfy = $numberToSatisfy;
         return $this;
     }
 
@@ -76,17 +76,17 @@ class RegEx extends AbstractValidator
      * Method to evaluate the validator
      *
      * @param  mixed $input
-     * @return boolean
+     * @return bool
      */
-    public function evaluate($input = null)
+    public function evaluate(mixed $input = null): bool
     {
         // Set the input, if passed
-        if (null !== $input) {
+        if ($input !== null) {
             $this->input = $input;
         }
 
         // Set the default message
-        if (null === $this->message) {
+        if ($this->message === null) {
             $this->message = 'The format is not correct.';
         }
 

@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  */
 
@@ -19,9 +19,9 @@ namespace Pop\Validator;
  * @category   Pop
  * @package    Pop\Validator
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    3.2.0
+ * @version    4.0.0
  */
 interface ValidatorInterface
 {
@@ -31,52 +31,52 @@ interface ValidatorInterface
      *
      * @return mixed
      */
-    public function getValue();
+    public function getValue(): mixed;
 
     /**
      * Get the validator default message
      *
-     * @return boolean
+     * @return string|null
      */
-    public function getMessage();
+    public function getMessage(): string|null;
 
     /**
      * Get the validator input
      *
      * @return mixed
      */
-    public function getInput();
+    public function getInput(): mixed;
 
     /**
      * Set the validator value
      *
      * @param  mixed $value
-     * @return AbstractValidator
+     * @return ValidatorInterface
      */
-    public function setValue($value);
+    public function setValue(mixed $value): ValidatorInterface;
 
     /**
      * Set the validator default message
      *
-     * @param  string $msg
-     * @return AbstractValidator
+     * @param  ?string $message
+     * @return ValidatorInterface
      */
-    public function setMessage($msg = null);
+    public function setMessage(?string $message = null): ValidatorInterface;
 
     /**
      * Set the validator input
      *
      * @param  mixed $input
-     * @return AbstractValidator
+     * @return ValidatorInterface
      */
-    public function setInput($input = null);
+    public function setInput(mixed $input = null): ValidatorInterface;
 
     /**
      * Evaluate
      *
      * @param  mixed $input
-     * @return boolean
+     * @return bool
      */
-    public function evaluate($input = null);
+    public function evaluate(mixed $input = null): bool;
 
 }

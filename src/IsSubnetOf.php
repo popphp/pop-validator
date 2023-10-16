@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  */
 
@@ -19,9 +19,9 @@ namespace Pop\Validator;
  * @category   Pop
  * @package    Pop\Validator
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    3.2.0
+ * @version    4.0.0
  */
 class IsSubnetOf extends AbstractValidator
 {
@@ -31,9 +31,9 @@ class IsSubnetOf extends AbstractValidator
      *
      * @param  mixed $input
      * @throws Exception
-     * @return boolean
+     * @return bool
      */
-    public function evaluate($input = null)
+    public function evaluate(mixed $input = null): bool
     {
         // Check to make sure the input is a valid Ipv4 address.
         if (!(new Ipv4())->evaluate($input)) {
@@ -41,12 +41,12 @@ class IsSubnetOf extends AbstractValidator
         }
 
         // Set the input, if passed
-        if (null !== $input) {
+        if ($input !== null) {
             $this->input = $input;
         }
 
         // Set the default message
-        if (null === $this->message) {
+        if ($this->message === null) {
             $this->message = 'The value must be part of the subnet ' . $this->value . '.';
         }
 

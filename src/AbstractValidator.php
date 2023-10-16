@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  */
 
@@ -19,9 +19,9 @@ namespace Pop\Validator;
  * @category   Pop
  * @package    Pop\Validator
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    3.2.0
+ * @version    4.0.0
  */
 abstract class AbstractValidator implements ValidatorInterface
 {
@@ -30,32 +30,32 @@ abstract class AbstractValidator implements ValidatorInterface
      * Validator value to test against
      * @var mixed
      */
-    protected $value = null;
+    protected mixed $value = null;
 
     /**
      * Input value to test
      * @var mixed
      */
-    protected $input = null;
+    protected mixed $input = null;
 
     /**
      * Validator message
-     * @var string
+     * @var ?string
      */
-    protected $message = null;
+    protected ?string $message = null;
 
     /**
      * Constructor
      *
      * Instantiate the validator object
      *
-     * @param  mixed  $value
-     * @param  string $message
+     * @param  mixed   $value
+     * @param  ?string $message
      */
-    public function __construct($value = null, $message = null)
+    public function __construct(mixed $value = null, ?string $message = null)
     {
         $this->setValue($value);
-        if (null !== $message) {
+        if ($message !== null) {
             $this->setMessage($message);
         }
     }
@@ -65,7 +65,7 @@ abstract class AbstractValidator implements ValidatorInterface
      *
      * @return mixed
      */
-    public function getValue()
+    public function getValue(): mixed
     {
         return $this->value;
     }
@@ -73,9 +73,9 @@ abstract class AbstractValidator implements ValidatorInterface
     /**
      * Get the validator default message
      *
-     * @return boolean
+     * @return string|null
      */
-    public function getMessage()
+    public function getMessage(): string|null
     {
         return $this->message;
     }
@@ -85,7 +85,7 @@ abstract class AbstractValidator implements ValidatorInterface
      *
      * @return mixed
      */
-    public function getInput()
+    public function getInput(): mixed
     {
         return $this->input;
     }
@@ -96,7 +96,7 @@ abstract class AbstractValidator implements ValidatorInterface
      * @param  mixed $value
      * @return AbstractValidator
      */
-    public function setValue($value)
+    public function setValue(mixed $value): AbstractValidator
     {
         $this->value = $value;
         return $this;
@@ -105,12 +105,12 @@ abstract class AbstractValidator implements ValidatorInterface
     /**
      * Set the validator condition
      *
-     * @param  string $msg
+     * @param  ?string $message
      * @return AbstractValidator
      */
-    public function setMessage($msg = null)
+    public function setMessage(?string $message = null): AbstractValidator
     {
-        $this->message = $msg;
+        $this->message = $message;
         return $this;
     }
 
@@ -120,7 +120,7 @@ abstract class AbstractValidator implements ValidatorInterface
      * @param  mixed $input
      * @return AbstractValidator
      */
-    public function setInput($input = null)
+    public function setInput(mixed $input = null): AbstractValidator
     {
         $this->input = $input;
         return $this;
@@ -130,8 +130,8 @@ abstract class AbstractValidator implements ValidatorInterface
      * Evaluate
 
      * @param  mixed $input
-     * @return boolean
+     * @return bool
      */
-    abstract public function evaluate($input = null);
+    abstract public function evaluate(mixed $input = null): bool;
 
 }

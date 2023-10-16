@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  */
 
@@ -19,9 +19,9 @@ namespace Pop\Validator;
  * @category   Pop
  * @package    Pop\Validator
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    3.2.0
+ * @version    4.0.0
  */
 class CreditCard extends AbstractValidator
 {
@@ -30,23 +30,23 @@ class CreditCard extends AbstractValidator
      * Method to evaluate the validator
      *
      * @param  mixed $input
-     * @return boolean
+     * @return bool
      */
-    public function evaluate($input = null)
+    public function evaluate(mixed $input = null): bool
     {
         // Set the input, if passed
-        if (null !== $input) {
+        if ($input !== null) {
             $this->input = $input;
-            if (strpos((string)$this->input, ' ') !== false) {
+            if (str_contains((string)$this->input, ' ')) {
                 $this->input = str_replace(' ', '', $this->input);
             }
-            if (strpos((string)$this->input, '-') !== false) {
+            if (str_contains((string)$this->input, '-')) {
                 $this->input = str_replace('-', '', $this->input);
             }
         }
 
         // Set the default message
-        if (null === $this->message) {
+        if ($this->message === null) {
             $this->message = 'The value must be a valid credit card number.';
         }
 
@@ -61,7 +61,7 @@ class CreditCard extends AbstractValidator
             if ($double) {
                 $num = $nums[$i] * 2;
                 if ($num > 9) {
-                    $num = substr($num, 0, 1) + substr($num, 1, 1);
+                    $num = (int)substr($num, 0, 1) + (int)substr($num, 1, 1);
                 }
                 $sum += $num;
                 $double = false;

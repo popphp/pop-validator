@@ -19,6 +19,12 @@ Install `pop-validator` using Composer.
 
     composer require popphp/pop-validator
 
+Or, require it in your composer.json file
+
+    "require": {
+        "popphp/pop-validator" : "4.0.*"
+    }
+
 BASIC USAGE
 -----------
 
