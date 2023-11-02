@@ -39,7 +39,7 @@ Or, require it in your composer.json file
 Quickstart
 ----------
 
-Here's a list of the available built-in validators:
+Here's a list of the available built-in validators, all under the namespace `Pop\Validator\`:
 
 |                   | Built-in Validators  |               |
 |-------------------|----------------------|---------------|
