@@ -4,7 +4,14 @@ pop-validator
 [![Build Status](https://github.com/popphp/pop-validator/workflows/phpunit/badge.svg)](https://github.com/popphp/pop-validator/actions)
 [![Coverage Status](http://cc.popphp.org/coverage.php?comp=pop-validator)](http://cc.popphp.org/pop-validator/)
 
-OVERVIEW
+[![Join the chat at https://popphp.slack.com](https://media.popphp.org/img/slack.svg)](https://popphp.slack.com)
+[![Join the chat at https://discord.gg/D9JBxPa5](https://media.popphp.org/img/discord.svg)](https://discord.gg/D9JBxPa5)
+
+* [Overview](#overview)
+* [Install](#install)
+* [Quickstart](#quickstart)
+
+Overview
 --------
 `pop-validator` is a component for validating values and returning the appropriate result messaging.
 The component comes with a set of built-in evaluation objects and also the ability to extend the
@@ -12,7 +19,9 @@ component and build your own.
 
 `pop-validator` is a component of the [Pop PHP Framework](http://www.popphp.org/).
 
-INSTALL
+[Top](#pop-validator)
+
+Install
 -------
 
 Install `pop-validator` using Composer.
@@ -25,8 +34,10 @@ Or, require it in your composer.json file
         "popphp/pop-validator" : "^4.0.0"
     }
 
-BASIC USAGE
------------
+[Top](#pop-validator)
+
+Quickstart
+----------
 
 Here's a list of the available built-in validators:
 
@@ -91,3 +102,4 @@ $validator->setMessage('You must only submit JPG, PNG or GIF images.');
 if ($validator->evaluate('image.jpg')) { } // Returns true
 ```
 
+[Top](#pop-validator)
