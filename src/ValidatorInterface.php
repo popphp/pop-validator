@@ -48,6 +48,20 @@ interface ValidatorInterface
     public function getInput(): mixed;
 
     /**
+     * Get the validator results
+     *
+     * @return mixed
+     */
+    public function getResults(): mixed;
+
+    /**
+     * Has validator results
+     *
+     * @return bool
+     */
+    public function hasResults(): bool;
+
+    /**
      * Set the validator value
      *
      * @param  mixed $value

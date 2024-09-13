@@ -40,9 +40,18 @@ abstract class AbstractValidator implements ValidatorInterface
 
     /**
      * Validator message
+     *  - The message provided when the validation fails
      * @var ?string
      */
     protected ?string $message = null;
+
+    /**
+     * Validator results
+     *  - Optional results to collect post-validation, would be something that was
+     *    set by a custom validator in its "evaluate" method
+     * @var mixed
+     */
+    protected mixed $results = null;
 
     /**
      * Constructor
@@ -88,6 +97,26 @@ abstract class AbstractValidator implements ValidatorInterface
     public function getInput(): mixed
     {
         return $this->input;
+    }
+
+    /**
+     * Get the validator results
+     *
+     * @return mixed
+     */
+    public function getResults(): mixed
+    {
+        return $this->results;
+    }
+
+    /**
+     * Has validator results
+     *
+     * @return bool
+     */
+    public function hasResults(): bool
+    {
+        return !empty($this->results);
     }
 
     /**

@@ -27,6 +27,8 @@ class ValidatorTest extends TestCase
         $validator = new Validator\AlphaNumeric();
         $this->assertTrue($validator->evaluate('hello123'));
         $this->assertFalse($validator->evaluate('$%^#ascx'));
+        $this->assertFalse($validator->hasResults());
+        $this->assertNull($validator->getResults());
     }
 
     public function testBetween()
@@ -99,7 +101,6 @@ class ValidatorTest extends TestCase
     public function testDateTimeBadValue()
     {
         $validator = new Validator\DateTimeGreaterThan('123456789');
-        //$this->assertTrue($validator->evaluate('2024-11-15'));
         $this->assertEquals('123456789', $validator->getValue());
     }
 
