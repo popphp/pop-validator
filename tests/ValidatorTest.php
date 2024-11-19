@@ -84,17 +84,17 @@ class ValidatorTest extends TestCase
 
     public function testDateTime1()
     {
-        $validator = new Validator\DateTimeGreaterThan('2024-11-30');
-        $this->assertTrue($validator->evaluate('2024-12-01'));
-        $this->assertFalse($validator->evaluate('2024-11-29'));
-        $this->assertEquals('2024-11-30', $validator->getValue());
+        $validator = new Validator\DateTimeGreaterThan('2025-11-30');
+        $this->assertTrue($validator->evaluate('2025-12-01'));
+        $this->assertFalse($validator->evaluate('2025-11-29'));
+        $this->assertEquals('2025-11-30', $validator->getValue());
     }
 
     public function testDateTime2()
     {
-        $validator = new Validator\DateTimeBetween(['2024-11-01', '2024-11-30']);
-        $this->assertTrue($validator->evaluate('2024-11-15'));
-        $this->assertFalse($validator->evaluate('2024-12-01'));
+        $validator = new Validator\DateTimeBetween(['2025-11-01', '2025-11-30']);
+        $this->assertTrue($validator->evaluate('2025-11-15'));
+        $this->assertFalse($validator->evaluate('2025-12-01'));
         $this->assertCount(2, $validator->getValue());
     }
 
