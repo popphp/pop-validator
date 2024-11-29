@@ -21,7 +21,7 @@ namespace Pop\Validator;
  * @author     Nick Sagona, III <dev@noladev.com>
  * @copyright  Copyright (c) 2009-2025 NOLA Interactive, LLC.
  * @license    http://www.popphp.org/license     New BSD License
- * @version    4.1.1
+ * @version    4.1.2
  */
 class LengthLte extends AbstractValidator
 {
