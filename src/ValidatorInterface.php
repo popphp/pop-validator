@@ -55,6 +55,27 @@ interface ValidatorInterface
     public function getResults(): mixed;
 
     /**
+     * Has validator value
+     *
+     * @return bool
+     */
+    public function hasValue(): bool;
+
+    /**
+     * Has validator message
+     *
+     * @return bool
+     */
+    public function hasMessage(): bool;
+
+    /**
+     * Has validator input
+     *
+     * @return bool
+     */
+    public function hasInput(): bool;
+
+    /**
      * Has validator results
      *
      * @return bool

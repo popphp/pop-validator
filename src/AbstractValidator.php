@@ -110,6 +110,36 @@ abstract class AbstractValidator implements ValidatorInterface
     }
 
     /**
+     * Has validator value
+     *
+     * @return bool
+     */
+    public function hasValue(): bool
+    {
+        return ($this->value !== null);
+    }
+
+    /**
+     * Has validator message
+     *
+     * @return bool
+     */
+    public function hasMessage(): bool
+    {
+        return ($this->message !== null);
+    }
+
+    /**
+     * Has validator input
+     *
+     * @return bool
+     */
+    public function hasInput(): bool
+    {
+        return ($this->input !== null);
+    }
+
+    /**
      * Has validator results
      *
      * @return bool

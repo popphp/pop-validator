@@ -15,7 +15,9 @@ class ValidatorTest extends TestCase
         $this->assertTrue($validator->evaluate('hello'));
         $this->assertFalse($validator->evaluate(123456));
         $this->assertEquals('This is not a alphabetical string.', $validator->getMessage());
-
+        $this->assertTrue($validator->hasInput());
+        $this->assertFalse($validator->hasValue());
+        $this->assertTrue($validator->hasMessage());
 
         $validator = new Validator\Alpha();
         $this->assertFalse($validator->evaluate(123456));
