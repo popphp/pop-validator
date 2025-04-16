@@ -27,6 +27,20 @@ interface ValidatorInterface
 {
 
     /**
+     * Get the validator name
+     *
+     * @return ?string
+     */
+    public function getName(): ?string;
+
+    /**
+     * Get the validator description
+     *
+     * @return ?string
+     */
+    public function getDescription(): ?string;
+
+    /**
      * Get the validator value
      *
      * @return mixed
@@ -55,6 +69,20 @@ interface ValidatorInterface
     public function getResults(): mixed;
 
     /**
+     * Has validator name
+     *
+     * @return bool
+     */
+    public function hasName(): bool;
+
+    /**
+     * Has validator description
+     *
+     * @return bool
+     */
+    public function hasDescription(): bool;
+
+    /**
      * Has validator value
      *
      * @return bool
@@ -81,6 +109,22 @@ interface ValidatorInterface
      * @return bool
      */
     public function hasResults(): bool;
+
+    /**
+     * Set the validator name
+     *
+     * @param  ?string $name
+     * @return static
+     */
+    public function setName(?string $name = null): static;
+
+    /**
+     * Set the validator description
+     *
+     * @param  ?string $description
+     * @return static
+     */
+    public function setDescription(?string $description = null): static;
 
     /**
      * Set the validator value

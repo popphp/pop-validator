@@ -27,6 +27,18 @@ abstract class AbstractValidator implements ValidatorInterface
 {
 
     /**
+     * Validator name
+     * @var ?string
+     */
+    protected mixed $name = null;
+
+    /**
+     * Validator description
+     * @var ?string
+     */
+    protected mixed $description = null;
+
+    /**
      * Validator value to test against
      * @var mixed
      */
@@ -60,13 +72,41 @@ abstract class AbstractValidator implements ValidatorInterface
      *
      * @param  mixed   $value
      * @param  ?string $message
+     * @param  ?string $name
+     * @param  ?string $description
      */
-    public function __construct(mixed $value = null, ?string $message = null)
+    public function __construct(mixed $value = null, ?string $message = null, ?string $name = null, ?string $description = null)
     {
         $this->setValue($value);
         if ($message !== null) {
             $this->setMessage($message);
         }
+        if ($name !== null) {
+            $this->setName($name);
+        }
+        if ($description !== null) {
+            $this->setDescription($description);
+        }
+    }
+
+    /**
+     * Get the validator name
+     *
+     * @return ?string
+     */
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    /**
+     * Get the validator description
+     *
+     * @return ?string
+     */
+    public function getDescription(): ?string
+    {
+        return $this->description;
     }
 
     /**
@@ -110,6 +150,26 @@ abstract class AbstractValidator implements ValidatorInterface
     }
 
     /**
+     * Has validator name
+     *
+     * @return bool
+     */
+    public function hasName(): bool
+    {
+        return ($this->name !== null);
+    }
+
+    /**
+     * Has validator description
+     *
+     * @return bool
+     */
+    public function hasDescription(): bool
+    {
+        return ($this->description !== null);
+    }
+
+    /**
      * Has validator value
      *
      * @return bool
@@ -147,6 +207,30 @@ abstract class AbstractValidator implements ValidatorInterface
     public function hasResults(): bool
     {
         return !empty($this->results);
+    }
+
+    /**
+     * Set the validator name
+     *
+     * @param  ?string $name
+     * @return static
+     */
+    public function setName(?string $name = null): static
+    {
+        $this->name = $name;
+        return $this;
+    }
+
+    /**
+     * Set the validator description
+     *
+     * @param  ?string $description
+     * @return static
+     */
+    public function setDescription(?string $description = null): static
+    {
+        $this->description = $description;
+        return $this;
     }
 
     /**

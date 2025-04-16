@@ -10,7 +10,7 @@ class ValidatorTest extends TestCase
 
     public function testAlpha()
     {
-        $validator = new Validator\Alpha(null, 'This is not a alphabetical string.');
+        $validator = new Validator\Alpha(null, 'This is not a alphabetical string.', 'An alphabetical validator', 'This validator checks if a string is alphabetical.');
         $this->assertInstanceOf('Pop\Validator\AbstractValidator', $validator);
         $this->assertTrue($validator->evaluate('hello'));
         $this->assertFalse($validator->evaluate(123456));
@@ -18,6 +18,10 @@ class ValidatorTest extends TestCase
         $this->assertTrue($validator->hasInput());
         $this->assertFalse($validator->hasValue());
         $this->assertTrue($validator->hasMessage());
+        $this->assertTrue($validator->hasName());
+        $this->assertTrue($validator->hasDescription());
+        $this->assertEquals('An alphabetical validator', $validator->getName());
+        $this->assertEquals('This validator checks if a string is alphabetical.', $validator->getDescription());
 
         $validator = new Validator\Alpha();
         $this->assertFalse($validator->evaluate(123456));
