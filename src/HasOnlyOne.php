@@ -14,7 +14,7 @@
 namespace Pop\Validator;
 
 /**
- * Equal validator class
+ * Has one validator class
  *
  * @category   Pop
  * @package    Pop\Validator
@@ -23,7 +23,7 @@ namespace Pop\Validator;
  * @license    http://www.popphp.org/license     New BSD License
  * @version    4.5.0
  */
-class Equal extends AbstractValidator
+class HasOnlyOne extends AbstractValidator
 {
 
     /**
@@ -41,10 +41,26 @@ class Equal extends AbstractValidator
 
         // Set the default message
         if ($this->message === null) {
-            $this->message = 'The value must be equal to ' . $this->value . '.';
+            $this->message = 'The value must contain only one item' . (($this->value !== null) ? " of '" . $this->value . "'." : '.');
         }
 
-        return ($this->input == $this->value);
+        $result = false;
+
+        // Simple array value count
+        if (($this->value === null) && is_array($this->input)) {
+            $result = (count($this->input) == 1);
+            // Check node of array
+        } else if (is_string($this->value) && is_array($this->input)) {
+            if (!str_contains($this->value, '.')) {
+                $result = (array_key_exists($this->value, $this->input) && is_array($this->input[$this->value]) && count($this->input[$this->value]) == 1);
+            } else {
+                $value = [];
+                Validator::traverseData($this->value, $this->input, $value);
+                $result = (is_array($value) && (count($value) == 1));
+            }
+        }
+
+        return $result;
     }
 
 }

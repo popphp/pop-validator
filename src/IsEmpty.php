@@ -14,7 +14,7 @@
 namespace Pop\Validator;
 
 /**
- * Equal validator class
+ * Is Empty validator class ("Empty" as that is a reserved keyword)
  *
  * @category   Pop
  * @package    Pop\Validator
@@ -23,7 +23,7 @@ namespace Pop\Validator;
  * @license    http://www.popphp.org/license     New BSD License
  * @version    4.5.0
  */
-class Equal extends AbstractValidator
+class IsEmpty extends AbstractValidator
 {
 
     /**
@@ -41,10 +41,10 @@ class Equal extends AbstractValidator
 
         // Set the default message
         if ($this->message === null) {
-            $this->message = 'The value must be equal to ' . $this->value . '.';
+            $this->message = 'The value must be empty.';
         }
 
-        return ($this->input == $this->value);
+        return (empty($this->input));
     }
 
 }

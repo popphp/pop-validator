@@ -14,37 +14,16 @@
 namespace Pop\Validator;
 
 /**
- * Not empty validator class
+ * Not empty validator class (alias class)
  *
  * @category   Pop
  * @package    Pop\Validator
  * @author     Nick Sagona, III <dev@noladev.com>
  * @copyright  Copyright (c) 2009-2025 NOLA Interactive, LLC.
  * @license    http://www.popphp.org/license     New BSD License
- * @version    4.1.3
+ * @version    4.5.0
  */
-class NotEmpty extends AbstractValidator
+class NotEmpty extends IsNotEmpty
 {
-
-    /**
-     * Method to evaluate the validator
-     *
-     * @param  mixed $input
-     * @return bool
-     */
-    public function evaluate(mixed $input = null): bool
-    {
-        // Set the input, if passed
-        if ($input !== null) {
-            $this->input = $input;
-        }
-
-        // Set the default message
-        if ($this->message === null) {
-            $this->message = 'The value must not be empty.';
-        }
-
-        return (!empty($this->input));
-    }
 
 }

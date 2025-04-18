@@ -14,7 +14,7 @@
 namespace Pop\Validator;
 
 /**
- * Equal validator class
+ * Starts with validator class
  *
  * @category   Pop
  * @package    Pop\Validator
@@ -23,7 +23,7 @@ namespace Pop\Validator;
  * @license    http://www.popphp.org/license     New BSD License
  * @version    4.5.0
  */
-class Equal extends AbstractValidator
+class StartsWith extends AbstractValidator
 {
 
     /**
@@ -41,10 +41,10 @@ class Equal extends AbstractValidator
 
         // Set the default message
         if ($this->message === null) {
-            $this->message = 'The value must be equal to ' . $this->value . '.';
+            $this->message = 'The input must start with the value.';
         }
 
-        return ($this->input == $this->value);
+        return str_starts_with($this->input, $this->value);
     }
 
 }

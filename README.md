@@ -30,7 +30,7 @@ Install `pop-validator` using Composer.
 Or, require it in your composer.json file
 
     "require": {
-        "popphp/pop-validator" : "^4.1.3"
+        "popphp/pop-validator" : "^4.5.0"
     }
 
 [Top](#pop-validator)

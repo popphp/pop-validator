@@ -14,14 +14,14 @@
 namespace Pop\Validator;
 
 /**
- * Validator class
+ * Abstract validator class
  *
  * @category   Pop
  * @package    Pop\Validator
  * @author     Nick Sagona, III <dev@noladev.com>
  * @copyright  Copyright (c) 2009-2025 NOLA Interactive, LLC.
  * @license    http://www.popphp.org/license     New BSD License
- * @version    4.1.3
+ * @version    4.5.0
  */
 abstract class AbstractValidator implements ValidatorInterface
 {
@@ -130,7 +130,7 @@ abstract class AbstractValidator implements ValidatorInterface
     }
 
     /**
-     * GEt the validator input
+     * Get the validator input
      *
      * @return mixed
      */

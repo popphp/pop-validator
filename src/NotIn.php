@@ -14,7 +14,7 @@
 namespace Pop\Validator;
 
 /**
- * Equal validator class
+ * Does not contain validator class (alias class)
  *
  * @category   Pop
  * @package    Pop\Validator
@@ -23,28 +23,7 @@ namespace Pop\Validator;
  * @license    http://www.popphp.org/license     New BSD License
  * @version    4.5.0
  */
-class Equal extends AbstractValidator
+class NotIn extends NotContains
 {
-
-    /**
-     * Method to evaluate the validator
-     *
-     * @param  mixed $input
-     * @return bool
-     */
-    public function evaluate(mixed $input = null): bool
-    {
-        // Set the input, if passed
-        if ($input !== null) {
-            $this->input = $input;
-        }
-
-        // Set the default message
-        if ($this->message === null) {
-            $this->message = 'The value must be equal to ' . $this->value . '.';
-        }
-
-        return ($this->input == $this->value);
-    }
 
 }
