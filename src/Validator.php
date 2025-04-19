@@ -13,6 +13,8 @@
  */
 namespace Pop\Validator;
 
+use Pop\Utils\Arr;
+use Pop\Utils\Str;
 
 /**
  * Validator class
@@ -34,6 +36,12 @@ class Validator
     protected array $validators = [];
 
     /**
+     * Conditions
+     * @var array
+     */
+    protected array $conditions = [];
+
+    /**
      * Errors
      * @var array
      */
@@ -51,10 +59,11 @@ class Validator
      * Instantiate the validator object
      *
      * @param mixed   $validators
+     * @param mixed   $conditions
      * @param ?string $field
      * @param bool    $strict
      */
-    public function __construct(mixed $validators = null, ?string $field = null, bool $strict = true)
+    public function __construct(mixed $validators = null, mixed $conditions = null, ?string $field = null, bool $strict = true)
     {
         if ($validators !== null) {
             if ($field !== null) {
@@ -78,34 +87,66 @@ class Validator
             }
         }
 
+        if ($conditions !== null) {
+            if ($field !== null) {
+                if (is_array($conditions)) {
+                    $this->addConditionsToField($field, $conditions);
+                } else if ($conditions instanceof Condition) {
+                    $this->addCondition($field, $conditions);
+                }
+            } else {
+                if (is_array($conditions)) {
+                    foreach ($conditions as $field => $condition) {
+                        if (is_array($condition)) {
+                            $this->addConditionsToField($field, $condition);
+                        } else if ($condition instanceof Condition) {
+                            $this->addCondition($field, $condition);
+                        }
+                    }
+                } else {
+                    throw new \InvalidArgumentException('Error: Conditions must be an array or a class with a field parameter.');
+                }
+            }
+        }
+
         $this->setStrict($strict);
     }
 
     /**
-     * Create validator set from the rules
+     * Create validator set
      *
-     * @param  array  $rules
-     * @param  bool   $strict
-     * @param  string $prefix
+     * @param  mixed   $validators
+     * @param  mixed   $conditions
+     * @param  ?string $field
+     * @param  bool    $strict
      * @return Validator
      */
-    public static function create(array $rules, bool $strict = true, string $prefix = 'Pop\Validator\\'): Validator
+    public static function create(mixed $validators = null, mixed $conditions = null, ?string $field = null, bool $strict = true): Validator
+    {
+        return new static($validators, $conditions, $field, $strict);
+    }
+
+    /**
+     * Create validator set from rules
+     *
+     * @param  array|string $rules
+     * @param  bool         $strict
+     * @param  string       $prefix
+     * @return Validator
+     */
+    public static function createFromRules(array|string $rules, bool $strict = true, string $prefix = 'Pop\Validator\\'): Validator
     {
         $validator = new static();
         $validator->setStrict($strict);
 
-        foreach ($rules as $field => $rule) {
-            if (str_contains($rule, ':')) {
-                $ruleset = explode(':', $rule);
-                $class   = $prefix . array_shift($ruleset);
-            } else {
-                $ruleset = null;
-                $class   = $prefix . $rule;
-            }
+        $rules = Arr::make($rules);
 
-            if (class_exists($class)) {
-                $validatorObject = new $class();
-                $validator->addValidator($field, $validatorObject);
+        foreach ($rules as $rule) {
+            ['field' => $field, 'operator' => $operator, 'value' => $value] = Validator::parseRule($rule, $prefix);
+
+            if (class_exists($prefix . $operator)) {
+                $class = new $prefix . $operator;
+                $validator->addValidator($field, new $class($value));
             }
         }
 
@@ -184,6 +225,81 @@ class Validator
             return (isset($this->validators[$field]));
         } else {
             return (!empty($this->validators));
+        }
+    }
+
+    /**
+     * Add condition
+     *
+     * @param  string    $field
+     * @param  Condition $condition
+     * @return Validator
+     */
+    public function addCondition(string $field, Condition $condition): Validator
+    {
+        if (!isset($this->conditions[$field])) {
+            $this->conditions[$field] = [];
+        }
+        $this->conditions[$field][] = $condition;
+        return $this;
+    }
+
+    /**
+     * Add conditions to specific field
+     *
+     * @param  string $field
+     * @param  array $conditions
+     * @return Validator
+     */
+    public function addConditionsToField(string $field, array $conditions): Validator
+    {
+        foreach ($conditions as $condition) {
+            $this->addCondition($field, $condition);
+        }
+        return $this;
+    }
+
+    /**
+     * Add conditions to specific field
+     *
+     * @param  array $conditions
+     * @return Validator
+     */
+    public function addConditions(array $conditions): Validator
+    {
+        foreach ($conditions as $field => $condition) {
+            $this->addCondition($field, $condition);
+        }
+        return $this;
+    }
+
+    /**
+     * Get conditions
+     *
+     * @param  ?string $field
+     * @return array
+     */
+    public function getConditions(?string $field = null): array
+    {
+        if ($field !== null) {
+            return (isset($this->conditions[$field])) ? $this->conditions[$field] : [];
+        } else {
+            return $this->conditions;
+        }
+    }
+
+    /**
+     * Has conditions
+     *
+     * @param  ?string $field
+     * @return bool
+     */
+    public function hasConditions(?string $field = null): bool
+    {
+        if ($field !== null) {
+            return (isset($this->conditions[$field]));
+        } else {
+            return (!empty($this->conditions));
         }
     }
 
@@ -273,6 +389,40 @@ class Validator
         }
 
         return (!$this->hasErrors());
+    }
+
+    /**
+     * Parse rule
+     *
+     * @param  string  $rule
+     * @param  ?string $prefix
+     * @throws \InvalidArgumentException
+     * @return array
+     */
+    public static function parseRule(string $rule, ?string $prefix = 'Pop\Validator\\'): array
+    {
+        $ruleSet = explode(':', $rule);
+
+        if (count($ruleSet) < 2) {
+            throw new \InvalidArgumentException('Error: The rule is invalid. It must have at least a field and an operator, e.g. user_id:equals:1.');
+        }
+
+        $operator = Str::snakeCaseToTitleCase($ruleSet[1]);
+        $value    = $ruleSet[2] ?? null;
+
+        if (str_contains($rule, ',')) {
+            $value = array_filter(array_map('trim', explode(',', $value)));
+        }
+
+        if (!class_exists($prefix . $operator)) {
+            throw new \InvalidArgumentException("Error: The operator class '" . $prefix . $operator . "' does not exist.");
+        }
+
+        return [
+            'field'    => $ruleSet[0],
+            'operator' => $operator,
+            'value'    => $value
+        ];
     }
 
     /**
