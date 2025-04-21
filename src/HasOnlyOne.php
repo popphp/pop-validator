@@ -41,7 +41,8 @@ class HasOnlyOne extends AbstractValidator
 
         // Set the default message
         if ($this->message === null) {
-            $this->message = 'The value must contain only one item' . (($this->value !== null) ? " of '" . $this->value . "'." : '.');
+            $this->message = 'The value must contain only one item' .
+                (($this->value !== null) ? " of '" . $this->value . "'." : '.');
         }
 
         $result = false;
@@ -52,10 +53,11 @@ class HasOnlyOne extends AbstractValidator
             // Check node of array
         } else if (is_string($this->value) && is_array($this->input)) {
             if (!str_contains($this->value, '.')) {
-                $result = (array_key_exists($this->value, $this->input) && is_array($this->input[$this->value]) && count($this->input[$this->value]) == 1);
+                $result = (array_key_exists($this->value, $this->input) &&
+                    is_array($this->input[$this->value]) && count($this->input[$this->value]) == 1);
             } else {
                 $value = [];
-                Validator::traverseData($this->value, $this->input, $value);
+                ValidatorSet::traverseData($this->value, $this->input, $value);
                 $result = (is_array($value) && (count($value) == 1));
             }
         }

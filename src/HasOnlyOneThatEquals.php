@@ -48,7 +48,8 @@ class HasOnlyOneThatEquals extends AbstractValidator
 
             // Set the default message
             if ($this->message === null) {
-                $this->message = 'The value must contain only one item' . (($this->value !== null) ? " of '" . $field . "'" : '') . ' with the required value.';
+                $this->message = 'The value must contain only one item' .
+                    (($this->value !== null) ? " of '" . $field . "'" : '') . ' with the required value.';
             }
 
             if (!str_contains($field, '.')) {
@@ -58,7 +59,7 @@ class HasOnlyOneThatEquals extends AbstractValidator
                 $child  = substr($field, (strrpos($field, '.') + 1));
                 $value  = [];
                 $count  = 0;
-                Validator::traverseData($parent, $this->input, $value);
+                ValidatorSet::traverseData($parent, $this->input, $value);
 
                 foreach ($value as $val) {
                     if (is_array($val)) {

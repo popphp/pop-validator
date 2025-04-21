@@ -33,10 +33,10 @@ class Condition
     protected ?string $field = null;
 
     /**
-     * Operator
+     * Validator
      * @var ?string
      */
-    protected ?string $operator = null;
+    protected ?string $validator = null;
 
     /**
      * Value
@@ -56,16 +56,16 @@ class Condition
      * Instantiate the condition object
      *
      * @param ?string $field
-     * @param ?string $operator
+     * @param ?string $validator
      * @param mixed   $value
      */
-    public function __construct(?string $field = null, ?string $operator = null, mixed $value = null, string $prefix = 'Pop\Validator\\')
+    public function __construct(?string $field = null, ?string $validator = null, mixed $value = null, string $prefix = 'Pop\Validator\\')
     {
         if ($field !== null) {
             $this->setField($field);
         }
-        if ($operator !== null) {
-            $this->setOperator($operator);
+        if ($validator !== null) {
+            $this->setValidator($validator);
         }
         if ($value !== null) {
             $this->setValue($value);
@@ -83,21 +83,23 @@ class Condition
      */
     public static function createFromRule(string $rule, string $prefix = 'Pop\Validator\\'): Condition
     {
-        ['field' => $field, 'operator' => $operator, 'value' => $value] = Validator::parseRule($rule, $prefix);
-        return new static($field, $operator, $value, $prefix);
+        ['field' => $field, 'validator' => $validator, 'value' => $value] = ValidatorSet::parseRule($rule, $prefix);
+        return new static($field, $validator, $value, $prefix);
     }
 
     /**
      * Create condition
      *
      * @param  ?string $field
-     * @param  ?string $operator
+     * @param  ?string $validator
      * @param  mixed $value
      * @return Condition
      */
-    public static function create(?string $field = null, ?string $operator = null, mixed $value = null, string $prefix = 'Pop\Validator\\'): Condition
+    public static function create(
+        ?string $field = null, ?string $validator = null, mixed $value = null, string $prefix = 'Pop\Validator\\'
+    ): Condition
     {
-        return new static($field, $operator, $value);
+        return new static($field, $validator, $value);
     }
 
     /**
@@ -113,14 +115,14 @@ class Condition
     }
 
     /**
-     * Set the condition operator
+     * Set the condition validator
      *
-     * @param  ?string $operator
+     * @param  ?string $validator
      * @return static
      */
-    public function setOperator(?string $operator = null): static
+    public function setValidator(?string $validator = null): static
     {
-        $this->operator = $operator;
+        $this->validator = $validator;
         return $this;
     }
 
@@ -159,13 +161,13 @@ class Condition
     }
 
     /**
-     * Get the condition operator
+     * Get the condition validator
      *
      * @return ?string
      */
-    public function getOperator(): ?string
+    public function getValidator(): ?string
     {
-        return $this->operator;
+        return $this->validator;
     }
 
     /**
@@ -199,13 +201,13 @@ class Condition
     }
 
     /**
-     * Has the condition operator
+     * Has the condition validator
      *
      * @return bool
      */
-    public function hasOperator(): bool
+    public function hasValidator(): bool
     {
-        return ($this->operator !== null);
+        return ($this->validator !== null);
     }
 
     /**
@@ -232,26 +234,24 @@ class Condition
      * Evaluate the condition
      *
      * @param  mixed $input
+     * @throws Exception
      * @return bool
      */
     public function evaluate(array $input): bool
     {
-        if (!class_exists($this->prefix . $this->operator)) {
+        if (!class_exists($this->prefix . $this->validator)) {
             throw new Exception('Error: The condition class does not exist.');
         }
 
-        $result   = false;
-        $class     = $this->prefix . $this->operator;
-        $validator = new $class($this->value);
-        if (!str_contains($this->field, '.') && isset($input[$this->field])) {
-            $result    = $validator->evaluate($input[$this->field]);
-        } else {
-            $value = [];
-            Validator::traverseData($this->field, $input, $value);
-            $result  = $validator->evaluate($value);
+        if (!str_contains($this->field, '.') && !array_key_exists($this->field, $input))  {
+            throw new Exception("Error: The input data does not contain a '" . $this->field . "' field value.");
         }
 
-        return $result;
+        $class     = $this->prefix . $this->validator;
+        $validator = (str_starts_with($this->validator, 'Has')) ? new $class([$this->field => $this->value]) : new $class($this->value);
+        $value     = (str_contains($this->field, '.')) ? $input : $input[$this->field];
+
+        return $validator->evaluate($value);
     }
 
 }

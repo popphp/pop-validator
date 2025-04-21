@@ -47,14 +47,16 @@ class HasOneThatEquals extends AbstractValidator
 
             // Set the default message
             if ($this->message === null) {
-                $this->message = 'The value must contain one item' . (($this->value !== null) ? " of '" . $field . "'" : '') . ' with the required value.';
+                $this->message = 'The value must contain one item' . (($this->value !== null) ?
+                        " of '" . $field . "'" : '') . ' with the required value.';
             }
 
             if (!str_contains($field, '.')) {
-                $result = (array_key_exists($field, $this->input) && is_array($this->input[$field]) && ($this->input[$field] == $requiredValue));
+                $result = (array_key_exists($field, $this->input) &&
+                    is_array($this->input[$field]) && ($this->input[$field] == $requiredValue));
             } else {
                 $value = [];
-                Validator::traverseData($field, $this->input, $value);
+                ValidatorSet::traverseData($field, $this->input, $value);
                 $result = ((is_array($value) && in_array($requiredValue, $value)) || ($value == $requiredValue));
             }
         }
