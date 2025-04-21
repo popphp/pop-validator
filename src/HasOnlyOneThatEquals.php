@@ -69,7 +69,7 @@ class HasOnlyOneThatEquals extends AbstractValidator
                 foreach ($value as $val) {
                     if (is_array($val)) {
                         foreach ($val as $item) {
-                            if (is_array($item) && isset($item[$child]) && ($item[$child] === $requiredValue)) {
+                            if (is_array($item) && isset($item[$child]) && ($item[$child] == $requiredValue)) {
                                 $count++;
                             }
                         }

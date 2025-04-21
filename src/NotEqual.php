@@ -14,7 +14,7 @@
 namespace Pop\Validator;
 
 /**
- * Now equal validator class
+ * Not equal validator class
  *
  * @category   Pop
  * @package    Pop\Validator

@@ -14,7 +14,7 @@
 namespace Pop\Validator;
 
 /**
- * Ends with validator class
+ * Is JSON validator class
  *
  * @category   Pop
  * @package    Pop\Validator
@@ -23,7 +23,7 @@ namespace Pop\Validator;
  * @license    http://www.popphp.org/license     New BSD License
  * @version    4.5.0
  */
-class EndsWith extends AbstractValidator
+class IsJson extends AbstractValidator
 {
 
     /**
@@ -41,10 +41,10 @@ class EndsWith extends AbstractValidator
 
         // Set the default message
         if ($this->message === null) {
-            $this->message = 'The input must end with the value.';
+            $this->message = 'The value must be a valid JSON string.';
         }
 
-        return str_ends_with($this->input, $this->value);
+        return ((@json_decode($this->input, true) !== false) && json_last_error() === JSON_ERROR_NONE);
     }
 
 }

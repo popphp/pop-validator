@@ -88,7 +88,31 @@ class ValidatorTest extends TestCase
         $this->assertFalse($validator->evaluate('123456789'));
     }
 
-    public function testDateTime1()
+    public function testDateTimeBetween()
+    {
+        $validator = new Validator\DateTimeBetween(['2025-11-01', '2025-11-30']);
+        $this->assertTrue($validator->evaluate('2025-11-15'));
+        $this->assertFalse($validator->evaluate('2025-12-01'));
+        $this->assertCount(2, $validator->getValue());
+    }
+
+    public function testDateTimeBetweenInclude()
+    {
+        $validator = new Validator\DateTimeBetweenInclude(['2025-11-01', '2025-11-30']);
+        $this->assertTrue($validator->evaluate('2025-11-30'));
+        $this->assertFalse($validator->evaluate('2025-12-01'));
+        $this->assertCount(2, $validator->getValue());
+    }
+
+    public function testDateTimeEqual()
+    {
+        $validator = new Validator\DateTimeEqual('2025-11-30');
+        $this->assertTrue($validator->evaluate('2025-11-30'));
+        $this->assertFalse($validator->evaluate('2025-11-29'));
+        $this->assertEquals('2025-11-30', $validator->getValue());
+    }
+
+    public function testDateTimeGreaterThan()
     {
         $validator = new Validator\DateTimeGreaterThan('2025-11-30');
         $this->assertTrue($validator->evaluate('2025-12-01'));
@@ -96,12 +120,36 @@ class ValidatorTest extends TestCase
         $this->assertEquals('2025-11-30', $validator->getValue());
     }
 
-    public function testDateTime2()
+    public function testDateTimeGreaterThanEqual()
     {
-        $validator = new Validator\DateTimeBetween(['2025-11-01', '2025-11-30']);
-        $this->assertTrue($validator->evaluate('2025-11-15'));
-        $this->assertFalse($validator->evaluate('2025-12-01'));
-        $this->assertCount(2, $validator->getValue());
+        $validator = new Validator\DateTimeGreaterThanEqual('2025-11-30');
+        $this->assertTrue($validator->evaluate('2025-11-30'));
+        $this->assertFalse($validator->evaluate('2025-11-29'));
+        $this->assertEquals('2025-11-30', $validator->getValue());
+    }
+
+    public function testDateTimeLessThan()
+    {
+        $validator = new Validator\DateTimeLessThan('2025-11-30');
+        $this->assertTrue($validator->evaluate('2025-11-01'));
+        $this->assertFalse($validator->evaluate('2025-12-29'));
+        $this->assertEquals('2025-11-30', $validator->getValue());
+    }
+
+    public function testDateTimeLessThanEqual()
+    {
+        $validator = new Validator\DateTimeLessThanEqual('2025-11-30');
+        $this->assertTrue($validator->evaluate('2025-11-30'));
+        $this->assertFalse($validator->evaluate('2025-12-29'));
+        $this->assertEquals('2025-11-30', $validator->getValue());
+    }
+
+    public function testDateTimeNotEqual()
+    {
+        $validator = new Validator\DateTimeNotEqual('2025-11-30');
+        $this->assertTrue($validator->evaluate('2025-11-29'));
+        $this->assertFalse($validator->evaluate('2025-11-30'));
+        $this->assertEquals('2025-11-30', $validator->getValue());
     }
 
     public function testDateTimeBadValue()
@@ -117,10 +165,24 @@ class ValidatorTest extends TestCase
         $this->assertFalse($validator->evaluate('bademail'));
     }
 
+    public function testEndsWith()
+    {
+        $validator = new Validator\EndsWith('xyz');
+        $this->assertTrue($validator->evaluate('qrstuvwxyz'));
+        $this->assertFalse($validator->evaluate('abcdefghi'));
+    }
+
     public function testEqual()
     {
         $validator = new Validator\Equal(10);
         $this->assertTrue($validator->evaluate(10));
+        $this->assertFalse($validator->evaluate(15));
+    }
+
+    public function testHasOne()
+    {
+        $validator = new Validator\HasOne(123);
+        $this->assertTrue($validator->evaluate([]));
         $this->assertFalse($validator->evaluate(15));
     }
 
@@ -355,6 +417,13 @@ class ValidatorTest extends TestCase
         $this->assertEquals(3, $regex1->getNumberToSatisfy());
         $this->assertTrue($regex1->evaluate('Hello123'));
         $this->assertFalse($regex1->evaluate('hello'));
+    }
+
+    public function testStartsWith()
+    {
+        $validator = new Validator\StartsWith('abc');
+        $this->assertTrue($validator->evaluate('abcdefghi'));
+        $this->assertFalse($validator->evaluate('qrstuvwxyz'));
     }
 
     public function testSubnet()

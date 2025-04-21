@@ -14,7 +14,7 @@
 namespace Pop\Validator;
 
 /**
- * Ends with validator class
+ * Count greater than validator class
  *
  * @category   Pop
  * @package    Pop\Validator
@@ -23,13 +23,14 @@ namespace Pop\Validator;
  * @license    http://www.popphp.org/license     New BSD License
  * @version    4.5.0
  */
-class EndsWith extends AbstractValidator
+class CountGreaterThan extends AbstractValidator
 {
 
     /**
      * Method to evaluate the validator
      *
      * @param  mixed $input
+     * @throws Exception
      * @return bool
      */
     public function evaluate(mixed $input = null): bool
@@ -41,10 +42,14 @@ class EndsWith extends AbstractValidator
 
         // Set the default message
         if ($this->message === null) {
-            $this->message = 'The input must end with the value.';
+            $this->message = 'The count must be greater than ' . $this->value . '.';
         }
 
-        return str_ends_with($this->input, $this->value);
+        if (!is_array($input)) {
+            throw new Exception('Error: The evaluated input must be an array.');
+        }
+
+        return (count($this->input) > $this->value);
     }
 
 }

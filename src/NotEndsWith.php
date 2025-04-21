@@ -14,7 +14,7 @@
 namespace Pop\Validator;
 
 /**
- * Ends with validator class
+ * Not ends with validator class
  *
  * @category   Pop
  * @package    Pop\Validator
@@ -23,7 +23,7 @@ namespace Pop\Validator;
  * @license    http://www.popphp.org/license     New BSD License
  * @version    4.5.0
  */
-class EndsWith extends AbstractValidator
+class NotEndsWith extends AbstractValidator
 {
 
     /**
@@ -41,10 +41,10 @@ class EndsWith extends AbstractValidator
 
         // Set the default message
         if ($this->message === null) {
-            $this->message = 'The input must end with the value.';
+            $this->message = 'The input must not end with the value.';
         }
 
-        return str_ends_with($this->input, $this->value);
+        return !str_ends_with($this->input, $this->value);
     }
 
 }

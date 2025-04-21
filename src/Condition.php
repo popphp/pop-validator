@@ -51,6 +51,12 @@ class Condition
     protected ?string $prefix = null;
 
     /**
+     * Validator
+     * @var ?AbstractValidator
+     */
+    protected ?AbstractValidator $validatorObject = null;
+
+    /**
      * Constructor
      *
      * Instantiate the condition object
@@ -191,6 +197,16 @@ class Condition
     }
 
     /**
+     * Get the condition validator object
+     *
+     * @return ?AbstractValidator
+     */
+    public function getValidatorObject(): ?AbstractValidator
+    {
+        return $this->validatorObject;
+    }
+
+    /**
      * Has the condition field
      *
      * @return bool
@@ -231,6 +247,16 @@ class Condition
     }
 
     /**
+     * Has the condition validator object
+     *
+     * @return bool
+     */
+    public function hasValidatorObject(): bool
+    {
+        return ($this->validatorObject !== null);
+    }
+
+    /**
      * Evaluate the condition
      *
      * @param  mixed $input
@@ -248,15 +274,16 @@ class Condition
         }
 
         // If the value references a value in the input array
-        if (is_string($this->value) && array_key_exists($this->value, $input)) {
+        if (is_string($this->value) && !is_numeric($this->value) && array_key_exists($this->value, $input)) {
             $this->value = $input[$this->value];
         }
 
-        $class     = $this->prefix . $this->validator;
-        $validator = (str_starts_with($this->validator, 'Has')) ? new $class([$this->field => $this->value]) : new $class($this->value);
-        $value     = (str_contains($this->field, '.')) ? $input : $input[$this->field];
+        $class = $this->prefix . $this->validator;
 
-        return $validator->evaluate($value);
+        $this->validatorObject = (str_starts_with($this->validator, 'Has')) ?
+            new $class([$this->field => $this->value]) : new $class($this->value);
+
+        return $this->validatorObject->evaluate($input);
     }
 
 }

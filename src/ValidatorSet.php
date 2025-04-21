@@ -265,7 +265,7 @@ class ValidatorSet
 
         // If the value references a value in the input array
         $value = $validator->getValue();
-        if (is_string($value) && array_key_exists($value, $input)) {
+        if (is_string($value) && !is_numeric($value) && array_key_exists($value, $input)) {
             $validator->setValue($input[$value]);
         }
 
@@ -636,6 +636,7 @@ class ValidatorSet
      */
     public function evaluate(array $input): bool
     {
+        $result = $this->evaluateConditions($input);
         // If conditions are met, or there are no conditions
         if (!($this->hasConditions()) || $this->evaluateConditions($input)) {
             if (!$this->isLoaded()) {

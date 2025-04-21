@@ -14,7 +14,7 @@
 namespace Pop\Validator;
 
 /**
- * Ends with validator class
+ * Accepted validator class
  *
  * @category   Pop
  * @package    Pop\Validator
@@ -23,7 +23,7 @@ namespace Pop\Validator;
  * @license    http://www.popphp.org/license     New BSD License
  * @version    4.5.0
  */
-class EndsWith extends AbstractValidator
+class Accepted extends AbstractValidator
 {
 
     /**
@@ -41,10 +41,11 @@ class EndsWith extends AbstractValidator
 
         // Set the default message
         if ($this->message === null) {
-            $this->message = 'The input must end with the value.';
+            $this->message = "The value must a value of either 'yes', '1', 1, 'true' or true.";
         }
 
-        return str_ends_with($this->input, $this->value);
+        return ((is_numeric($this->input) && ((int)$this->input === 1)) || ($this->input === true) ||
+            (is_string($this->input) && ((strtolower($this->input) === 'true') || (strtolower($this->input) === 'yes'))));
     }
 
 }

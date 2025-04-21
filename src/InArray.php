@@ -14,7 +14,7 @@
 namespace Pop\Validator;
 
 /**
- * Ends with validator class
+ * In array validator class (alias class)
  *
  * @category   Pop
  * @package    Pop\Validator
@@ -23,28 +23,7 @@ namespace Pop\Validator;
  * @license    http://www.popphp.org/license     New BSD License
  * @version    4.5.0
  */
-class EndsWith extends AbstractValidator
+class InArray extends Contains
 {
-
-    /**
-     * Method to evaluate the validator
-     *
-     * @param  mixed $input
-     * @return bool
-     */
-    public function evaluate(mixed $input = null): bool
-    {
-        // Set the input, if passed
-        if ($input !== null) {
-            $this->input = $input;
-        }
-
-        // Set the default message
-        if ($this->message === null) {
-            $this->message = 'The input must end with the value.';
-        }
-
-        return str_ends_with($this->input, $this->value);
-    }
 
 }
