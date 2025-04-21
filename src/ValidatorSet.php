@@ -15,7 +15,6 @@ namespace Pop\Validator;
 
 use Pop\Utils\Arr;
 use Pop\Utils\CallableObject;
-use Pop\Utils\Str;
 
 /**
  * Validator set class
@@ -31,6 +30,18 @@ class ValidatorSet
 {
 
     /**
+     * Constants
+     */
+    const PASSED_NONE = 0;
+    const PASSED_ALL  = 1;
+    const PASSED_SOME = 2;
+
+    const STRICT_NONE             = 0;
+    const STRICT_VALIDATIONS_ONLY = 1;
+    const STRICT_CONDITIONS_ONLY  = 2;
+    const STRICT_BOTH             = 3;
+
+    /**
      * Validators
      * @var array
      */
@@ -43,7 +54,7 @@ class ValidatorSet
     protected array $loaded = [];
 
     /**
-     * Evaluated validators
+     * Evaluated validators and their true/false results
      * @var array
      */
     protected array $evaluated = [];
@@ -61,10 +72,22 @@ class ValidatorSet
     protected array $errors = [];
 
     /**
-     * Strict flag
-     * @var bool
+     * Validation status
+     * @var ?int
      */
-    protected bool $strict = true;
+    protected ?int $validationStatus = null;
+
+    /**
+     * Condition status
+     * @var ?int
+     */
+    protected ?int $conditionStatus = null;
+
+    /**
+     * Strict flag
+     * @var int
+     */
+    protected int $strict = 3;
 
     /**
      * Add validators
@@ -132,11 +155,40 @@ class ValidatorSet
         $rules = Arr::make($rules);
 
         foreach ($rules as $rule) {
-            ['field' => $field, 'validator' => $validator, 'value' => $value] = ValidatorSet::parseRule($rule, $prefix);
+            ['field' => $field, 'validator' => $validator, 'value' => $value] = Rule::parse($rule, $prefix);
             $validatorSet->addValidator($field, $validator, $value, $prefix);
         }
 
         return $validatorSet;
+    }
+
+    /**
+     * Add validator from rule
+     *
+     * @param  string $rule
+     * @param  string $prefix
+     * @return ValidatorSet
+     */
+    public function addValidatorFromRule(string $rule, string $prefix = 'Pop\Validator\\'): ValidatorSet
+    {
+        ['field' => $field, 'validator' => $validator, 'value' => $value] = Rule::parse($rule, $prefix);
+        $this->addValidator($field, $validator, $value, $prefix);
+        return $this;
+    }
+
+    /**
+     * Add validators from rules
+     *
+     * @param  array $rules
+     * @param  string $prefix
+     * @return ValidatorSet
+     */
+    public function addValidatorsFromRules(array $rules, string $prefix = 'Pop\Validator\\'): ValidatorSet
+    {
+        foreach ($rules as $rule) {
+            $this->addValidatorFromRule($rule, $prefix);
+        }
+        return $this;
     }
 
     /**
@@ -202,13 +254,21 @@ class ValidatorSet
      *
      * @param  string            $field
      * @param  AbstractValidator $validator
+     * @param  array             $input
      * @return ValidatorSet
      */
-    public function loadValidator(string $field, AbstractValidator $validator): ValidatorSet
+    public function loadValidator(string $field, AbstractValidator $validator, array $input = []): ValidatorSet
     {
         if (!isset($this->loaded[$field])) {
             $this->loaded[$field] = [];
         }
+
+        // If the value references a value in the input array
+        $value = $validator->getValue();
+        if (is_string($value) && array_key_exists($value, $input)) {
+            $validator->setValue($input[$value]);
+        }
+
         $this->loaded[$field][] = $validator;
         return $this;
     }
@@ -216,17 +276,18 @@ class ValidatorSet
     /**
      * Load validators to specific field
      *
-     * @param string $field
-     * @param  array $validators
+     * @param  string $field
+     * @param  array  $validators
+     * @param  array  $input
      * @return ValidatorSet
      */
-    public function loadValidatorsToField(string $field, array $validators): ValidatorSet
+    public function loadValidatorsToField(string $field, array $validators, array $input = []): ValidatorSet
     {
         foreach ($validators as $validator) {
             if ($validator instanceof CallableObject) {
                 $validator = $validator->call();
             }
-            $this->loadValidator($field, $validator);
+            $this->loadValidator($field, $validator, $input);
         }
         return $this;
     }
@@ -235,9 +296,10 @@ class ValidatorSet
      * Load validators to specific field
      *
      * @param  ?array $validators
+     * @pparam array  $input
      * @return ValidatorSet
      */
-    public function loadValidators(?array $validators = null): ValidatorSet
+    public function loadValidators(?array $validators = null, array $input = []): ValidatorSet
     {
         if ($validators === null) {
             $validators = $this->validators;
@@ -247,7 +309,7 @@ class ValidatorSet
                 if ($val instanceof CallableObject) {
                     $val = $val->call();
                 }
-                $this->loadValidator($field, $val);
+                $this->loadValidator($field, $val, $input);
             }
         }
         return $this;
@@ -299,46 +361,55 @@ class ValidatorSet
     }
 
     /**
+     * Add condition from rule
+     *
+     * @param  string $rule
+     * @param  string $prefix
+     * @return ValidatorSet
+     */
+    public function addConditionFromRule(string $rule, string $prefix = 'Pop\Validator\\'): ValidatorSet
+    {
+        $this->addCondition(Condition::createFromRule($rule, $prefix));
+        return $this;
+    }
+
+    /**
+     * Add conditions from rules
+     *
+     * @param  array  $rules
+     * @param  string $prefix
+     * @return ValidatorSet
+     */
+    public function addConditionsFromRules(array $rules, string $prefix = 'Pop\Validator\\'): ValidatorSet
+    {
+        foreach ($rules as $rule) {
+            $this->addConditionFromRule($rule, $prefix);
+        }
+        return $this;
+    }
+
+    /**
      * Add condition
      *
-     * @param  string    $field
      * @param  Condition $condition
      * @return ValidatorSet
      */
-    public function addCondition(string $field, Condition $condition): ValidatorSet
+    public function addCondition(Condition $condition): ValidatorSet
     {
-        if (!isset($this->conditions[$field])) {
-            $this->conditions[$field] = [];
-        }
-        $this->conditions[$field][] = $condition;
+        $this->conditions[] = $condition;
         return $this;
     }
 
     /**
-     * Add conditions to specific field
-     *
-     * @param  string $field
-     * @param  array $conditions
-     * @return ValidatorSet
-     */
-    public function addConditionsToField(string $field, array $conditions): ValidatorSet
-    {
-        foreach ($conditions as $condition) {
-            $this->addCondition($field, $condition);
-        }
-        return $this;
-    }
-
-    /**
-     * Add conditions to specific field
+     * Add conditions
      *
      * @param  array $conditions
      * @return ValidatorSet
      */
     public function addConditions(array $conditions): ValidatorSet
     {
-        foreach ($conditions as $field => $condition) {
-            $this->addCondition($field, $condition);
+        foreach ($conditions as $condition) {
+            $this->addCondition($condition);
         }
         return $this;
     }
@@ -346,31 +417,21 @@ class ValidatorSet
     /**
      * Get conditions
      *
-     * @param  ?string $field
      * @return array
      */
-    public function getConditions(?string $field = null): array
+    public function getConditions(): array
     {
-        if ($field !== null) {
-            return (isset($this->conditions[$field])) ? $this->conditions[$field] : [];
-        } else {
-            return $this->conditions;
-        }
+        return $this->conditions;
     }
 
     /**
      * Has conditions
      *
-     * @param  ?string $field
      * @return bool
      */
-    public function hasConditions(?string $field = null): bool
+    public function hasConditions(): bool
     {
-        if ($field !== null) {
-            return (isset($this->conditions[$field]));
-        } else {
-            return (!empty($this->conditions));
-        }
+        return (!empty($this->conditions));
     }
 
     /**
@@ -450,15 +511,77 @@ class ValidatorSet
     }
 
     /**
-     * Set strict
+     * Get validation status
      *
-     * @param  bool $strict
+     * @return ?int
+     */
+    public function getValidationStatus(): ?int
+    {
+        return $this->validationStatus;
+    }
+    /**
+     * Get condition status
+     *
+     * @return ?int
+     */
+    public function getConditionStatus(): ?int
+    {
+        return $this->conditionStatus;
+    }
+
+    /**
+     * Evaluate status
+     *
      * @return ValidatorSet
      */
-    public function setStrict(bool $strict = true): ValidatorSet
+    public function evaluateStatus(): ValidatorSet
     {
+        $numOfValidators = 0;
+        $numOfPassed     = 0;
+
+        foreach ($this->evaluated as $field => $evaluated) {
+            foreach ($evaluated as $result) {
+                $numOfValidators++;
+                if ($result) {
+                    $numOfPassed++;
+                }
+            }
+        }
+
+        if ($numOfValidators == $numOfPassed) {
+            $this->validationStatus = self::PASSED_ALL;
+        } else if ($numOfPassed > 0) {
+            $this->validationStatus = self::PASSED_SOME;
+        } else if ($numOfPassed == 0) {
+            $this->validationStatus = self::PASSED_NONE;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Set strict
+     *
+     * @param  int $strict
+     * @return ValidatorSet
+     */
+    public function setStrict(int $strict): ValidatorSet
+    {
+        if ($strict < 0 || $strict > 3) {
+            throw new \InvalidArgumentException('Error: Strict must be between 0 and 3');
+        }
         $this->strict = $strict;
         return $this;
+    }
+
+    /**
+     * Get strict
+     *
+     * @return int
+     */
+    public function getStrict(): int
+    {
+        return $this->strict;
     }
 
     /**
@@ -468,7 +591,41 @@ class ValidatorSet
      */
     public function isStrict(): bool
     {
-        return $this->strict;
+        return ($this->strict > 0);
+    }
+
+    /**
+     * Evaluate all conditions over the provided input data
+     *
+     * @param  mixed $input
+     * @return bool
+     */
+    public function evaluateConditions(array $input): bool
+    {
+        $numOfConditions = count($this->conditions);
+        $numOfPassed     = 0;
+
+        foreach ($this->conditions as $condition) {
+            if ($condition->evaluate($input)) {
+                $numOfPassed++;
+            }
+        }
+
+        if ($numOfConditions == $numOfPassed) {
+            $this->conditionStatus = self::PASSED_ALL;
+        } else if ($numOfPassed > 0) {
+            $this->conditionStatus = self::PASSED_SOME;
+        } else if ($numOfPassed == 0) {
+            $this->conditionStatus = self::PASSED_NONE;
+        }
+
+        // Passed all
+        if (($this->strict == self::STRICT_BOTH) || ($this->strict == self::STRICT_CONDITIONS_ONLY)) {
+            return ($numOfConditions == $numOfPassed);
+        // Passed some, or false if none passed
+        } else {
+            return ($numOfPassed > 0);
+        }
     }
 
     /**
@@ -479,108 +636,49 @@ class ValidatorSet
      */
     public function evaluate(array $input): bool
     {
-        if (!$this->isLoaded()) {
-            $this->loadValidators();
-        }
+        // If conditions are met, or there are no conditions
+        if (!($this->hasConditions()) || $this->evaluateConditions($input)) {
+            if (!$this->isLoaded()) {
+                $this->loadValidators(null, $input);
+            }
 
-        foreach ($this->loaded as $field => $validators) {
-            foreach ($validators as $validator) {
-                $result = (isset($input[$field])) ? $validator->evaluate($input[$field]) : $validator->evaluate();
-                if (!$result) {
-                    $this->addError($field, $validator->getMessage());
+            foreach ($this->loaded as $field => $validators) {
+                foreach ($validators as $validator) {
+                    $result = (isset($input[$field])) ? $validator->evaluate($input[$field]) : $validator->evaluate();
+                    if (!$result) {
+                        $this->addError($field, $validator->getMessage());
+                    }
+                    if (!isset($this->evaluated[$field])) {
+                        $this->evaluated[$field] = [];
+                    }
+                    $this->evaluated[$field][] = $result;
                 }
             }
-            $this->evaluated[$field] = $result;
-        }
 
-        // Catch any validators that were added after a load call
-        foreach ($this->validators as $field => $validators) {
-            if (!$this->isEvaluated($field)) {
-                $this->loadValidatorsToField($field, $validators);
+            // Catch any validators that were added after a load call
+            foreach ($this->validators as $field => $validators) {
+                if (!$this->isEvaluated($field)) {
+                    $this->loadValidatorsToField($field, $validators, $input);
 
-                if ($this->isLoaded($field)) {
-                    foreach ($this->loaded[$field] as $validator) {
-                        $result = (isset($input[$field])) ? $validator->evaluate($input[$field]) : $validator->evaluate();
-                        if (!$result) {
-                            $this->addError($field, $validator->getMessage());
+                    if ($this->isLoaded($field)) {
+                        foreach ($this->loaded[$field] as $validator) {
+                            $result = (isset($input[$field])) ? $validator->evaluate($input[$field]) : $validator->evaluate();
+                            if (!$result) {
+                                $this->addError($field, $validator->getMessage());
+                            }
+                            if (!isset($this->evaluated[$field])) {
+                                $this->evaluated[$field] = [];
+                            }
+                            $this->evaluated[$field][] = $result;
                         }
                     }
-                    $this->evaluated[$field] = $result;
                 }
             }
+
+            $this->evaluateStatus();
         }
 
         return (!$this->hasErrors());
-    }
-
-    /**
-     * Parse rule
-     *
-     * @param  string  $rule
-     * @param  ?string $prefix
-     * @throws \InvalidArgumentException
-     * @return array
-     */
-    public static function parseRule(string $rule, ?string $prefix = 'Pop\Validator\\'): array
-    {
-        $ruleSet = explode(':', $rule);
-
-        if (count($ruleSet) < 2) {
-            throw new \InvalidArgumentException(
-                'Error: The rule is invalid. It must have at least a field and a validator, e.g. username:not_empty.'
-            );
-        }
-
-        $validator = Str::snakeCaseToTitleCase($ruleSet[1]);
-        $value     = $ruleSet[2] ?? null;
-
-        if (str_contains($rule, ',')) {
-            $value = array_filter(array_map('trim', explode(',', $value)));
-        }
-
-        if (!class_exists($prefix . $validator)) {
-            throw new \InvalidArgumentException("Error: The validator class '" . $prefix . $validator . "' does not exist.");
-        }
-
-        return [
-            'field'     => $ruleSet[0],
-            'validator' => $validator,
-            'value'     => $value
-        ];
-    }
-
-    /**
-     * Traverse data
-     *
-     * @param  string  $targetNode
-     * @param  mixed   $data
-     * @param  array   $nodeValues
-     * @param  ?string $currentNode
-     * @param  int     $depth
-     * @return void
-     */
-    public static function traverseData(
-        string $targetNode, mixed $data, array &$nodeValues = [], ?string &$currentNode = null, int &$depth = 0
-    ): void
-    {
-        if ($targetNode === $currentNode) {
-            $nodeValues[] = $data;
-        } else if (is_array($data)) {
-            foreach ($data as $key => $datum) {
-                if (!is_numeric($key)) {
-                    $currentNode = ($currentNode !== null) ? $currentNode . '.' . $key : $key;
-                }
-                $depth++;
-                self::traverseData($targetNode, $datum, $nodeValues, $currentNode, $depth);
-                $depth--;
-                if (str_contains($currentNode, '.') && !is_numeric($key) ||
-                    (is_numeric($key) && (($key + 1) == count($data)))) {
-                    $currentNode = substr($currentNode, 0, strrpos($currentNode, '.'));
-                } else if ($depth == 0) {
-                    $currentNode = null;
-                }
-            }
-        }
     }
 
 }

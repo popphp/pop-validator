@@ -14,7 +14,7 @@
 namespace Pop\Validator;
 
 /**
- * Date-time greater than or equal validator class
+ * Date-time not equal validator class
  *
  * @category   Pop
  * @package    Pop\Validator
@@ -23,7 +23,7 @@ namespace Pop\Validator;
  * @license    http://www.popphp.org/license     New BSD License
  * @version    4.5.0
  */
-class DateTimeGreaterThanEqual extends GreaterThanEqual
+class DateTimeNotEqual extends NotEqual
 {
 
     /**
@@ -43,7 +43,7 @@ class DateTimeGreaterThanEqual extends GreaterThanEqual
             $input = strtotime($input);
         }
         if ($this->value !== null) {
-            $this->message = 'The value must be greater than or equal to ' . $this->getValue() . '.';
+            $this->message = 'The value must not be equal to ' . $this->getValue() . '.';
         }
         return parent::evaluate($input);
     }

@@ -26,6 +26,26 @@ namespace Pop\Validator;
 class DateTimeLessThanEqual extends LessThanEqual
 {
 
+    /**
+     * Traits
+     */
     use DateTimeTrait;
+
+    /**
+     * Method to evaluate the validator
+     *
+     * @param  mixed $input
+     * @return bool
+     */
+    public function evaluate(mixed $input = null): bool
+    {
+        if ($input !== null) {
+            $input = strtotime($input);
+        }
+        if ($this->value !== null) {
+            $this->message = 'The value must be less than or equal to ' . $this->getValue() . '.';
+        }
+        return parent::evaluate($input);
+    }
 
 }

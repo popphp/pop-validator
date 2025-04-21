@@ -1,0 +1,67 @@
+<?php
+/**
+ * Pop PHP Framework (http://www.popphp.org/)
+ *
+ * @link       https://github.com/popphp/popphp-framework
+ * @author     Nick Sagona, III <dev@noladev.com>
+ * @copyright  Copyright (c) 2009-2025 NOLA Interactive, LLC.
+ * @license    http://www.popphp.org/license     New BSD License
+ */
+
+/**
+ * @namespace
+ */
+namespace Pop\Validator;
+
+use Pop\Utils\Str;
+
+/**
+ * Validator rule class
+ *
+ * @category   Pop
+ * @package    Pop\Validator
+ * @author     Nick Sagona, III <dev@noladev.com>
+ * @copyright  Copyright (c) 2009-2025 NOLA Interactive, LLC.
+ * @license    http://www.popphp.org/license     New BSD License
+ * @version    4.5.0
+ */
+class Rule
+{
+
+    /**
+     * Parse rule
+     *
+     * @param  string  $rule
+     * @param  ?string $prefix
+     * @throws \InvalidArgumentException
+     * @return array
+     */
+    public static function parse(string $rule, ?string $prefix = 'Pop\Validator\\'): array
+    {
+        $ruleSet = explode(':', $rule);
+
+        if (count($ruleSet) < 2) {
+            throw new \InvalidArgumentException(
+                'Error: The rule is invalid. It must have at least a field and a validator, e.g. username:not_empty.'
+            );
+        }
+
+        $validator = Str::snakeCaseToTitleCase($ruleSet[1]);
+        $value     = $ruleSet[2] ?? null;
+
+        if (str_contains($rule, ',')) {
+            $value = array_filter(array_map('trim', explode(',', $value)));
+        }
+
+        if (!class_exists($prefix . $validator)) {
+            throw new \InvalidArgumentException("Error: The validator class '" . $prefix . $validator . "' does not exist.");
+        }
+
+        return [
+            'field'     => $ruleSet[0],
+            'validator' => $validator,
+            'value'     => $value
+        ];
+    }
+
+}

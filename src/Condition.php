@@ -83,7 +83,7 @@ class Condition
      */
     public static function createFromRule(string $rule, string $prefix = 'Pop\Validator\\'): Condition
     {
-        ['field' => $field, 'validator' => $validator, 'value' => $value] = ValidatorSet::parseRule($rule, $prefix);
+        ['field' => $field, 'validator' => $validator, 'value' => $value] = Rule::parse($rule, $prefix);
         return new static($field, $validator, $value, $prefix);
     }
 
@@ -245,6 +245,11 @@ class Condition
 
         if (!str_contains($this->field, '.') && !array_key_exists($this->field, $input))  {
             throw new Exception("Error: The input data does not contain a '" . $this->field . "' field value.");
+        }
+
+        // If the value references a value in the input array
+        if (is_string($this->value) && array_key_exists($this->value, $input)) {
+            $this->value = $input[$this->value];
         }
 
         $class     = $this->prefix . $this->validator;

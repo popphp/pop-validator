@@ -16,7 +16,7 @@ namespace Pop\Validator;
 use Pop\Utils;
 
 /**
- * Date-time greater than validator class
+ * Date-time trait
  *
  * @category   Pop
  * @package    Pop\Validator
@@ -72,20 +72,6 @@ trait DateTimeTrait
             }
         }
         return parent::setValue($value);
-    }
-
-    /**
-     * Method to evaluate the validator
-     *
-     * @param  mixed $input
-     * @return bool
-     */
-    public function evaluate(mixed $input = null): bool
-    {
-        if ($input !== null) {
-            $input = strtotime($input);
-        }
-        return parent::evaluate($input);
     }
 
 }

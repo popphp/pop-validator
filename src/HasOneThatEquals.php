@@ -27,6 +27,11 @@ class HasOneThatEquals extends AbstractValidator
 {
 
     /**
+     * Traits
+     */
+    use HasTrait;
+
+    /**
      * Method to evaluate the validator
      *
      * @param  mixed $input
@@ -56,7 +61,7 @@ class HasOneThatEquals extends AbstractValidator
                     is_array($this->input[$field]) && ($this->input[$field] == $requiredValue));
             } else {
                 $value = [];
-                ValidatorSet::traverseData($field, $this->input, $value);
+                self::traverseData($field, $this->input, $value);
                 $result = ((is_array($value) && in_array($requiredValue, $value)) || ($value == $requiredValue));
             }
         }

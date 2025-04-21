@@ -26,6 +26,26 @@ namespace Pop\Validator;
 class DateTimeGreaterThan extends GreaterThan
 {
 
+    /**
+     * Traits
+     */
     use DateTimeTrait;
+
+    /**
+     * Method to evaluate the validator
+     *
+     * @param  mixed $input
+     * @return bool
+     */
+    public function evaluate(mixed $input = null): bool
+    {
+        if ($input !== null) {
+            $input = strtotime($input);
+        }
+        if ($this->value !== null) {
+            $this->message = 'The value must be greater than ' . $this->getValue() . '.';
+        }
+        return parent::evaluate($input);
+    }
 
 }

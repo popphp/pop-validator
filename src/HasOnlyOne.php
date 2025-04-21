@@ -27,6 +27,11 @@ class HasOnlyOne extends AbstractValidator
 {
 
     /**
+     * Traits
+     */
+    use HasTrait;
+
+    /**
      * Method to evaluate the validator
      *
      * @param  mixed $input
@@ -57,7 +62,7 @@ class HasOnlyOne extends AbstractValidator
                     is_array($this->input[$this->value]) && count($this->input[$this->value]) == 1);
             } else {
                 $value = [];
-                ValidatorSet::traverseData($this->value, $this->input, $value);
+                self::traverseData($this->value, $this->input, $value);
                 $result = (is_array($value) && (count($value) == 1));
             }
         }

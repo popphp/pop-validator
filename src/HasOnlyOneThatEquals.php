@@ -27,6 +27,11 @@ class HasOnlyOneThatEquals extends AbstractValidator
 {
 
     /**
+     * Traits
+     */
+    use HasTrait;
+
+    /**
      * Method to evaluate the validator
      *
      * @param  mixed $input
@@ -59,7 +64,7 @@ class HasOnlyOneThatEquals extends AbstractValidator
                 $child  = substr($field, (strrpos($field, '.') + 1));
                 $value  = [];
                 $count  = 0;
-                ValidatorSet::traverseData($parent, $this->input, $value);
+                self::traverseData($parent, $this->input, $value);
 
                 foreach ($value as $val) {
                     if (is_array($val)) {
