@@ -122,7 +122,7 @@ if ($validator->evaluate('image.jpg')) { } // Returns true
 Validation Sets
 ---------------
 
-Validation sets are a way to group validations together to evaluate all of them at one time.
+Validation sets are a way to group validators together to evaluate all of them at one time.
 With that, a level of strictness can be set to enforce whether or not all the validations have
 to pass or just some of them.
 
@@ -143,6 +143,35 @@ if ($set->evaluate(['username' => 'username_123'])) {
     print_r($set->getErrors());
 }
 ```
+
+#### Strictness
+
+The strictness of the validator set can be set as needed. If set to `STRICT_NONE` then only one
+validator in the set would have to pass in order for the whole set to pass. The same applies for
+conditions as well:
+
+```php
+use Pop\Validator\ValidatorSet;
+
+$set = ValidatorSet::createFromRules([
+    'username:alpha_numeric',
+    'username:length_gte:8'
+]);
+$set->setStrict(ValidatorSet::STRICT_NONE);
+
+if ($set->evaluate(['username' => 'someuser_!23'])) {
+    echo 'The username satisfies the requirements.' . PHP_EOL;
+} else {
+    print_r($set->getErrors());
+}
+```
+
+Available strict constants are:
+
+- `STRICT_NONE`
+- `STRICT_VALIDATIONS_ONLY`
+- `STRICT_CONDITIONS_ONLY`
+- `STRICT_BOTH`
 
 [Top](#pop-validator)
 

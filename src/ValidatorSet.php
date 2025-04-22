@@ -709,7 +709,13 @@ class ValidatorSet
             $this->evaluateStatus();
         }
 
-        return (!$this->hasErrors());
+        // Passed all
+        if (($this->strict == self::STRICT_BOTH) || ($this->strict == self::STRICT_VALIDATIONS_ONLY)) {
+            return (!$this->hasErrors());
+        // Passed some, or false if none passed
+        } else {
+            return ($this->validationStatus > 0);
+        }
     }
 
 }
