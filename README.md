@@ -40,18 +40,31 @@ Quickstart
 
 Here's a list of the available built-in validators, all under the namespace `Pop\Validator\`:
 
-|                   | Built-in Validators  |               |
-|-------------------|----------------------|---------------|
-| Alpha             | Ipv4                 | LessThan      |
-| AlphaNumeric      | Ipv6                 | LessThanEqual |
-| Between           | IsSubnetOf           | NotContains   |
-| BetweenInclude    | Length               | NotEmpty      |
-| Contains          | LengthBetween        | NotEqual      |
-| CreditCard        | LengthBetweenInclude | Numeric       |
-| Email             | LengthGt             | RegEx         |
-| Equal             | LengthGte            | Subnet        |
-| GreaterThan       | LengthLt             | Url           |
-| GreaterThanEqual  | LengthLte            |               |
+|                          | Built-in Validators      |                      |
+|--------------------------|--------------------------|----------------------|
+| Accepted                 | Email                    | IsSubnetOf           |
+| AlphaNumeric             | EndsWith                 | LengthBetweenInclude |
+| Alpha                    | Equal                    | LengthBetween        |
+| BetweenInclude           | GreaterThanEqual         | LengthGte            |
+| Between                  | GreaterThan              | LengthGt             |
+| Boolean                  | HasCountEqual            | LengthLte            |
+| Contains                 | HasCountGreaterThanEqual | LengthLt             |
+| CountEqual               | HasCountGreaterThan      | Length               |
+| CountGreaterThanEqual    | HasCountLessThanEqual    | LessThanEqual        |
+| CountGreaterThan         | HasCountLessThan         | LessThan             |
+| CountLessThanEqual       | HasCountNotEqual         | NotContains          |
+| CountLessThan            | HasOne                   | NotEmpty             |
+| CountNotEqual            | HasOneThatEquals         | NotEndsWith          |
+| CreditCard               | HasOnlyOne               | NotEqual             |
+| DateTimeBetweenInclude   | HasOnlyOneThatEquals     | NotInArray           |
+| DateTimeBetween          | InArray                  | NotIn                |
+| DateTimeEqual            | In                       | NotStartsWith        |
+| DateTimeGreaterThanEqual | Ipv4                     | Numeric              |
+| DateTimeGreaterThan      | Ipv6                     | RegEx                |
+| DateTimeLessThanEqual    | IsArray                  | StartsWith           |
+| DateTimeLessThan         | IsEmpty                  | Subnet               |
+| DateTimeNotEqual         | IsJson                   | Url                  |
+| Declined                 | IsNotEmpty               |                      |
 
 ### Check an email value
 
