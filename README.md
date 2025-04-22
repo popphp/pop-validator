@@ -137,7 +137,7 @@ if ($set->evaluate(['username' => 'username_123'])) {
 }
 ```
 
-**Lazy-loading vs eager-loading**
+#### Lazy-Loading vs Eager-Loading
 
 If the validators are added to the set validator using the `add*` methods will store the validator
 configuration and not create the validator objects until the validator set is evaluated (lazy-loading.)
