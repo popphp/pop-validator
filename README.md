@@ -126,13 +126,6 @@ Validation sets are a way to group validators together to evaluate all of them a
 With that, a level of strictness can be set to enforce whether or not all the validations have
 to pass or just some of them.
 
-**Lazy-loading vs eager-loading**
-
-If the validators are added to the set validator using the `add*` methods will store the validator
-configuration and not create the validator objects until the validator set is evaluated (lazy-loading.)
-Using the `load*` methods, actual validator objects will be stored in the instance of the validator
-set object (eager-loading.)
-
 ```php
 $set = new Pop\Validator\ValidatorSet();
 $set->addValidators(['username' => ['AlphaNumeric' => null, 'LengthGte' => 8]]);
@@ -143,6 +136,13 @@ if ($set->evaluate(['username' => 'username_123'])) {
     print_r($set->getErrors());
 }
 ```
+
+**Lazy-loading vs eager-loading**
+
+If the validators are added to the set validator using the `add*` methods will store the validator
+configuration and not create the validator objects until the validator set is evaluated (lazy-loading.)
+Using the `load*` methods, actual validator objects will be stored in the instance of the validator
+set object (eager-loading.)
 
 #### Strictness
 
