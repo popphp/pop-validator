@@ -127,7 +127,9 @@ With that, a level of strictness can be set to enforce whether or not all the va
 to pass or just some of them.
 
 ```php
-$set = new Pop\Validator\ValidatorSet();
+use Pop\Validator\ValidatorSet;
+
+$set = ValidatorSet();
 $set->addValidators(['username' => ['AlphaNumeric' => null, 'LengthGte' => 8]]);
 
 if ($set->evaluate(['username' => 'username_123'])) {
@@ -153,10 +155,8 @@ conditions as well:
 ```php
 use Pop\Validator\ValidatorSet;
 
-$set = ValidatorSet::createFromRules([
-    'username:alpha_numeric',
-    'username:length_gte:8'
-]);
+$set = ValidatorSet();
+$set->addValidators(['username' => ['AlphaNumeric' => null, 'LengthGte' => 8]]);
 $set->setStrict(ValidatorSet::STRICT_NONE);
 
 if ($set->evaluate(['username' => 'someuser_!23'])) {
