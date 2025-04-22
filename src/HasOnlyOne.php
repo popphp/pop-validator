@@ -35,6 +35,7 @@ class HasOnlyOne extends AbstractValidator
      * Method to evaluate the validator
      *
      * @param  mixed $input
+     * @throws Exception
      * @return bool
      */
     public function evaluate(mixed $input = null): bool
@@ -44,30 +45,27 @@ class HasOnlyOne extends AbstractValidator
             $this->input = $input;
         }
 
+        if (!is_array($input)) {
+            throw new Exception('Error: The evaluated input must be an array.');
+        }
+        if (empty($this->value)) {
+            throw new Exception('Error: The evaluated value cannot be empty.');
+        }
+
         // Set the default message
         if ($this->message === null) {
             $this->message = 'The value must contain only one item' .
                 (($this->value !== null) ? " of '" . $this->value . "'." : '.');
         }
 
-        $result = false;
-
-        // Simple array value count
-        if (($this->value === null) && is_array($this->input)) {
-            $result = (count($this->input) == 1);
-            // Check node of array
-        } else if (is_string($this->value) && is_array($this->input)) {
-            if (!str_contains($this->value, '.')) {
-                $result = (array_key_exists($this->value, $this->input) &&
-                    is_array($this->input[$this->value]) && count($this->input[$this->value]) == 1);
-            } else {
-                $value = [];
-                self::traverseData($this->value, $this->input, $value);
-                $result = (is_array($value) && (count($value) == 1));
-            }
+        if (!str_contains($this->value, '.')) {
+            return (array_key_exists($this->value, $this->input) &&
+                is_array($this->input[$this->value]) && count($this->input[$this->value]) == 1);
+        } else {
+            $value = [];
+            self::traverseData($this->value, $this->input, $value);
+            return (is_array($value) && (count($value) == 1));
         }
-
-        return $result;
     }
 
 }

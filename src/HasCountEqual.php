@@ -14,7 +14,7 @@
 namespace Pop\Validator;
 
 /**
- * Has one that equals validator class
+ * Has count equal validator class
  *
  * @category   Pop
  * @package    Pop\Validator
@@ -23,7 +23,7 @@ namespace Pop\Validator;
  * @license    http://www.popphp.org/license     New BSD License
  * @version    4.5.0
  */
-class HasOneThatEquals extends AbstractValidator
+class HasCountEqual extends AbstractValidator
 {
 
     /**
@@ -48,26 +48,25 @@ class HasOneThatEquals extends AbstractValidator
         if (!is_array($input)) {
             throw new Exception('Error: The evaluated input must be an array.');
         }
-        if (!is_array($this->value)) {
-            throw new Exception("Error: The evaluated value must be an array of node name and value, e.g. ['node' => 3].");
+        if (!is_array($this->value) || !is_numeric(reset($this->value))) {
+            throw new Exception("Error: The evaluated value must be an array of node name and count value, e.g. ['node' => 3].");
         }
 
-        $field         = array_key_first($this->value);
-        $requiredValue = reset($this->value);
+        $field = array_key_first($this->value);
+        $count = reset($this->value);
 
-        // Set the default message
         if ($this->message === null) {
-            $this->message = 'The value must contain one item' . (($this->value !== null) ?
-                " of '" . $field . "'" : '') . ' with the required value.';
+            $this->message = "The array must have a field '" . $field . "' with " . $count . " item(s).";
         }
 
         if (!str_contains($field, '.')) {
             return (array_key_exists($field, $this->input) &&
-                !is_array($this->input[$field]) && ($this->input[$field] == $requiredValue));
+                is_array($this->input[$field]) && count($this->input[$field]) == $count);
         } else {
             $value = [];
             self::traverseData($field, $this->input, $value);
-            return ((is_array($value) && in_array($requiredValue, $value)) || ($value == $requiredValue));
+
+            return (is_array($value) && (isset($value[0])) && (count($value[0]) == $count));
         }
     }
 

@@ -39,13 +39,16 @@ class Accepted extends AbstractValidator
             $this->input = $input;
         }
 
+        if (is_string($this->input)) {
+            $this->input = strtolower($this->input);
+        }
+
         // Set the default message
         if ($this->message === null) {
             $this->message = "The value must a value of either 'yes', '1', 1, 'true' or true.";
         }
 
-        return ((is_numeric($this->input) && ((int)$this->input === 1)) || ($this->input === true) ||
-            (is_string($this->input) && ((strtolower($this->input) === 'true') || (strtolower($this->input) === 'yes'))));
+        return in_array($this->input, [1, '1', true, 'true', 'yes'], true);
     }
 
 }

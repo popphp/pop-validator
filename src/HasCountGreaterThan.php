@@ -45,43 +45,29 @@ class HasCountGreaterThan extends AbstractValidator
             $this->input = $input;
         }
 
-        $result = false;
-
-        // Simple array value count
-        if (is_array($this->input)) {
-            if (is_numeric($this->value)) {
-                // Set the default message
-                if ($this->message === null) {
-                    $this->message = 'The array must have more than ' . $this->value . ' item(s).';
-                }
-
-                if (!is_array($input)) {
-                    throw new Exception('Error: The evaluated input must be an array.');
-                }
-
-                $result = (count($this->input) > $this->value);
-            // Check node of array
-            } else if (is_array($this->value)) {
-                $field = array_key_first($this->value);
-                $count = reset($this->value);
-
-                if ($this->message === null) {
-                    $this->message = "The array must have a field '" . $field . "' with more than " . $count . " item(s).";
-                }
-
-                if (!str_contains($field, '.')) {
-                    $result = (array_key_exists($field, $this->input) &&
-                        is_array($this->input[$field]) && count($this->input[$field]) > $count);
-                } else {
-                    $value = [];
-                    self::traverseData($field, $this->input, $value);
-
-                    $result = (is_array($value) && (isset($value[0])) && (count($value[0]) > $count));
-                }
-            }
+        if (!is_array($input)) {
+            throw new Exception('Error: The evaluated input must be an array.');
+        }
+        if (!is_array($this->value) || !is_numeric(reset($this->value))) {
+            throw new Exception("Error: The evaluated value must be an array of node name and count value, e.g. ['node' => 3].");
         }
 
-        return $result;
+        $field = array_key_first($this->value);
+        $count = reset($this->value);
+
+        if ($this->message === null) {
+            $this->message = "The array must have a field '" . $field . "' with more than " . $count . " item(s).";
+        }
+
+        if (!str_contains($field, '.')) {
+            return (array_key_exists($field, $this->input) &&
+                is_array($this->input[$field]) && count($this->input[$field]) > $count);
+        } else {
+            $value = [];
+            self::traverseData($field, $this->input, $value);
+
+            return (is_array($value) && (isset($value[0])) && (count($value[0]) > $count));
+        }
     }
 
 }

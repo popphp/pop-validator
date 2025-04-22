@@ -47,45 +47,43 @@ class HasOnlyOneThatEquals extends AbstractValidator
 
         $result = false;
 
-        if (is_array($this->value) && is_array($this->input)) {
-            $field         = array_key_first($this->value);
-            $requiredValue = reset($this->value);
+        if (!is_array($input)) {
+            throw new Exception('Error: The evaluated input must be an array.');
+        }
+        if (!is_array($this->value)) {
+            throw new Exception("Error: The evaluated value must be an array of node name and value, e.g. ['node.name' => 3].");
+        }
 
-            // Set the default message
-            if ($this->message === null) {
-                $this->message = 'The value must contain only one item' .
-                    (($this->value !== null) ? " of '" . $field . "'" : '') . ' with the required value.';
-            }
+        $field         = array_key_first($this->value);
+        $requiredValue = reset($this->value);
 
-            if (!str_contains($field, '.')) {
-                throw new Exception("Error: The evaluated value must been an array with a column name, e.g. 'users.username'.");
-            } else {
-                $parent = substr($field, 0, strrpos($field, '.'));
-                $child  = substr($field, (strrpos($field, '.') + 1));
-                $value  = [];
-                $count  = 0;
-                self::traverseData($parent, $this->input, $value);
+        // Set the default message
+        if ($this->message === null) {
+            $this->message = 'The value must contain only one item' .
+                (($this->value !== null) ? " of '" . $field . "'" : '') . ' with the required value.';
+        }
 
-                foreach ($value as $val) {
-                    if (is_array($val)) {
-                        foreach ($val as $item) {
-                            if (is_array($item) && isset($item[$child]) && ($item[$child] == $requiredValue)) {
-                                $count++;
-                            }
-                        }
+        if (!str_contains($field, '.')) {
+            throw new Exception("Error: The evaluated value must been an array with a column name, e.g. 'users.username'.");
+        }
+
+        $parent = substr($field, 0, strrpos($field, '.'));
+        $child  = substr($field, (strrpos($field, '.') + 1));
+        $value  = [];
+        $count  = 0;
+        self::traverseData($parent, $this->input, $value);
+
+        foreach ($value as $val) {
+            if (is_array($val)) {
+                foreach ($val as $item) {
+                    if (is_array($item) && isset($item[$child]) && ($item[$child] == $requiredValue)) {
+                        $count++;
                     }
                 }
-
-                $result = ($count == 1);
             }
         }
 
-        // Set the fallback default message
-        if ($this->message === null) {
-            $this->message = 'The value must contain only one item with the required value.';
-        }
-
-        return $result;
+        return ($count == 1);
     }
 
 }

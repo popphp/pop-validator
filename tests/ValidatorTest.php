@@ -37,6 +37,21 @@ class ValidatorTest extends TestCase
         $this->assertNull($validator->getResults());
     }
 
+    public function testAccepted()
+    {
+        $validator = new Validator\Accepted();
+        $this->assertTrue($validator->evaluate(1));
+        $this->assertTrue($validator->evaluate(true));
+        $this->assertTrue($validator->evaluate('true'));
+        $this->assertTrue($validator->evaluate('1'));
+        $this->assertTrue($validator->evaluate('yes'));
+        $this->assertFalse($validator->evaluate(0));
+        $this->assertFalse($validator->evaluate('0'));
+        $this->assertFalse($validator->evaluate(false));
+        $this->assertFalse($validator->evaluate('false'));
+        $this->assertFalse($validator->evaluate('no'));
+    }
+
     public function testBetween()
     {
         $validator = new Validator\Between([1, 10]);
@@ -77,6 +92,101 @@ class ValidatorTest extends TestCase
         $this->expectException('Pop\Validator\Exception');
         $validator = new Validator\BetweenInclude([1, 10, 15]);
         $this->assertTrue($validator->evaluate(5));
+    }
+
+    public function testBoolean()
+    {
+        $validator = new Validator\Boolean();
+        $this->assertTrue($validator->evaluate(1));
+        $this->assertTrue($validator->evaluate(true));
+        $this->assertTrue($validator->evaluate('1'));
+        $this->assertTrue($validator->evaluate(0));
+        $this->assertTrue($validator->evaluate('0'));
+        $this->assertTrue($validator->evaluate(false));
+    }
+
+    public function testCountEqual()
+    {
+        $validator = new Validator\CountEqual(2);
+        $this->assertTrue($validator->evaluate([1, 2]));
+        $this->assertFalse($validator->evaluate([1, 2, 3]));
+    }
+
+    public function testCountEqualException()
+    {
+        $this->expectException('Pop\Validator\Exception');
+        $validator = new Validator\CountEqual(2);
+        $this->assertFalse($validator->evaluate(1));
+    }
+
+    public function testCountGreaterThan()
+    {
+        $validator = new Validator\CountGreaterThan(2);
+        $this->assertTrue($validator->evaluate([1, 2, 3]));
+        $this->assertFalse($validator->evaluate([1]));
+    }
+
+    public function testCountGreaterThanException()
+    {
+        $this->expectException('Pop\Validator\Exception');
+        $validator = new Validator\CountGreaterThan(2);
+        $this->assertTrue($validator->evaluate(1));
+    }
+
+    public function testCountGreaterThanEqual()
+    {
+        $validator = new Validator\CountGreaterThanEqual(2);
+        $this->assertTrue($validator->evaluate([1, 2, 3]));
+        $this->assertFalse($validator->evaluate([1]));
+    }
+
+    public function testCountGreaterThanEqualException()
+    {
+        $this->expectException('Pop\Validator\Exception');
+        $validator = new Validator\CountGreaterThanEqual(2);
+        $this->assertTrue($validator->evaluate(1));
+    }
+
+    public function testCountLessThan()
+    {
+        $validator = new Validator\CountLessThan(4);
+        $this->assertTrue($validator->evaluate([1, 2, 3]));
+        $this->assertFalse($validator->evaluate([1, 2, 3, 4, 5]));
+    }
+
+    public function testCountLessThanException()
+    {
+        $this->expectException('Pop\Validator\Exception');
+        $validator = new Validator\CountLessThan(2);
+        $this->assertTrue($validator->evaluate(1));
+    }
+
+    public function testCountLessThanEqual()
+    {
+        $validator = new Validator\CountLessThanEqual(4);
+        $this->assertTrue($validator->evaluate([1, 2, 3]));
+        $this->assertFalse($validator->evaluate([1, 2, 3, 4, 5]));
+    }
+
+    public function testCountLessThanEqualException()
+    {
+        $this->expectException('Pop\Validator\Exception');
+        $validator = new Validator\CountLessThanEqual(2);
+        $this->assertTrue($validator->evaluate(1));
+    }
+
+    public function testCountNotEqual()
+    {
+        $validator = new Validator\CountNotEqual(2);
+        $this->assertTrue($validator->evaluate([1, 2, 3]));
+        $this->assertFalse($validator->evaluate([1, 2]));
+    }
+
+    public function testCountNotEqualException()
+    {
+        $this->expectException('Pop\Validator\Exception');
+        $validator = new Validator\CountNotEqual(2);
+        $this->assertFalse($validator->evaluate(1));
     }
 
     public function testCreditCard()
@@ -158,6 +268,21 @@ class ValidatorTest extends TestCase
         $this->assertEquals('123456789', $validator->getValue());
     }
 
+    public function testDeclined()
+    {
+        $validator = new Validator\Declined();
+        $this->assertFalse($validator->evaluate(1));
+        $this->assertFalse($validator->evaluate(true));
+        $this->assertFalse($validator->evaluate('true'));
+        $this->assertFalse($validator->evaluate('1'));
+        $this->assertFalse($validator->evaluate('yes'));
+        $this->assertTrue($validator->evaluate(0));
+        $this->assertTrue($validator->evaluate('0'));
+        $this->assertTrue($validator->evaluate(false));
+        $this->assertTrue($validator->evaluate('false'));
+        $this->assertTrue($validator->evaluate('no'));
+    }
+
     public function testEmail()
     {
         $validator = new Validator\Email();
@@ -172,6 +297,13 @@ class ValidatorTest extends TestCase
         $this->assertFalse($validator->evaluate('abcdefghi'));
     }
 
+    public function testNotEndsWith()
+    {
+        $validator = new Validator\NotEndsWith('xyz');
+        $this->assertFalse($validator->evaluate('qrstuvwxyz'));
+        $this->assertTrue($validator->evaluate('abcdefghi'));
+    }
+
     public function testEqual()
     {
         $validator = new Validator\Equal(10);
@@ -179,11 +311,722 @@ class ValidatorTest extends TestCase
         $this->assertFalse($validator->evaluate(15));
     }
 
-    public function testHasOne()
+    public function testHasCountEqual1()
     {
-        $validator = new Validator\HasOne(123);
+        $data1 = [
+            'users' => [
+                ['name' => 'John Doe', 'email' => 'john@doe.com'],
+                ['name' => 'Jane Doe', 'email' => 'jane@doe.com']
+            ]
+        ];
+        $data2 = [
+            'users' => [
+                ['name' => 'John Doe', 'email' => 'john@doe.com']
+            ]
+        ];
+        $validator = new Validator\HasCountEqual(['users' => 2]);
+        $this->assertTrue($validator->evaluate($data1));
+        $this->assertFalse($validator->evaluate($data2));
+    }
+
+    public function testHasCountEqual2()
+    {
+        $data1 = [
+            [
+                'website_data' => [
+                    'title' => 'My Website',
+                    'users' => [
+                        ['name' => 'John Doe', 'email' => 'john@doe.com'],
+                        ['name' => 'Jane Doe', 'email' => 'jane@doe.com']
+                    ]
+                ]
+            ]
+        ];
+        $data2 = [
+            [
+                'website_data' => [
+                    'title' => 'My Website',
+                    'users' => [
+                        ['name' => 'John Doe', 'email' => 'john@doe.com']
+                    ]
+                ]
+            ]
+        ];
+        $validator = new Validator\HasCountEqual(['website_data.users' => 2]);
+        $this->assertTrue($validator->evaluate($data1));
+        $this->assertFalse($validator->evaluate($data2));
+    }
+
+    public function testHasCountEqualException1()
+    {
+
+        $this->expectException('Pop\Validator\Exception');
+        $validator = new Validator\HasCountEqual(['users' => 2]);
+        $this->assertTrue($validator->evaluate(1));
+    }
+
+    public function testHasCountEqualException2()
+    {
+        $data1 = [
+            'users' => [
+                ['name' => 'John Doe', 'email' => 'john@doe.com'],
+                ['name' => 'Jane Doe', 'email' => 'jane@doe.com']
+            ]
+        ];
+        $this->expectException('Pop\Validator\Exception');
+        $validator = new Validator\HasCountEqual(2);
+        $this->assertTrue($validator->evaluate($data1));
+    }
+
+    public function testHasCountNotEqual1()
+    {
+        $data1 = [
+            'users' => [
+                ['name' => 'John Doe', 'email' => 'john@doe.com'],
+                ['name' => 'Jane Doe', 'email' => 'jane@doe.com']
+            ]
+        ];
+        $data2 = [
+            'users' => [
+                ['name' => 'John Doe', 'email' => 'john@doe.com']
+            ]
+        ];
+        $validator = new Validator\HasCountNotEqual(['users' => 2]);
+        $this->assertFalse($validator->evaluate($data1));
+        $this->assertTrue($validator->evaluate($data2));
+    }
+
+    public function testHasCountNotEqual2()
+    {
+        $data1 = [
+            [
+                'website_data' => [
+                    'title' => 'My Website',
+                    'users' => [
+                        ['name' => 'John Doe', 'email' => 'john@doe.com'],
+                        ['name' => 'Jane Doe', 'email' => 'jane@doe.com']
+                    ]
+                ]
+            ]
+        ];
+        $data2 = [
+            [
+                'website_data' => [
+                    'title' => 'My Website',
+                    'users' => [
+                        ['name' => 'John Doe', 'email' => 'john@doe.com']
+                    ]
+                ]
+            ]
+        ];
+        $validator = new Validator\HasCountNotEqual(['website_data.users' => 2]);
+        $this->assertFalse($validator->evaluate($data1));
+        $this->assertTrue($validator->evaluate($data2));
+    }
+
+    public function testHasCountNotEqualException1()
+    {
+
+        $this->expectException('Pop\Validator\Exception');
+        $validator = new Validator\HasCountNotEqual(['users' => 2]);
+        $this->assertTrue($validator->evaluate(1));
+    }
+
+    public function testHasCountNotEqualException2()
+    {
+        $data1 = [
+            'users' => [
+                ['name' => 'John Doe', 'email' => 'john@doe.com'],
+                ['name' => 'Jane Doe', 'email' => 'jane@doe.com']
+            ]
+        ];
+        $this->expectException('Pop\Validator\Exception');
+        $validator = new Validator\HasCountNotEqual(2);
+        $this->assertTrue($validator->evaluate($data1));
+    }
+
+    public function testHasCountGreaterThan1()
+    {
+        $data1 = [
+            'users' => [
+                ['name' => 'John Doe', 'email' => 'john@doe.com'],
+                ['name' => 'Jane Doe', 'email' => 'jane@doe.com']
+            ]
+        ];
+        $data2 = [
+            'users' => [
+                ['name' => 'John Doe', 'email' => 'john@doe.com']
+            ]
+        ];
+        $validator = new Validator\HasCountGreaterThan(['users' => 1]);
+        $this->assertTrue($validator->evaluate($data1));
+        $this->assertFalse($validator->evaluate($data2));
+    }
+
+    public function testHasCountGreaterThan2()
+    {
+        $data1 = [
+            [
+                'website_data' => [
+                    'title' => 'My Website',
+                    'users' => [
+                        ['name' => 'John Doe', 'email' => 'john@doe.com'],
+                        ['name' => 'Jane Doe', 'email' => 'jane@doe.com']
+                    ]
+                ]
+            ]
+        ];
+        $data2 = [
+            [
+                'website_data' => [
+                    'title' => 'My Website',
+                    'users' => [
+                        ['name' => 'John Doe', 'email' => 'john@doe.com']
+                    ]
+                ]
+            ]
+        ];
+        $validator = new Validator\HasCountGreaterThan(['website_data.users' => 1]);
+        $this->assertTrue($validator->evaluate($data1));
+        $this->assertFalse($validator->evaluate($data2));
+    }
+
+    public function testHasCountGreaterThanException1()
+    {
+
+        $this->expectException('Pop\Validator\Exception');
+        $validator = new Validator\HasCountGreaterThan(['users' => 1]);
+        $this->assertTrue($validator->evaluate(1));
+    }
+
+    public function testHasCountGreaterThanException2()
+    {
+        $data1 = [
+            'users' => [
+                ['name' => 'John Doe', 'email' => 'john@doe.com'],
+                ['name' => 'Jane Doe', 'email' => 'jane@doe.com']
+            ]
+        ];
+        $this->expectException('Pop\Validator\Exception');
+        $validator = new Validator\HasCountGreaterThan(1);
+        $this->assertTrue($validator->evaluate($data1));
+    }
+
+    public function testHasCountGreaterThanEqual1()
+    {
+        $data1 = [
+            'users' => [
+                ['name' => 'John Doe', 'email' => 'john@doe.com'],
+                ['name' => 'Jane Doe', 'email' => 'jane@doe.com']
+            ]
+        ];
+        $data2 = [
+            'users' => [
+                ['name' => 'John Doe', 'email' => 'john@doe.com']
+            ]
+        ];
+        $validator = new Validator\HasCountGreaterThanEqual(['users' => 2]);
+        $this->assertTrue($validator->evaluate($data1));
+        $this->assertFalse($validator->evaluate($data2));
+    }
+
+    public function testHasCountGreaterThanEqual2()
+    {
+        $data1 = [
+            [
+                'website_data' => [
+                    'title' => 'My Website',
+                    'users' => [
+                        ['name' => 'John Doe', 'email' => 'john@doe.com'],
+                        ['name' => 'Jane Doe', 'email' => 'jane@doe.com']
+                    ]
+                ]
+            ]
+        ];
+        $data2 = [
+            [
+                'website_data' => [
+                    'title' => 'My Website',
+                    'users' => [
+                        ['name' => 'John Doe', 'email' => 'john@doe.com']
+                    ]
+                ]
+            ]
+        ];
+        $validator = new Validator\HasCountGreaterThanEqual(['website_data.users' => 2]);
+        $this->assertTrue($validator->evaluate($data1));
+        $this->assertFalse($validator->evaluate($data2));
+    }
+
+    public function testHasCountGreaterThanEqualException1()
+    {
+
+        $this->expectException('Pop\Validator\Exception');
+        $validator = new Validator\HasCountGreaterThanEqual(['users' => 2]);
+        $this->assertTrue($validator->evaluate(1));
+    }
+
+    public function testHasCountGreaterThanEqualException2()
+    {
+        $data1 = [
+            'users' => [
+                ['name' => 'John Doe', 'email' => 'john@doe.com'],
+                ['name' => 'Jane Doe', 'email' => 'jane@doe.com']
+            ]
+        ];
+        $this->expectException('Pop\Validator\Exception');
+        $validator = new Validator\HasCountGreaterThanEqual(1);
+        $this->assertTrue($validator->evaluate($data1));
+    }
+
+    public function testHasCountLessThan1()
+    {
+        $data1 = [
+            'users' => [
+                ['name' => 'John Doe', 'email' => 'john@doe.com'],
+                ['name' => 'Jane Doe', 'email' => 'jane@doe.com']
+            ]
+        ];
+        $data2 = [
+            'users' => [
+                ['name' => 'John Doe', 'email' => 'john@doe.com']
+            ]
+        ];
+        $validator = new Validator\HasCountLessThan(['users' => 2]);
+        $this->assertFalse($validator->evaluate($data1));
+        $this->assertTrue($validator->evaluate($data2));
+    }
+
+    public function testHasCountLessThan2()
+    {
+        $data1 = [
+            [
+                'website_data' => [
+                    'title' => 'My Website',
+                    'users' => [
+                        ['name' => 'John Doe', 'email' => 'john@doe.com'],
+                        ['name' => 'Jane Doe', 'email' => 'jane@doe.com']
+                    ]
+                ]
+            ]
+        ];
+        $data2 = [
+            [
+                'website_data' => [
+                    'title' => 'My Website',
+                    'users' => [
+                        ['name' => 'John Doe', 'email' => 'john@doe.com']
+                    ]
+                ]
+            ]
+        ];
+        $validator = new Validator\HasCountLessThan(['website_data.users' => 2]);
+        $this->assertFalse($validator->evaluate($data1));
+        $this->assertTrue($validator->evaluate($data2));
+    }
+
+    public function testHasCountLessThanException1()
+    {
+
+        $this->expectException('Pop\Validator\Exception');
+        $validator = new Validator\HasCountLessThan(['users' => 1]);
+        $this->assertTrue($validator->evaluate(1));
+    }
+
+    public function testHasCountLessThanException2()
+    {
+        $data1 = [
+            'users' => [
+                ['name' => 'John Doe', 'email' => 'john@doe.com'],
+                ['name' => 'Jane Doe', 'email' => 'jane@doe.com']
+            ]
+        ];
+        $this->expectException('Pop\Validator\Exception');
+        $validator = new Validator\HasCountLessThan(1);
+        $this->assertTrue($validator->evaluate($data1));
+    }
+
+    public function testHasCountLessThanEqual1()
+    {
+        $data1 = [
+            'users' => [
+                ['name' => 'John Doe', 'email' => 'john@doe.com'],
+                ['name' => 'Jane Doe', 'email' => 'jane@doe.com']
+            ]
+        ];
+        $data2 = [
+            'users' => [
+                ['name' => 'John Doe', 'email' => 'john@doe.com'],
+                ['name' => 'John Doe', 'email' => 'john@doe.com'],
+                ['name' => 'John Doe', 'email' => 'john@doe.com']
+            ]
+        ];
+        $validator = new Validator\HasCountLessThanEqual(['users' => 2]);
+        $this->assertTrue($validator->evaluate($data1));
+        $this->assertFalse($validator->evaluate($data2));
+    }
+
+    public function testHasCountLessThanEqual2()
+    {
+        $data1 = [
+            [
+                'website_data' => [
+                    'title' => 'My Website',
+                    'users' => [
+                        ['name' => 'John Doe', 'email' => 'john@doe.com'],
+                        ['name' => 'Jane Doe', 'email' => 'jane@doe.com']
+                    ]
+                ]
+            ]
+        ];
+        $data2 = [
+            [
+                'website_data' => [
+                    'title' => 'My Website',
+                    'users' => [
+                        ['name' => 'John Doe', 'email' => 'john@doe.com'],
+                        ['name' => 'John Doe', 'email' => 'john@doe.com'],
+                        ['name' => 'John Doe', 'email' => 'john@doe.com']
+                    ]
+                ]
+            ]
+        ];
+        $validator = new Validator\HasCountLessThanEqual(['website_data.users' => 2]);
+        $this->assertTrue($validator->evaluate($data1));
+        $this->assertFalse($validator->evaluate($data2));
+    }
+
+    public function testHasCountLessThanEqualException1()
+    {
+
+        $this->expectException('Pop\Validator\Exception');
+        $validator = new Validator\HasCountLessThanEqual(['users' => 2]);
+        $this->assertTrue($validator->evaluate(1));
+    }
+
+    public function testHasCountLessThanEqualException2()
+    {
+        $data1 = [
+            'users' => [
+                ['name' => 'John Doe', 'email' => 'john@doe.com'],
+                ['name' => 'Jane Doe', 'email' => 'jane@doe.com']
+            ]
+        ];
+        $this->expectException('Pop\Validator\Exception');
+        $validator = new Validator\HasCountLessThanEqual(1);
+        $this->assertTrue($validator->evaluate($data1));
+    }
+
+    public function testHasOne1()
+    {
+        $data1 = [
+            'users' => [
+                ['username' => 'john_doe', 'email' => 'john@doe.com']
+            ]
+        ];
+        $data2 = [
+            'not_users' => [
+                ['username' => 'bob_doe', 'email' => 'bob@doe.com'],
+                ['username' => 'jane_doe', 'email' => 'jane@doe.com']
+            ]
+        ];
+        $validator = new Validator\HasOne('users');
+        $this->assertTrue($validator->evaluate($data1));
+        $this->assertFalse($validator->evaluate($data2));
+    }
+
+    public function testHasOne2()
+    {
+        $data1 = [
+            [
+                'website_data' => [
+                    'title' => 'My Website',
+                    'users' => [
+                        ['name' => 'John Doe', 'email' => 'john@doe.com'],
+                        ['name' => 'Jane Doe', 'email' => 'jane@doe.com']
+                    ]
+                ]
+            ]
+        ];
+        $data2 = [
+            [
+                'website_data' => [
+                    'title' => 'My Website',
+                    'not_users' => [
+                        ['name' => 'John Doe', 'email' => 'john@doe.com'],
+                        ['name' => 'John Doe', 'email' => 'john@doe.com'],
+                        ['name' => 'John Doe', 'email' => 'john@doe.com']
+                    ]
+                ]
+            ]
+        ];
+
+        $validator = new Validator\HasOne('website_data.users');
+        $this->assertTrue($validator->evaluate($data1));
+        $this->assertFalse($validator->evaluate($data2));
+    }
+
+    public function testHasOneException1()
+    {
+        $this->expectException('Pop\Validator\Exception');
+        $validator = new Validator\HasOne('users');
+        $this->assertTrue($validator->evaluate(2));
+    }
+
+    public function testHasOneException2()
+    {
+        $this->expectException('Pop\Validator\Exception');
+        $validator = new Validator\HasOne('');
+        $this->assertTrue($validator->evaluate([1]));
+    }
+
+    public function testHasOneThatEquals1()
+    {
+        $data1 = [
+            'users' => [
+                ['username' => 'john_doe', 'email' => 'john@doe.com']
+            ]
+        ];
+        $data2 = [
+            'users' => [
+                ['username' => 'bob_doe', 'email' => 'bob@doe.com'],
+                ['username' => 'jane_doe', 'email' => 'jane@doe.com']
+            ]
+        ];
+        $validator = new Validator\HasOneThatEquals(['users.username' => 'john_doe']);
+        $this->assertTrue($validator->evaluate($data1));
+        $this->assertFalse($validator->evaluate($data2));
+    }
+
+    public function testHasOneThatEquals2()
+    {
+        $data1 = [
+            [
+                'website_data' => [
+                    'title' => 'My Website',
+                    'users' => [
+                        ['username' => 'john_doe', 'email' => 'john@doe.com']
+                    ]
+                ]
+            ]
+        ];
+        $data2 = [
+            [
+                'website_data' => [
+                    'title' => 'My Website',
+                    'users' => [
+                        ['username' => 'bob_doe', 'email' => 'bob@doe.com'],
+                        ['username' => 'jane_doe', 'email' => 'jane@doe.com']
+                    ]
+                ]
+            ]
+        ];
+
+        $validator = new Validator\HasOneThatEquals(['website_data.users.username' => 'john_doe']);
+        $this->assertTrue($validator->evaluate($data1));
+        $this->assertFalse($validator->evaluate($data2));
+    }
+
+    public function testHasOneThatEquals3()
+    {
+        $data1 = [
+            'title'      => 'My Website',
+            'user_count' => 3
+        ];
+        $data2 = [
+            'title'      => 'My Website',
+            'user_count' => 4
+        ];
+        $validator = new Validator\HasOneThatEquals(['user_count' => 3]);
+        $this->assertTrue($validator->evaluate($data1));
+        $this->assertFalse($validator->evaluate($data2));
+    }
+
+    public function testHasOneThatEqualsException1()
+    {
+        $this->expectException('Pop\Validator\Exception');
+        $validator = new Validator\HasOneThatEquals('users');
+        $this->assertTrue($validator->evaluate(2));
+    }
+
+    public function testHasOneThatEqualsException2()
+    {
+        $this->expectException('Pop\Validator\Exception');
+        $validator = new Validator\HasOneThatEquals('');
+        $this->assertTrue($validator->evaluate([1]));
+    }
+
+    public function testHasOnlyOne1()
+    {
+        $data1 = [
+            'users' => [
+                ['username' => 'john_doe', 'email' => 'john@doe.com']
+            ]
+        ];
+        $data2 = [
+            'not_users' => [
+                ['username' => 'bob_doe', 'email' => 'bob@doe.com'],
+                ['username' => 'jane_doe', 'email' => 'jane@doe.com']
+            ]
+        ];
+        $validator = new Validator\HasOnlyOne('users');
+        $this->assertTrue($validator->evaluate($data1));
+        $this->assertFalse($validator->evaluate($data2));
+    }
+
+    public function testHasOnlyOne2()
+    {
+        $data1 = [
+            [
+                'website_data' => [
+                    'title' => 'My Website',
+                    'users' => [
+                        ['name' => 'John Doe', 'email' => 'john@doe.com']
+                    ]
+                ]
+            ]
+        ];
+        $data2 = [
+            [
+                'website_data' => [
+                    'title' => 'My Website',
+                    'not_users' => [
+                        ['name' => 'John Doe', 'email' => 'john@doe.com'],
+                        ['name' => 'John Doe', 'email' => 'john@doe.com'],
+                        ['name' => 'John Doe', 'email' => 'john@doe.com']
+                    ]
+                ]
+            ]
+        ];
+
+        $validator = new Validator\HasOnlyOne('website_data.users');
+        $this->assertTrue($validator->evaluate($data1));
+        $this->assertFalse($validator->evaluate($data2));
+    }
+
+    public function testHasOnlyOneException1()
+    {
+        $this->expectException('Pop\Validator\Exception');
+        $validator = new Validator\HasOnlyOne('users');
+        $this->assertTrue($validator->evaluate(2));
+    }
+
+    public function testHasOnlyOneException2()
+    {
+        $this->expectException('Pop\Validator\Exception');
+        $validator = new Validator\HasOnlyOne('');
+        $this->assertTrue($validator->evaluate([1]));
+    }
+
+    public function testHasOnlyOneThatEquals1()
+    {
+        $data1 = [
+            'users' => [
+                ['username' => 'john_doe', 'email' => 'john@doe.com']
+            ]
+        ];
+        $data2 = [
+            'users' => [
+                ['username' => 'bob_doe', 'email' => 'bob@doe.com'],
+                ['username' => 'jane_doe', 'email' => 'jane@doe.com']
+            ]
+        ];
+        $validator = new Validator\HasOnlyOneThatEquals(['users.username' => 'john_doe']);
+        $this->assertTrue($validator->evaluate($data1));
+        $this->assertFalse($validator->evaluate($data2));
+    }
+
+    public function testHasOnlyOneThatEquals2()
+    {
+        $data1 = [
+            [
+                'website_data' => [
+                    'title' => 'My Website',
+                    'users' => [
+                        ['username' => 'john_doe', 'email' => 'john@doe.com']
+                    ]
+                ]
+            ]
+        ];
+        $data2 = [
+            [
+                'website_data' => [
+                    'title' => 'My Website',
+                    'users' => [
+                        ['username' => 'bob_doe', 'email' => 'bob@doe.com'],
+                        ['username' => 'jane_doe', 'email' => 'jane@doe.com']
+                    ]
+                ]
+            ]
+        ];
+
+        $validator = new Validator\HasOnlyOneThatEquals(['website_data.users.username' => 'john_doe']);
+        $this->assertTrue($validator->evaluate($data1));
+        $this->assertFalse($validator->evaluate($data2));
+    }
+
+//    public function testHasOnlyOneThatEquals3()
+//    {
+//        $data1 = [
+//            'title'      => 'My Website',
+//            'user_count' => 3
+//        ];
+//        $data2 = [
+//            'title'      => 'My Website',
+//            'user_count' => 4
+//        ];
+//        $validator = new Validator\HasOnlyOneThatEquals(['user_count' => 3]);
+//        $this->assertTrue($validator->evaluate($data1));
+//        $this->assertFalse($validator->evaluate($data2));
+//    }
+//
+    public function testHasOnlyOneThatEqualsException1()
+    {
+        $this->expectException('Pop\Validator\Exception');
+        $validator = new Validator\HasOnlyOneThatEquals('users');
+        $this->assertTrue($validator->evaluate(2));
+    }
+
+    public function testHasOnlyOneThatEqualsException2()
+    {
+        $this->expectException('Pop\Validator\Exception');
+        $validator = new Validator\HasOnlyOneThatEquals('');
+        $this->assertTrue($validator->evaluate([1]));
+    }
+
+    public function testHasOnlyOneThatEqualsException3()
+    {
+        $this->expectException('Pop\Validator\Exception');
+        $validator = new Validator\HasOnlyOneThatEquals(['user_count' => 3]);
+        $this->assertTrue($validator->evaluate([1]));
+    }
+
+    public function testIsArray()
+    {
+        $validator = new Validator\IsArray();
+        $this->assertTrue($validator->evaluate([1]));
+        $this->assertFalse($validator->evaluate(15));
+    }
+
+    public function testIsEmpty()
+    {
+        $validator = new Validator\IsEmpty();
         $this->assertTrue($validator->evaluate([]));
         $this->assertFalse($validator->evaluate(15));
+    }
+
+    public function testIsJson()
+    {
+        $validator = new Validator\IsJson();
+        $this->assertTrue($validator->evaluate('{"foo": "bar"}'));
+        $this->assertFalse($validator->evaluate('{"foo": "bar"'));
+    }
+
+    public function testIsNotEmpty()
+    {
+        $validator = new Validator\IsNotEmpty();
+        $this->assertTrue($validator->evaluate([1]));
+        $this->assertFalse($validator->evaluate(0));
     }
 
     public function testNotContains()
@@ -424,6 +1267,13 @@ class ValidatorTest extends TestCase
         $validator = new Validator\StartsWith('abc');
         $this->assertTrue($validator->evaluate('abcdefghi'));
         $this->assertFalse($validator->evaluate('qrstuvwxyz'));
+    }
+
+    public function testNotStartsWith()
+    {
+        $validator = new Validator\NotStartsWith('abc');
+        $this->assertFalse($validator->evaluate('abcdefghi'));
+        $this->assertTrue($validator->evaluate('qrstuvwxyz'));
     }
 
     public function testSubnet()

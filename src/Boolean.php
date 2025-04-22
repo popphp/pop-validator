@@ -44,8 +44,7 @@ class Boolean extends AbstractValidator
             $this->message = "The value must a boolean value.";
         }
 
-        return ((is_numeric($this->input) && (((int)$this->input === 1) || (int)$this->input === 0)) ||
-            ($this->input === true) || ($this->input === false));
+        return in_array($this->input, [true, false, 1, 0, '1', '0'], true);
     }
 
 }

@@ -39,13 +39,16 @@ class Declined extends AbstractValidator
             $this->input = $input;
         }
 
+        if (is_string($this->input)) {
+            $this->input = strtolower($this->input);
+        }
+
         // Set the default message
         if ($this->message === null) {
             $this->message = "The value must a value of either 'no', '0', 0, 'false' or false.";
         }
 
-        return ((is_numeric($this->input) && ((int)$this->input === 0)) || ($this->input === false) ||
-            (is_string($this->input) && ((strtolower($this->input) === 'false') || (strtolower($this->input) === 'no'))));
+        return in_array($this->input, [0, '0', false, 'false', 'no'], true);
     }
 
 }
