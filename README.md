@@ -9,6 +9,9 @@ pop-validator
 * [Overview](#overview)
 * [Install](#install)
 * [Quickstart](#quickstart)
+* [Validation Sets](#validation-sets)
+  - [Conditions](#conditions)
+  - [Rules](#rules)
 
 Overview
 --------
@@ -112,6 +115,116 @@ $validator = new Pop\Validator\RegEx('/^.*\.(jpg|jpeg|png|gif)$/i');
 $validator->setMessage('You must only submit JPG, PNG or GIF images.');
 
 if ($validator->evaluate('image.jpg')) { } // Returns true
+```
+
+[Top](#pop-validator)
+
+Validation Sets
+---------------
+
+Validation sets are a way to group validations together to evaluate all of them at one time.
+With that, a level of strictness can be set to enforce whether or not all the validations have
+to pass or just some of them.
+
+**Lazy-loading vs eager-loading**
+
+If the validators are added to the set validator using the `add*` methods will store the validator
+configuration and not create the validator objects until the validator set is evaluated (lazy-loading.)
+Using the `load*` methods, actual validator objects will be stored in the instance of the validator
+set object (eager-loading.)
+
+```php
+$set = new Pop\Validator\ValidatorSet();
+$set->addValidators(['username' => ['AlphaNumeric' => null, 'LengthGte' => 8]]);
+
+if ($set->evaluate(['username' => 'username_123'])) {
+    echo 'The username satisfies the requirements.' . PHP_EOL;
+} else {
+    print_r($set->getErrors());
+}
+```
+
+[Top](#pop-validator)
+
+### Conditions
+
+Conditions can be added to a validation set that would need to pass in order for the validations
+to evaluate. Conditions are validators themselves. And the strictness level can be utilized as well
+to enforce whether or not all the conditions pass or just some of them.
+
+**Note:** By default, conditions store their validation configuration via lazy-loading and do not
+create the validator object until the condition is evaluated.   
+
+```php
+use Pop\Validator\ValidatorSet;
+use Pop\Validator\Condition;
+
+$set = new ValidatorSet();
+$set->addCondition(new Condition('client_id', 'Equal', '1'));
+$set->addValidator('documents', 'NotEmpty');
+
+$data = [
+    'client_id' => 1,
+    'documents' => [
+        'some_file_1.pdf',
+        'some_file_2.pdf',
+    ]
+];
+
+if ($set->evaluate($data)) {
+    echo 'The client order data satisfies the requirements.' . PHP_EOL;
+} else {
+    print_r($set->getErrors());
+}
+```
+
+In the above example, if the value of `client_id` is changed to 2, the validators will not be evaluated,
+as the required conditions would not be met.
+
+[Top](#pop-validator)
+
+### Rules
+
+Rules provide a shorthand way to wire up validations and conditions within the validation set. Rules are
+colon-separated strings compromised of a field, validator and value (optional.) The validator should be
+a `snake_case` format of the class string.
+
+Below is the same example from above, but using rules instead:
+
+```php
+$set = Pop\Validator\ValidatorSet::createFromRules([
+    'username:alpha_numeric',
+    'username:length_gte:8'
+]);
+
+if ($set->evaluate(['username' => 'someuser_123'])) {
+    echo 'The username satisfies the requirements.' . PHP_EOL;
+} else {
+    print_r($set->getErrors());
+}
+```
+
+Conditions can be added using rules as well. Here is the example from above using rules instead:
+
+```php
+use Pop\Validator\ValidatorSet;
+
+$set = ValidatorSet::createFromRules('documents:not_empty')
+    ->addConditionFromRule('client_id:equal:1');
+
+$data = [
+    'client_id' => 1,
+    'documents' => [
+        'some_file_1.pdf',
+        'some_file_2.pdf',
+    ]
+];
+
+if ($set->evaluate($data)) {
+    echo 'The client order data satisfies the requirements.' . PHP_EOL;
+} else {
+    print_r($set->getErrors());
+}
 ```
 
 [Top](#pop-validator)
