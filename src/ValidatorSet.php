@@ -675,7 +675,7 @@ class ValidatorSet
 
             foreach ($this->loaded as $field => $validators) {
                 foreach ($validators as $validator) {
-                    $result = (isset($input[$field])) ? $validator->evaluate($input[$field]) : $validator->evaluate();
+                    $result = (isset($input[$field])) ? $validator->evaluate($input[$field]) : $validator->evaluate($input);
                     if (!$result) {
                         $this->addError($field, $validator->getMessage());
                     }
