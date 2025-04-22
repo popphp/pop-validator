@@ -965,21 +965,6 @@ class ValidatorTest extends TestCase
         $this->assertFalse($validator->evaluate($data2));
     }
 
-//    public function testHasOnlyOneThatEquals3()
-//    {
-//        $data1 = [
-//            'title'      => 'My Website',
-//            'user_count' => 3
-//        ];
-//        $data2 = [
-//            'title'      => 'My Website',
-//            'user_count' => 4
-//        ];
-//        $validator = new Validator\HasOnlyOneThatEquals(['user_count' => 3]);
-//        $this->assertTrue($validator->evaluate($data1));
-//        $this->assertFalse($validator->evaluate($data2));
-//    }
-//
     public function testHasOnlyOneThatEqualsException1()
     {
         $this->expectException('Pop\Validator\Exception');
