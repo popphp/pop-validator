@@ -171,7 +171,7 @@ Available strict constants are:
 - `STRICT_NONE`
 - `STRICT_VALIDATIONS_ONLY`
 - `STRICT_CONDITIONS_ONLY`
-- `STRICT_BOTH`
+- `STRICT_BOTH` (default)
 
 [Top](#pop-validator)
 
