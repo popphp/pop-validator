@@ -207,8 +207,8 @@ if ($set->evaluate($data)) {
 }
 ```
 
-In the above example, if the value of `client_id` is changed to 2, the validators will not be evaluated,
-as the required conditions would not be met.
+In the above example, if the value of `client_id` is changed to `2`, the validators will not be evaluated,
+as the required conditions would not be satisfied.
 
 [Top](#pop-validator)
 
