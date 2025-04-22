@@ -94,10 +94,10 @@ class ValidatorSet
      *
      * @param  array|string $validators
      * @param  ?string      $field
-     * @param  bool         $strict
+     * @param  int          $strict
      * @return ValidatorSet
      */
-    public static function add(array|string $validators, ?string $field = null, bool $strict = true): ValidatorSet
+    public static function add(array|string $validators, ?string $field = null, int $strict = 3): ValidatorSet
     {
         $validatorSet = new static();
         $validatorSet->setStrict($strict);
@@ -118,10 +118,10 @@ class ValidatorSet
      *
      * @param  array|string $validators
      * @param  ?string      $field
-     * @param  bool         $strict
+     * @param  int          $strict
      * @return ValidatorSet
      */
-    public static function load(array|string $validators, ?string $field = null, bool $strict = true): ValidatorSet
+    public static function load(array|string $validators, ?string $field = null, int $strict = 3): ValidatorSet
     {
         $validatorSet = new static();
         $validatorSet->setStrict($strict);
@@ -141,12 +141,12 @@ class ValidatorSet
      * Create validator set from rules
      *
      * @param  array|string $rules
-     * @param  bool         $strict
+     * @param  int          $strict
      * @param  string       $prefix
      * @return ValidatorSet
      */
     public static function createFromRules(
-        array|string $rules, bool $strict = true, string $prefix = 'Pop\Validator\\'
+        array|string $rules, int $strict = 3, string $prefix = 'Pop\Validator\\'
     ): ValidatorSet
     {
         $validatorSet = new static();
@@ -342,6 +342,36 @@ class ValidatorSet
             return (isset($this->validators[$field]));
         } else {
             return (!empty($this->validators));
+        }
+    }
+
+    /**
+     * Get loaded validators
+     *
+     * @param  ?string $field
+     * @return array
+     */
+    public function getLoadedValidators(?string $field = null): array
+    {
+        if ($field !== null) {
+            return (isset($this->loaded[$field])) ? $this->loaded[$field] : [];
+        } else {
+            return $this->loaded;
+        }
+    }
+
+    /**
+     * Has loaded validators
+     *
+     * @param  ?string $field
+     * @return bool
+     */
+    public function hasLoadedValidators(?string $field = null): bool
+    {
+        if ($field !== null) {
+            return (isset($this->loaded[$field]));
+        } else {
+            return (!empty($this->loaded));
         }
     }
 
