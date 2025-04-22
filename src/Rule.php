@@ -38,7 +38,7 @@ class Rule
      */
     public static function parse(string $rule, ?string $prefix = 'Pop\Validator\\'): array
     {
-        $ruleSet = explode(':', $rule);
+        $ruleSet = array_map('trim', explode(':', $rule));
 
         if (count($ruleSet) < 2) {
             throw new \InvalidArgumentException(
@@ -47,7 +47,8 @@ class Rule
         }
 
         $validator = Str::snakeCaseToTitleCase($ruleSet[1]);
-        $value     = $ruleSet[2] ?? null;
+        $value     = (!empty($ruleSet[2])) ? $ruleSet[2] : null;
+        $message   = (!empty($ruleSet[3])) ? $ruleSet[3] : null;
 
         if (str_contains($rule, ',')) {
             $value = array_filter(array_map('trim', explode(',', $value)));
@@ -60,7 +61,8 @@ class Rule
         return [
             'field'     => $ruleSet[0],
             'validator' => $validator,
-            'value'     => $value
+            'value'     => $value,
+            'message'   => $message,
         ];
     }
 

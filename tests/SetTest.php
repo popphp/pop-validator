@@ -74,16 +74,36 @@ class SetTest extends TestCase
     public function testAddValidators2()
     {
         $set = new Validator\ValidatorSet();
+        $set->addValidators(['user_id' => [
+            'equal' => ['value' => 1, 'message' => 'User ID must equal 1.']
+        ]]);
+        $this->assertCount(1, $set->getValidators());
+        $this->assertCount(1, $set->getValidators('user_id'));
+    }
+
+    public function testAddValidators3()
+    {
+        $set = new Validator\ValidatorSet();
         $set->addValidators(['user_id' => 'NotEmpty']);
         $this->assertCount(1, $set->getValidators());
         $this->assertCount(1, $set->getValidators('user_id'));
     }
 
-    public function testAddValidatorsToField()
+    public function testAddValidatorsToField1()
     {
         $set = new Validator\ValidatorSet();
         $set->addValidatorsToField('user_id', [
             'equal' => 1
+        ]);
+        $this->assertCount(1, $set->getValidators());
+        $this->assertCount(1, $set->getValidators('user_id'));
+    }
+
+    public function testAddValidatorsToField2()
+    {
+        $set = new Validator\ValidatorSet();
+        $set->addValidatorsToField('user_id', [
+            'equal' => ['value' => 1, 'message' => 'User ID must equal 1.']
         ]);
         $this->assertCount(1, $set->getValidators());
         $this->assertCount(1, $set->getValidators('user_id'));

@@ -155,8 +155,8 @@ class ValidatorSet
         $rules = Arr::make($rules);
 
         foreach ($rules as $rule) {
-            ['field' => $field, 'validator' => $validator, 'value' => $value] = Rule::parse($rule, $prefix);
-            $validatorSet->addValidator($field, $validator, $value, $prefix);
+            ['field' => $field, 'validator' => $validator, 'value' => $value, 'message' => $message] = Rule::parse($rule, $prefix);
+            $validatorSet->addValidator($field, $validator, $value, $message, $prefix);
         }
 
         return $validatorSet;
@@ -171,8 +171,8 @@ class ValidatorSet
      */
     public function addValidatorFromRule(string $rule, string $prefix = 'Pop\Validator\\'): ValidatorSet
     {
-        ['field' => $field, 'validator' => $validator, 'value' => $value] = Rule::parse($rule, $prefix);
-        $this->addValidator($field, $validator, $value, $prefix);
+        ['field' => $field, 'validator' => $validator, 'value' => $value, 'message' => $message] = Rule::parse($rule, $prefix);
+        $this->addValidator($field, $validator, $value, $message, $prefix);
         return $this;
     }
 
@@ -194,13 +194,16 @@ class ValidatorSet
     /**
      * Add validator
      *
-     * @param  string $field
-     * @param  string $validator
-     * @param  mixed  $value
-     * @param  string $prefix
+     * @param  string  $field
+     * @param  string  $validator
+     * @param  mixed   $value
+     * @param  ?string $message
+     * @param  ?string $prefix
      * @return ValidatorSet
      */
-    public function addValidator(string $field, string $validator, mixed $value = null, string $prefix = 'Pop\Validator\\'): ValidatorSet
+    public function addValidator(
+        string $field, string $validator, mixed $value = null, ?string $message = null, ?string $prefix = 'Pop\Validator\\'
+    ): ValidatorSet
     {
         if (!isset($this->validators[$field])) {
             $this->validators[$field] = [];
@@ -208,7 +211,8 @@ class ValidatorSet
         if (!class_exists($prefix . $validator)) {
             throw new \InvalidArgumentException("Error: The validator class '" . $prefix . $validator . "' does not exist.");
         }
-        $this->validators[$field][] = new CallableObject($prefix . $validator, $value);
+
+        $this->validators[$field][] = new CallableObject($prefix . $validator, [$value, $message]);
         return $this;
     }
 
@@ -223,7 +227,11 @@ class ValidatorSet
     public function addValidatorsToField(string $field, array $validators, string $prefix = 'Pop\Validator\\'): ValidatorSet
     {
         foreach ($validators as $validator => $value) {
-            $this->addValidator($field, $validator, $value, $prefix);
+            if (is_array($value) && isset($value['value']) && isset($value['message'])) {
+                $this->addValidator($field, $validator, $value['value'], $value['message'], $prefix);
+            } else {
+                $this->addValidator($field, $validator, $value, $prefix);
+            }
         }
         return $this;
     }
@@ -240,7 +248,11 @@ class ValidatorSet
         foreach ($validators as $field => $validator) {
             if (is_array($validator)) {
                 foreach ($validator as $val => $value) {
-                    $this->addValidator($field, $val, $value, $prefix);
+                    if (is_array($value) && isset($value['value']) && isset($value['message'])) {
+                        $this->addValidator($field, $val, $value['value'], $value['message'], $prefix);
+                    } else {
+                        $this->addValidator($field, $val, $value, $prefix);
+                    }
                 }
             } else {
                 $this->addValidator($field, $validator, null, $prefix);

@@ -44,9 +44,11 @@ class ConditionTest extends TestCase
 
     public function testEvaluate1()
     {
-        $condition = Validator\Condition::createFromRule('user_id:equal:1');
+        $condition = Validator\Condition::createFromRule('user_id:equal:1:User ID must equal 1.');
         $this->assertTrue($condition->evaluate(['user_id' => 1]));
         $this->assertFalse($condition->evaluate(['user_id' => 2]));
+        $this->assertTrue($condition->hasMessage());
+        $this->assertEquals('User ID must equal 1.', $condition->getMessage());
     }
 
     public function testEvaluate2()

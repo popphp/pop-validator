@@ -45,6 +45,13 @@ class Condition
     protected mixed $value = null;
 
     /**
+     * Message
+     * @var ?string
+     */
+    protected ?string $message = null;
+
+
+    /**
      * Prefix
      * @var ?string
      */
@@ -64,8 +71,13 @@ class Condition
      * @param ?string $field
      * @param ?string $validator
      * @param mixed   $value
+     * @param ?string $message
+     * @param ?string $prefix
      */
-    public function __construct(?string $field = null, ?string $validator = null, mixed $value = null, string $prefix = 'Pop\Validator\\')
+    public function __construct(
+        ?string $field = null, ?string $validator = null, mixed $value = null,
+        ?string $message = null, ?string $prefix = 'Pop\Validator\\'
+    )
     {
         if ($field !== null) {
             $this->setField($field);
@@ -75,6 +87,9 @@ class Condition
         }
         if ($value !== null) {
             $this->setValue($value);
+        }
+        if ($message !== null) {
+            $this->setMessage($message);
         }
         if ($prefix !== null) {
             $this->setPrefix($prefix);
@@ -89,8 +104,8 @@ class Condition
      */
     public static function createFromRule(string $rule, string $prefix = 'Pop\Validator\\'): Condition
     {
-        ['field' => $field, 'validator' => $validator, 'value' => $value] = Rule::parse($rule, $prefix);
-        return new static($field, $validator, $value, $prefix);
+        ['field' => $field, 'validator' => $validator, 'value' => $value, 'message' => $message] = Rule::parse($rule, $prefix);
+        return new static($field, $validator, $value, $message, $prefix);
     }
 
     /**
@@ -98,14 +113,17 @@ class Condition
      *
      * @param  ?string $field
      * @param  ?string $validator
-     * @param  mixed $value
+     * @param  mixed   $value
+     * @param  ?string $message
+     * @param  ?string $prefix
      * @return Condition
      */
     public static function create(
-        ?string $field = null, ?string $validator = null, mixed $value = null, string $prefix = 'Pop\Validator\\'
+        ?string $field = null, ?string $validator = null, mixed $value = null,
+        ?string $message = null, ?string $prefix = 'Pop\Validator\\'
     ): Condition
     {
-        return new static($field, $validator, $value);
+        return new static($field, $validator, $value, $message, $prefix);
     }
 
     /**
@@ -141,6 +159,18 @@ class Condition
     public function setValue(mixed $value = null): static
     {
         $this->value = $value;
+        return $this;
+    }
+
+    /**
+     * Set the condition message
+     *
+     * @param  ?string $message
+     * @return static
+     */
+    public function setMessage(?string $message = null): static
+    {
+        $this->message = $message;
         return $this;
     }
 
@@ -184,6 +214,16 @@ class Condition
     public function getValue(): mixed
     {
         return $this->value;
+    }
+
+    /**
+     * Get the condition message
+     *
+     * @return ?string
+     */
+    public function getMessage(): ?string
+    {
+        return $this->message;
     }
 
     /**
@@ -237,6 +277,16 @@ class Condition
     }
 
     /**
+     * Has the condition message
+     *
+     * @return bool
+     */
+    public function hasMessage(): bool
+    {
+        return ($this->message !== null);
+    }
+
+    /**
      * Has the condition prefix
      *
      * @return bool
@@ -281,7 +331,7 @@ class Condition
         $class = $this->prefix . $this->validator;
 
         $this->validatorObject = (str_starts_with($this->validator, 'Has')) ?
-            new $class([$this->field => $this->value]) : new $class($this->value);
+            new $class([$this->field => $this->value], $this->message) : new $class($this->value, $this->message);
 
         return $this->validatorObject->evaluate(($input[$this->field] ?? $input));
     }
