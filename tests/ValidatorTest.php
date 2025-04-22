@@ -1247,6 +1247,46 @@ class ValidatorTest extends TestCase
         $this->assertFalse($regex1->evaluate('hello'));
     }
 
+    public function testRequired1()
+    {
+        $validator = new Validator\Required('username');
+        $this->assertTrue($validator->evaluate(['username' => 'someuser']));
+        $this->assertFalse($validator->evaluate([]));
+    }
+
+    public function testRequired2()
+    {
+        $data1 = [
+            'users' => [
+                ['username' => 'someuser1'],
+                ['username' => 'someuser2'],
+            ]
+        ];
+        $data2 = [
+            'users' => [
+                ['username' => 'someuser1'],
+                ['name' => 'someuser2'],
+            ]
+        ];
+        $validator = new Validator\Required('users.username');
+        $this->assertTrue($validator->evaluate($data1));
+        $this->assertFalse($validator->evaluate($data2));
+    }
+
+    public function testRequiredException1()
+    {
+        $this->expectException('Pop\Validator\Exception');
+        $validator = new Validator\Required('users');
+        $this->assertTrue($validator->evaluate(2));
+    }
+
+    public function testRequiredException2()
+    {
+        $this->expectException('Pop\Validator\Exception');
+        $validator = new Validator\Required('');
+        $this->assertTrue($validator->evaluate([1]));
+    }
+
     public function testStartsWith()
     {
         $validator = new Validator\StartsWith('abc');

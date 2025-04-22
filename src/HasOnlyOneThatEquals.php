@@ -29,7 +29,7 @@ class HasOnlyOneThatEquals extends AbstractValidator
     /**
      * Traits
      */
-    use HasTrait;
+    use TraverseTrait;
 
     /**
      * Method to evaluate the validator

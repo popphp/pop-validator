@@ -64,10 +64,10 @@ Here's a list of the available built-in validators, all under the namespace `Pop
 | DateTimeEqual            | In                       | NotStartsWith        |
 | DateTimeGreaterThanEqual | Ipv4                     | Numeric              |
 | DateTimeGreaterThan      | Ipv6                     | RegEx                |
-| DateTimeLessThanEqual    | IsArray                  | StartsWith           |
-| DateTimeLessThan         | IsEmpty                  | Subnet               |
-| DateTimeNotEqual         | IsJson                   | Url                  |
-| Declined                 | IsNotEmpty               |                      |
+| DateTimeLessThanEqual    | IsArray                  | Required             |
+| DateTimeLessThan         | IsEmpty                  | StartsWith           |
+| DateTimeNotEqual         | IsJson                   | Subnet               |
+| Declined                 | IsNotEmpty               | Url                  |
 
 ### Check an email value
 

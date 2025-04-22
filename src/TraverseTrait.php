@@ -16,7 +16,7 @@ namespace Pop\Validator;
 use Pop\Utils;
 
 /**
- * Has trait
+ * Traverse trait
  *
  * @category   Pop
  * @package    Pop\Validator
@@ -25,7 +25,7 @@ use Pop\Utils;
  * @license    http://www.popphp.org/license     New BSD License
  * @version    4.5.0
  */
-trait HasTrait
+trait TraverseTrait
 {
 
     /**

@@ -14,7 +14,7 @@
 namespace Pop\Validator;
 
 /**
- * Has one validator class
+ * Required validator class (alias class)
  *
  * @category   Pop
  * @package    Pop\Validator
@@ -23,7 +23,7 @@ namespace Pop\Validator;
  * @license    http://www.popphp.org/license     New BSD License
  * @version    4.5.0
  */
-class HasOnlyOne extends AbstractValidator
+class Required extends AbstractValidator
 {
 
     /**
@@ -45,6 +45,11 @@ class HasOnlyOne extends AbstractValidator
             $this->input = $input;
         }
 
+        // Set the default message
+        if ($this->message === null) {
+            $this->message = "The '" . $this->value . "' field is required." ;
+        }
+
         if (!is_array($input)) {
             throw new Exception('Error: The evaluated input must be an array.');
         }
@@ -52,19 +57,19 @@ class HasOnlyOne extends AbstractValidator
             throw new Exception('Error: The evaluated value cannot be empty.');
         }
 
-        // Set the default message
-        if ($this->message === null) {
-            $this->message = 'The value must contain only one item' .
-                (($this->value !== null) ? " of '" . $this->value . "'." : '.');
-        }
-
         if (!str_contains($this->value, '.')) {
-            return (array_key_exists($this->value, $this->input) &&
-                is_array($this->input[$this->value]) && count($this->input[$this->value]) == 1);
+            return (array_key_exists($this->value, $this->input));
         } else {
-            $value = [];
-            self::traverseData($this->value, $this->input, $value);
-            return (is_array($value) && (count($value) == 1));
+            $parentValues = [];
+            $childValues  = [];
+
+            self::traverseData(substr($this->value, 0, strrpos($this->value, '.')), $this->input, $parentValues);
+            self::traverseData($this->value, $this->input, $childValues);
+
+            if (isset($parentValues[0][0])) {
+                $parentValues = $parentValues[0];
+            }
+            return (is_array($parentValues) && is_array($childValues) && (count($parentValues) == count($childValues)));
         }
     }
 
