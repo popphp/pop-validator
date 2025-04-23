@@ -8,6 +8,14 @@ use PHPUnit\Framework\TestCase;
 class SetTest extends TestCase
 {
 
+    public function testGetAvailableValidators()
+    {
+        $validators = Validator\ValidatorSet::getAvailableValidators();
+        $this->assertIsArray($validators);
+        $this->assertTrue(array_key_exists('Accepted', $validators));
+        $this->assertTrue(in_array('accepted', $validators));
+    }
+
     public function testAdd1()
     {
         $set = Validator\ValidatorSet::add(['Equal' => 1], 'user_id');

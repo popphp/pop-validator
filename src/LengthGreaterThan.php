@@ -14,7 +14,7 @@
 namespace Pop\Validator;
 
 /**
- * Length less than or equal validator class
+ * Length greater than validator class
  *
  * @category   Pop
  * @package    Pop\Validator
@@ -23,7 +23,7 @@ namespace Pop\Validator;
  * @license    http://www.popphp.org/license     New BSD License
  * @version    4.5.0
  */
-class LengthLte extends AbstractValidator
+class LengthGreaterThan extends AbstractValidator
 {
 
     /**
@@ -41,10 +41,10 @@ class LengthLte extends AbstractValidator
 
         // Set the default message
         if ($this->message === null) {
-            $this->message = 'The value length must be less than or equal to ' . $this->value . '.';
+            $this->message = 'The value length must be greater than ' . $this->value . '.';
         }
 
-        return (strlen((string)$this->input) <= $this->value);
+        return (strlen((string)$this->input) > $this->value);
     }
 
 }

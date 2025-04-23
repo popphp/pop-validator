@@ -43,31 +43,31 @@ Quickstart
 
 Here's a list of the available built-in validators, all under the namespace `Pop\Validator\`:
 
-|                          | Built-in Validators      |                      |
-|--------------------------|--------------------------|----------------------|
-| Accepted                 | Email                    | IsSubnetOf           |
-| AlphaNumeric             | EndsWith                 | LengthBetweenInclude |
-| Alpha                    | Equal                    | LengthBetween        |
-| BetweenInclude           | GreaterThanEqual         | LengthGte            |
-| Between                  | GreaterThan              | LengthGt             |
-| Boolean                  | HasCountEqual            | LengthLte            |
-| Contains                 | HasCountGreaterThanEqual | LengthLt             |
-| CountEqual               | HasCountGreaterThan      | Length               |
-| CountGreaterThanEqual    | HasCountLessThanEqual    | LessThanEqual        |
-| CountGreaterThan         | HasCountLessThan         | LessThan             |
-| CountLessThanEqual       | HasCountNotEqual         | NotContains          |
-| CountLessThan            | HasOne                   | NotEmpty             |
-| CountNotEqual            | HasOneThatEquals         | NotEndsWith          |
-| CreditCard               | HasOnlyOne               | NotEqual             |
-| DateTimeBetweenInclude   | HasOnlyOneThatEquals     | NotInArray           |
-| DateTimeBetween          | InArray                  | NotIn                |
-| DateTimeEqual            | In                       | NotStartsWith        |
-| DateTimeGreaterThanEqual | Ipv4                     | Numeric              |
-| DateTimeGreaterThan      | Ipv6                     | RegEx                |
-| DateTimeLessThanEqual    | IsArray                  | Required             |
-| DateTimeLessThan         | IsEmpty                  | StartsWith           |
-| DateTimeNotEqual         | IsJson                   | Subnet               |
-| Declined                 | IsNotEmpty               | Url                  |
+|                          | Built-in Validators      |                        |
+|--------------------------|--------------------------|------------------------|
+| Accepted                 | Email                    | IsSubnetOf             |
+| AlphaNumeric             | EndsWith                 | LengthBetweenInclude   |
+| Alpha                    | Equal                    | LengthBetween          |
+| BetweenInclude           | GreaterThanEqual         | LengthGreaterThanEqual |
+| Between                  | GreaterThan              | LengthGreaterThan      |
+| Boolean                  | HasCountEqual            | LengthLessThanEqual    |
+| Contains                 | HasCountGreaterThanEqual | LengthLessThan         |
+| CountEqual               | HasCountGreaterThan      | Length                 |
+| CountGreaterThanEqual    | HasCountLessThanEqual    | LessThanEqual          |
+| CountGreaterThan         | HasCountLessThan         | LessThan               |
+| CountLessThanEqual       | HasCountNotEqual         | NotContains            |
+| CountLessThan            | HasOne                   | NotEmpty               |
+| CountNotEqual            | HasOneThatEquals         | NotEndsWith            |
+| CreditCard               | HasOnlyOne               | NotEqual               |
+| DateTimeBetweenInclude   | HasOnlyOneThatEquals     | NotInArray             |
+| DateTimeBetween          | InArray                  | NotIn                  |
+| DateTimeEqual            | In                       | NotStartsWith          |
+| DateTimeGreaterThanEqual | Ipv4                     | Numeric                |
+| DateTimeGreaterThan      | Ipv6                     | RegEx                  |
+| DateTimeLessThanEqual    | IsArray                  | Required               |
+| DateTimeLessThan         | IsEmpty                  | StartsWith             |
+| DateTimeNotEqual         | IsJson                   | Subnet                 |
+| Declined                 | IsNotEmpty               | Url                    |
 
 ### Check an email value
 
@@ -129,8 +129,46 @@ to pass or just some of them.
 ```php
 use Pop\Validator\ValidatorSet;
 
-$set = ValidatorSet();
+$set = new ValidatorSet();
+$set->addValidators(['username' => 'AlphaNumeric']);
+
+if ($set->evaluate(['username' => 'username_123'])) {
+    echo 'The username satisfies the requirements.' . PHP_EOL;
+} else {
+    print_r($set->getErrors());
+}
+```
+
+**Multiple Validators**
+
+```php
+use Pop\Validator\ValidatorSet;
+
+$set = new ValidatorSet();
 $set->addValidators(['username' => ['AlphaNumeric' => null, 'LengthGte' => 8]]);
+
+if ($set->evaluate(['username' => 'username_123'])) {
+    echo 'The username satisfies the requirements.' . PHP_EOL;
+} else {
+    print_r($set->getErrors());
+}
+```
+
+**Custom Messaging**
+
+```php
+use Pop\Validator\ValidatorSet;
+
+$set = new ValidatorSet();
+$set->addValidators([
+    'username' => [
+        'AlphaNumeric' => [
+            'value'   => null,
+            'message' => 'The username can only contain alphanumeric characters.'
+        ],
+        'LengthGte' => 8
+    ]
+]);
 
 if ($set->evaluate(['username' => 'username_123'])) {
     echo 'The username satisfies the requirements.' . PHP_EOL;
@@ -215,8 +253,9 @@ as the required conditions would not be satisfied.
 ### Rules
 
 Rules provide a shorthand way to wire up validations and conditions within the validation set. Rules are
-colon-separated strings compromised of a field, validator and value (optional.) The validator should be
-a `snake_case` format of the class string.
+colon-separated strings compromised of a `field`, a `validator` and optional `value` and `message` values.
+The validator should be a `snake_case` format of the class string, e.g. `HasOne` class should be written as
+`has_one`.
 
 Below is the same example from above, but using rules instead:
 

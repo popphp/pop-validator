@@ -14,6 +14,7 @@
 namespace Pop\Validator;
 
 use Pop\Utils\Arr;
+use Pop\Utils\Str;
 use Pop\Utils\CallableObject;
 
 /**
@@ -88,6 +89,43 @@ class ValidatorSet
      * @var int
      */
     protected int $strict = 3;
+
+    /**
+     * Get available validators over the provided input data
+     *
+     * @param  string $directory
+     * @param  ?array $exclude
+     * @return array
+     */
+    public static function getAvailableValidators(string $directory = __DIR__, ?array $exclude = null): array
+    {
+        if ($exclude === null) {
+            $exclude = [
+                '.', '..',
+                'AbstractValidator.php',
+                'Condition.php',
+                'Exception.php',
+                'Rule.php',
+                'TraverseTrait.php',
+                'ValidatorInterface.php',
+                'ValidatorSet.php'
+            ];
+        }
+
+        $validatorClasses = array_map(function ($value) {
+            return str_replace('.php', '', $value);
+        }, array_filter(scandir($directory), function ($value) use ($exclude) {
+            return !in_array($value, $exclude);
+        }));
+
+        $validators = [];
+
+        foreach ($validatorClasses as $class) {
+            $validators[$class] = Str::titleCaseToSnakeCase($class);
+        }
+
+        return $validators;
+    }
 
     /**
      * Add validators
@@ -227,10 +265,10 @@ class ValidatorSet
     public function addValidatorsToField(string $field, array $validators, string $prefix = 'Pop\Validator\\'): ValidatorSet
     {
         foreach ($validators as $validator => $value) {
-            if (is_array($value) && isset($value['value']) && isset($value['message'])) {
+            if (is_array($value) && array_key_exists('value', $value) && isset($value['message'])) {
                 $this->addValidator($field, $validator, $value['value'], $value['message'], $prefix);
             } else {
-                $this->addValidator($field, $validator, $value, $prefix);
+                $this->addValidator($field, $validator, $value, null, $prefix);
             }
         }
         return $this;
@@ -248,14 +286,14 @@ class ValidatorSet
         foreach ($validators as $field => $validator) {
             if (is_array($validator)) {
                 foreach ($validator as $val => $value) {
-                    if (is_array($value) && isset($value['value']) && isset($value['message'])) {
+                    if (is_array($value) && array_key_exists('value', $value) && isset($value['message'])) {
                         $this->addValidator($field, $val, $value['value'], $value['message'], $prefix);
                     } else {
-                        $this->addValidator($field, $val, $value, $prefix);
+                        $this->addValidator($field, $val, $value, null, $prefix);
                     }
                 }
             } else {
-                $this->addValidator($field, $validator, null, $prefix);
+                $this->addValidator($field, $validator, null, null, $prefix);
             }
         }
         return $this;

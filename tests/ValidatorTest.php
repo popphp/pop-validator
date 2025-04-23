@@ -1192,30 +1192,30 @@ class ValidatorTest extends TestCase
         $this->assertTrue($validator->evaluate('no'));
     }
 
-    public function testLengthGt()
+    public function testLengthGreaterThan()
     {
-        $validator = new Validator\LengthGt(5);
+        $validator = new Validator\LengthGreaterThan(5);
         $this->assertTrue($validator->evaluate('hello you'));
         $this->assertFalse($validator->evaluate('no'));
     }
 
-    public function testLengthGte()
+    public function testLengthGreaterThanEqual()
     {
-        $validator = new Validator\LengthGte(5);
+        $validator = new Validator\LengthGreaterThanEqual(5);
         $this->assertTrue($validator->evaluate('hello'));
         $this->assertFalse($validator->evaluate('no'));
     }
 
-    public function testLengthLt()
+    public function testLengthLessThan()
     {
-        $validator = new Validator\LengthLt(5);
+        $validator = new Validator\LengthLessThan(5);
         $this->assertTrue($validator->evaluate('no'));
         $this->assertFalse($validator->evaluate('hello you'));
     }
 
-    public function testLengthLte()
+    public function testLengthLessThanEqual()
     {
-        $validator = new Validator\LengthLte(5);
+        $validator = new Validator\LengthLessThanEqual(5);
         $this->assertTrue($validator->evaluate('hello'));
         $this->assertFalse($validator->evaluate('hello world'));
     }
