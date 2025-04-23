@@ -90,16 +90,6 @@ class ValidatorSet
     protected int $strict = 3;
 
     /**
-     * "Has" classes
-     * @var array
-     */
-    protected array $hasClasses = [
-        'Pop\Validator\HasOne', 'Pop\Validator\HasOnlyOne', 'Pop\Validator\HasCountEqual',
-        'Pop\Validator\HasCountGreaterThanEqual', 'Pop\Validator\HasCountGreaterThan',
-        'Pop\Validator\HasCountLessThanEqual', 'Pop\Validator\HasCountLessThan', 'Pop\Validator\HasCountNotEqual'
-    ];
-
-    /**
      * Add validators
      *
      * @param  array|string $validators
@@ -686,10 +676,11 @@ class ValidatorSet
     /**
      * Evaluate all validators over the provided input data
      *
-     * @param  mixed $input
+     * @param  mixed   $input
+     * @param  ?string $prefix
      * @return bool
      */
-    public function evaluate(array $input): bool
+    public function evaluate(array $input, ?string $prefix = 'Pop\Validator\\'): bool
     {
         $result = $this->evaluateConditions($input);
         // If conditions are met, or there are no conditions
@@ -700,8 +691,7 @@ class ValidatorSet
 
             foreach ($this->loaded as $field => $validators) {
                 foreach ($validators as $validator) {
-                    $validatorClass = get_class($validator);
-                    $result         = (isset($input[$field]) && !in_array($validatorClass, $this->hasClasses)) ?
+                    $result = (isset($input[$field]) && !Rule::isHasClass(get_class($validator), true, $prefix)) ?
                         $validator->evaluate($input[$field]) : $validator->evaluate($input);
                     if (!$result) {
                         $this->addError($field, $validator->getMessage());

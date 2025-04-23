@@ -76,9 +76,9 @@ class Rule
             $value = array_filter(array_map('trim', explode(',', $value)));
         }
 
-        if (in_array($validator, self::$hasClasses)) {
+        if (self::isHasClass($validator, false, $prefix)) {
             $value = [$field => $value];
-        } else if (in_array($validator, self::$hasOneClasses)) {
+        } else if (self::isHasOneClass($validator, $prefix)) {
             $value = $field;
         }
 
@@ -88,6 +88,41 @@ class Rule
             'value'     => $value,
             'message'   => $message,
         ];
+    }
+
+    /**
+     * Is a "has" class
+     *
+     * @param  string  $class
+     * @param  bool    $both
+     * @param  ?string $prefix
+     * @return bool
+     */
+    public static function isHasClass(string $class, bool $both = false, ?string $prefix = 'Pop\Validator\\'): bool
+    {
+        if (str_starts_with($class, $prefix)) {
+            $class = substr($class, strlen($prefix));
+        }
+
+        $hasClasses = ($both) ? array_merge(self::$hasClasses, self::$hasOneClasses) : self::$hasClasses;
+
+        return in_array($class, $hasClasses);
+    }
+
+    /**
+     * Is a "has" class
+     *
+     * @param  string  $class
+     * @param  ?string $prefix
+     * @return bool
+     */
+    public static function isHasOneClass(string $class, ?string $prefix = 'Pop\Validator\\'): bool
+    {
+        if (str_starts_with($class, $prefix)) {
+            $class = substr($class, strlen($prefix));
+        }
+
+        return in_array($class, self::$hasOneClasses);
     }
 
 }

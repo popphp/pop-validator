@@ -52,4 +52,9 @@ class RuleTest extends TestCase
         ['field' => $field, 'validator' => $validator, 'value' => $value] = Validator\Rule::parse('user_id:bad:1');
     }
 
+    public function testRuleIsHasOneClass()
+    {
+        $this->assertTrue(Validator\Rule::isHasOneClass('Pop\Validator\HasOne'));
+    }
+
 }
