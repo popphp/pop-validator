@@ -53,7 +53,7 @@ class ConditionTest extends TestCase
 
     public function testEvaluate2()
     {
-        $condition = Validator\Condition::createFromRule('value_1:equal:value_2');
+        $condition = Validator\Condition::createFromRule('value_1:equal:[value_2]');
         $this->assertTrue($condition->evaluate(['value_1' => 1, 'value_2' => 1]));
     }
 

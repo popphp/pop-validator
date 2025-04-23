@@ -127,7 +127,7 @@ class SetTest extends TestCase
     public function testLoadValidators2()
     {
         $set = new Validator\ValidatorSet();
-        $set->loadValidator('value_1', new Validator\Equal('value_2'), ['value_1' => 1, 'value_2' => 1]);
+        $set->loadValidator('value_1', new Validator\Equal('[value_2]'), ['value_1' => 1, 'value_2' => 1]);
         $this->assertCount(1, $set->getLoadedValidators());
         $this->assertCount(1, $set->getLoadedValidators('value_1'));
     }

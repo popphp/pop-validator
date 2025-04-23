@@ -324,8 +324,11 @@ class Condition
         }
 
         // If the value references a value in the input array
-        if (is_string($this->value) && !is_numeric($this->value) && array_key_exists($this->value, $input)) {
-            $this->value = $input[$this->value];
+        if (is_string($this->value) && str_starts_with($this->value, '[') && str_ends_with($this->value, ']')) {
+            $value = substr($this->value, 1, -1);
+            if (array_key_exists($value, $input)) {
+                $this->value = $input[$value];
+            }
         }
 
         $class = $this->prefix . $this->validator;

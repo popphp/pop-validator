@@ -90,6 +90,16 @@ class ValidatorSet
     protected int $strict = 3;
 
     /**
+     * "Has" classes
+     * @var array
+     */
+    protected array $hasClasses = [
+        'Pop\Validator\HasOne', 'Pop\Validator\HasOnlyOne', 'Pop\Validator\HasCountEqual',
+        'Pop\Validator\HasCountGreaterThanEqual', 'Pop\Validator\HasCountGreaterThan',
+        'Pop\Validator\HasCountLessThanEqual', 'Pop\Validator\HasCountLessThan', 'Pop\Validator\HasCountNotEqual'
+    ];
+
+    /**
      * Add validators
      *
      * @param  array|string $validators
@@ -277,8 +287,11 @@ class ValidatorSet
 
         // If the value references a value in the input array
         $value = $validator->getValue();
-        if (is_string($value) && !is_numeric($value) && array_key_exists($value, $input)) {
-            $validator->setValue($input[$value]);
+        if (is_string($value) && str_starts_with($value, '[') && str_ends_with($value, ']')) {
+            $value = substr($value, 1, -1);
+            if (array_key_exists($value, $input)) {
+                $validator->setValue($input[$value]);
+            }
         }
 
         $this->loaded[$field][] = $validator;
@@ -687,7 +700,9 @@ class ValidatorSet
 
             foreach ($this->loaded as $field => $validators) {
                 foreach ($validators as $validator) {
-                    $result = (isset($input[$field])) ? $validator->evaluate($input[$field]) : $validator->evaluate($input);
+                    $validatorClass = get_class($validator);
+                    $result         = (isset($input[$field]) && !in_array($validatorClass, $this->hasClasses)) ?
+                        $validator->evaluate($input[$field]) : $validator->evaluate($input);
                     if (!$result) {
                         $this->addError($field, $validator->getMessage());
                     }

@@ -24,6 +24,22 @@ class RuleTest extends TestCase
         $this->assertEquals($value, ['1', '2', '3']);
     }
 
+    public function testRuleParse3()
+    {
+        ['field' => $field, 'validator' => $validator, 'value' => $value] = Validator\Rule::parse('users:has_one:');
+        $this->assertEquals($field, 'users');
+        $this->assertEquals($validator, 'HasOne');
+        $this->assertEquals($value, 'users');
+    }
+
+    public function testRuleParse4()
+    {
+        ['field' => $field, 'validator' => $validator, 'value' => $value] = Validator\Rule::parse('users:has_one_that_equals:1');
+        $this->assertEquals($field, 'users');
+        $this->assertEquals($validator, 'HasOneThatEquals');
+        $this->assertEquals($value, ['users' => 1]);
+    }
+
     public function testRuleParseException1()
     {
         $this->expectException('InvalidArgumentException');

@@ -256,4 +256,26 @@ if ($set->evaluate($data)) {
 }
 ```
 
+#### Referencing Fields
+
+When writing rules, fields passed into the input data at the time of evaluating the data can be accessed
+by using brackets:
+
+```php
+use Pop\Validator\ValidatorSet;
+
+$set = ValidatorSet::createFromRules('value_1:equal:[value_2]');
+
+$data = [
+    'value_1' => 'test',
+    'value_2' => 'test'
+];
+
+if ($set->evaluate($data)) {
+    echo 'The data satisfies the requirements.' . PHP_EOL;
+} else {
+    print_r($set->getErrors());
+}
+```
+
 [Top](#pop-validator)

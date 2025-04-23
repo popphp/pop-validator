@@ -29,6 +29,23 @@ class Rule
 {
 
     /**
+     * "Has" classes
+     * @var array
+     */
+    protected static array $hasClasses = [
+        'HasOneThatEquals', 'HasOnlyOneThatEquals', 'HasCountEqual', 'HasCountGreaterThanEqual',
+        'HasCountGreaterThan', 'HasCountLessThanEqual', 'HasCountLessThan', 'HasCountNotEqual'
+    ];
+
+    /**
+     * "Has one" classes
+     * @var array
+     */
+    protected static array $hasOneClasses = [
+        'HasOne', 'HasOnlyOne'
+    ];
+
+    /**
      * Parse rule
      *
      * @param  string  $rule
@@ -46,20 +63,27 @@ class Rule
             );
         }
 
+        $field     = $ruleSet[0];
         $validator = Str::snakeCaseToTitleCase($ruleSet[1]);
         $value     = (!empty($ruleSet[2])) ? $ruleSet[2] : null;
         $message   = (!empty($ruleSet[3])) ? $ruleSet[3] : null;
-
-        if (str_contains($rule, ',')) {
-            $value = array_filter(array_map('trim', explode(',', $value)));
-        }
 
         if (!class_exists($prefix . $validator)) {
             throw new \InvalidArgumentException("Error: The validator class '" . $prefix . $validator . "' does not exist.");
         }
 
+        if (str_contains($rule, ',')) {
+            $value = array_filter(array_map('trim', explode(',', $value)));
+        }
+
+        if (in_array($validator, self::$hasClasses)) {
+            $value = [$field => $value];
+        } else if (in_array($validator, self::$hasOneClasses)) {
+            $value = $field;
+        }
+
         return [
-            'field'     => $ruleSet[0],
+            'field'     => $field,
             'validator' => $validator,
             'value'     => $value,
             'message'   => $message,
