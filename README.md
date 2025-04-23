@@ -256,6 +256,16 @@ if ($set->evaluate($data)) {
 }
 ```
 
+#### Rule Messages
+
+Custom messaging can be passed via the rule format as well, in the 4th position:
+
+```php
+$set = Pop\Validator\ValidatorSet::createFromRules([
+    'username:length_gt:8:The username must be greater than 8 characters.'
+]);
+```
+
 #### Referencing Fields
 
 When writing rules, fields passed into the input data at the time of evaluating the data can be accessed
