@@ -23,7 +23,51 @@ namespace Pop\Validator;
  * @license    http://www.popphp.org/license     New BSD License
  * @version    4.5.0
  */
-class NotIn extends NotContains
+class NotIn extends AbstractValidator
 {
+
+    /**
+     * Method to evaluate the validator
+     *
+     * @param  mixed $input
+     * @return bool
+     */
+    public function evaluate(mixed $input = null): bool
+    {
+        // Set the input, if passed
+        if ($input !== null) {
+            $this->input = $input;
+        }
+
+        // Set the default message
+        if ($this->message === null) {
+            $this->message = 'The input must not be contained in the value.';
+        }
+
+        $result   = false;
+        $needle   = $this->input;
+        $haystack = $this->value;
+
+        if (is_string($needle) && is_string($haystack)) {
+            $result = (!str_contains($haystack, $needle));
+        } else if (!is_array($needle) && is_array($haystack)) {
+            $result = (!in_array($needle, $haystack));
+        } else if (is_array($needle)) {
+            $result = true;
+            foreach ($needle as $n) {
+                if (is_array($haystack)) {
+                    if (in_array($n, $haystack)) {
+                        $result = false;
+                        break;
+                    }
+                } else if (str_contains((string)$haystack, $n)) {
+                    $result = false;
+                    break;
+                }
+            }
+        }
+
+        return $result;
+    }
 
 }

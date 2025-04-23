@@ -41,7 +41,7 @@ class NotContains extends AbstractValidator
 
         // Set the default message
         if ($this->message === null) {
-            $this->message = 'The input must be not contained in the value.';
+            $this->message = 'The value must not be contained in the input.';
         }
 
         $result   = false;

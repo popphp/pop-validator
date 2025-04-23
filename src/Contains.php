@@ -41,7 +41,7 @@ class Contains extends AbstractValidator
 
         // Set the default message
         if ($this->message === null) {
-            $this->message = 'The input must be contained in the value.';
+            $this->message = 'The value must be contained in the input.';
         }
 
         $result   = false;

@@ -1036,6 +1036,28 @@ class ValidatorTest extends TestCase
         $this->assertTrue($validator->evaluate('testing'));
     }
 
+    public function testNotIn()
+    {
+        $validator = new Validator\NotIn('hello');
+        $this->assertFalse($validator->evaluate('hel'));
+        $this->assertTrue($validator->evaluate('qz'));
+
+        $validator = new Validator\NotIn([1, 2, 3]);
+        $this->assertFalse($validator->evaluate([2, 3]));
+
+        $validator = new Validator\NotIn([1, 2, 3]);
+        $this->assertTrue($validator->evaluate([4, 5]));
+
+        $validator = new Validator\NotIn([1]);
+        $this->assertFalse($validator->evaluate(1));
+        $this->assertTrue($validator->evaluate(2));
+
+        $validator = new Validator\NotIn('test$ing');
+        $this->assertFalse($validator->evaluate(['$', '?']));
+        $this->assertTrue($validator->evaluate(['?', 'testing']));
+        $this->assertTrue($validator->evaluate('testing'));
+    }
+
     public function testGreaterThan()
     {
         $validator = new Validator\GreaterThan(10);
@@ -1068,6 +1090,28 @@ class ValidatorTest extends TestCase
 
         $validator = new Validator\Contains(['$', '?']);
         $this->assertTrue($validator->evaluate('test$i?ng'));
+        $this->assertFalse($validator->evaluate('testing'));
+    }
+
+    public function testIn()
+    {
+        $validator = new Validator\In('hello');
+        $this->assertTrue($validator->evaluate('hel'));
+        $this->assertFalse($validator->evaluate('qz'));
+
+        $validator = new Validator\In([1, 2, 3]);
+        $this->assertTrue($validator->evaluate([2, 3]));
+
+        $validator = new Validator\In([1, 2, 3]);
+        $this->assertFalse($validator->evaluate([4, 5]));
+
+        $validator = new Validator\In([1]);
+        $this->assertTrue($validator->evaluate(1));
+        $this->assertFalse($validator->evaluate(2));
+
+        $validator = new Validator\In('test$i?ng');
+        $this->assertTrue($validator->evaluate(['$', '?']));
+        $this->assertFalse($validator->evaluate(['$', '?', 'testing']));
         $this->assertFalse($validator->evaluate('testing'));
     }
 
