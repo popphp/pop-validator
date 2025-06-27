@@ -45,11 +45,11 @@ Here's a list of the available built-in validators, all under the namespace `Pop
 
 |                          | Built-in Validators      |                        |
 |--------------------------|--------------------------|------------------------|
-| Accepted                 | Email                    | IsSubnetOf             |
-| AlphaNumeric             | EndsWith                 | LengthBetweenInclude   |
-| Alpha                    | Equal                    | LengthBetween          |
-| BetweenInclude           | GreaterThanEqual         | LengthGreaterThanEqual |
-| Between                  | GreaterThan              | LengthGreaterThan      |
+| Accepted                 | Equal                    | IsSubnetOf             |
+| AlphaNumeric             | GreaterThanEqual         | LengthBetweenInclude   |
+| Alpha                    | GreaterThan              | LengthBetween          |
+| BetweenInclude           | HasAtLeast               | LengthGreaterThanEqual |
+| Between                  | HasAtMost                | LengthGreaterThan      |
 | Boolean                  | HasCountEqual            | LengthLessThanEqual    |
 | Contains                 | HasCountGreaterThanEqual | LengthLessThan         |
 | CountEqual               | HasCountGreaterThan      | Length                 |
@@ -68,6 +68,8 @@ Here's a list of the available built-in validators, all under the namespace `Pop
 | DateTimeLessThan         | IsEmpty                  | StartsWith             |
 | DateTimeNotEqual         | IsJson                   | Subnet                 |
 | Declined                 | IsNotEmpty               | Url                    |
+| Email                    | IsNotNull                |                        |
+| EndsWith                 | IsNull                   |                        |
 
 ### Check an email value
 

@@ -1256,6 +1256,24 @@ class ValidatorTest extends TestCase
         $this->assertFalse($validator->evaluate(10));
     }
 
+    public function testIsNotNull()
+    {
+        $notNull = 'not null';
+        $null    = null;
+        $validator = new Validator\IsNotNull();
+        $this->assertTrue($validator->evaluate($notNull));
+        $this->assertFalse($validator->evaluate($null));
+    }
+
+    public function testIsNull()
+    {
+        $notNull = 'not null';
+        $null    = null;
+        $validator = new Validator\IsNull();
+        $this->assertTrue($validator->evaluate($null));
+        $this->assertFalse($validator->evaluate($notNull));
+    }
+
     public function testNumeric()
     {
         $validator = new Validator\Numeric();

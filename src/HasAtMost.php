@@ -14,7 +14,7 @@
 namespace Pop\Validator;
 
 /**
- * Not empty validator class (alias class for backwards compatibility)
+ * Has at most validator class (alias to CountLessThanEqual)
  *
  * @category   Pop
  * @package    Pop\Validator
@@ -23,7 +23,7 @@ namespace Pop\Validator;
  * @license    http://www.popphp.org/license     New BSD License
  * @version    4.5.0
  */
-class NotEmpty extends IsNotEmpty
+class HasAtMost extends CountLessThanEqual
 {
 
 }
