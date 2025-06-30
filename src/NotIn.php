@@ -53,16 +53,15 @@ class NotIn extends AbstractValidator
         } else if (!is_array($needle) && is_array($haystack)) {
             $result = (!in_array($needle, $haystack));
         } else if (is_array($needle)) {
-            $result = true;
-            foreach ($needle as $n) {
-                if (is_array($haystack)) {
-                    if (in_array($n, $haystack)) {
+            if (is_array($haystack)) {
+                $result = empty(array_intersect($needle, $haystack));
+            } else {
+                $result = true;
+                foreach ($needle as $n) {
+                    if (str_contains((string)$haystack, $n)) {
                         $result = false;
                         break;
                     }
-                } else if (str_contains((string)$haystack, $n)) {
-                    $result = false;
-                    break;
                 }
             }
         }
