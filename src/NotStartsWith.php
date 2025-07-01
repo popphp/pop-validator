@@ -40,11 +40,26 @@ class NotStartsWith extends AbstractValidator
         }
 
         // Set the default message
-        if ($this->message === null) {
-            $this->message = 'The input must not start with the value.';
+        if (!$this->hasMessage()) {
+            $this->generateDefaultMessage();
         }
 
         return !str_starts_with($this->input, $this->value);
+    }
+
+    /**
+     * Generate default message
+
+     * @param  mixed $name
+     * @param  mixed $value
+     * @return string
+     */
+    public function generateDefaultMessage(mixed $name = null, mixed $value = null): string
+    {
+        $this->message = "The " . (($name !== null) ? "'" . $name . "'" : "value") .
+            " must not start with '" . ($value ?? $this->value) . "'.";
+
+        return $this->message;
     }
 
 }

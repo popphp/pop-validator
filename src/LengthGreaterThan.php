@@ -40,11 +40,26 @@ class LengthGreaterThan extends AbstractValidator
         }
 
         // Set the default message
-        if ($this->message === null) {
-            $this->message = 'The value length must be greater than ' . $this->value . '.';
+        if (!$this->hasMessage()) {
+            $this->generateDefaultMessage();
         }
 
         return (strlen((string)$this->input) > $this->value);
+    }
+
+    /**
+     * Generate default message
+
+     * @param  mixed $name
+     * @param  mixed $value
+     * @return string
+     */
+    public function generateDefaultMessage(mixed $name = null, mixed $value = null): string
+    {
+        $this->message = "The " . (($name !== null) ? "'" . $name . "'" : "value") .
+            " length must be greater than '" . ($value ?? $this->value) . "'.";
+
+        return $this->message;
     }
 
 }

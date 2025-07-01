@@ -47,11 +47,36 @@ class LengthBetween extends AbstractValidator
         }
 
         // Set the default message
-        if ($this->message === null) {
-            $this->message = 'The value length must be between ' . $this->value[0] . ' and ' . $this->value[1] . '.';
+        if (!$this->hasMessage()) {
+            $this->generateDefaultMessage();
         }
 
         return ((strlen((string)$this->input) > $this->value[0]) && (strlen((string)$this->input) < $this->value[1]));
+    }
+
+    /**
+     * Generate default message
+
+     * @param  mixed $name
+     * @param  mixed $value
+     * @return string
+     */
+    public function generateDefaultMessage(mixed $name = null, mixed $value = null): string
+    {
+        $value1 = null;
+        $value2 = null;
+        if (($value !== null) && is_array($value) && (count($value) == 2)) {
+            $value1 = $value[0];
+            $value2 = $value[1];
+        } else if (($this->value !== null) && is_array($this->value) && (count($this->value) == 2)) {
+            $value1 = $this->value[0];
+            $value2 = $this->value[1];
+        }
+
+        $this->message = "The " . (($name !== null) ? "'" . $name . "'" : "value") .
+            " length must be between '" . $value1 . "' and '"  . $value2  . "'.";
+
+        return $this->message;
     }
 
 }

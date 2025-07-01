@@ -40,11 +40,24 @@ class Url extends AbstractValidator
         }
 
         // Set the default message
-        if ($this->message === null) {
-            $this->message = 'The value is not a valid URL.';
+        if (!$this->hasMessage()) {
+            $this->generateDefaultMessage();
         }
 
         return (filter_var($this->input, FILTER_VALIDATE_URL) !== false);
+    }
+
+    /**
+     * Generate default message
+
+     * @param  mixed $name
+     * @param  mixed $value
+     * @return string
+     */
+    public function generateDefaultMessage(mixed $name = null, mixed $value = null): string
+    {
+        $this->message = "The " . (($name !== null) ? "'" . $name . "'" : "value") . " is not a valid URL.";
+        return $this->message;
     }
 
 }

@@ -44,11 +44,26 @@ class Accepted extends AbstractValidator
         }
 
         // Set the default message
-        if ($this->message === null) {
-            $this->message = "The value must a value of either 'yes', '1', 1, 'true' or true.";
+        if (!$this->hasMessage()) {
+            $this->generateDefaultMessage();
         }
 
         return in_array($this->input, [1, '1', true, 'true', 'yes'], true);
+    }
+
+    /**
+     * Generate default message
+
+     * @param  mixed $name
+     * @param  mixed $value
+     * @return string
+     */
+    public function generateDefaultMessage(mixed $name = null, mixed $value = null): string
+    {
+        $this->message = "The " . (($name !== null) ? "'" . $name . "'" : "value") .
+            " must a value of either 'yes', '1', 1, 'true' or true.";
+
+        return $this->message;
     }
 
 }

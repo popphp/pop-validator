@@ -158,4 +158,13 @@ interface ValidatorInterface
      */
     public function evaluate(mixed $input = null): bool;
 
+    /**
+     * Generate default message
+
+     * @param  mixed $name
+     * @param  mixed $value
+     * @return string
+     */
+    public function generateDefaultMessage(mixed $name = null, mixed $value = null): string;
+
 }

@@ -40,11 +40,24 @@ class IsJson extends AbstractValidator
         }
 
         // Set the default message
-        if ($this->message === null) {
-            $this->message = 'The value must be a valid JSON string.';
+        if (!$this->hasMessage()) {
+            $this->generateDefaultMessage();
         }
 
         return ((@json_decode($this->input, true) !== false) && json_last_error() === JSON_ERROR_NONE);
+    }
+
+    /**
+     * Generate default message
+
+     * @param  mixed $name
+     * @param  mixed $value
+     * @return string
+     */
+    public function generateDefaultMessage(mixed $name = null, mixed $value = null): string
+    {
+        $this->message = "The " . (($name !== null) ? "'" . $name . "'" : "value") . " must be a valid JSON string.";
+        return $this->message;
     }
 
 }

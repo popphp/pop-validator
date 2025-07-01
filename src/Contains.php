@@ -40,8 +40,8 @@ class Contains extends AbstractValidator
         }
 
         // Set the default message
-        if ($this->message === null) {
-            $this->message = 'The value must be contained in the input.';
+        if (!$this->hasMessage()) {
+            $this->generateDefaultMessage();
         }
 
         $result   = false;
@@ -68,6 +68,21 @@ class Contains extends AbstractValidator
         }
 
         return $result;
+    }
+
+    /**
+     * Generate default message
+
+     * @param  mixed $name
+     * @param  mixed $value
+     * @return string
+     */
+    public function generateDefaultMessage(mixed $name = null, mixed $value = null): string
+    {
+        $this->message = "The " . (($name !== null) ? "'" . $name . "'" : "value") .
+            " must be contained in the input.";
+
+        return $this->message;
     }
 
 }

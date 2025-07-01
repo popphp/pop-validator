@@ -40,11 +40,25 @@ class Subnet extends AbstractValidator
         }
 
         // Set the default message
-        if ($this->message === null) {
-            $this->message = 'The value must be a valid IPv4 subnet.';
+        if (!$this->hasMessage()) {
+            $this->generateDefaultMessage();
         }
 
         return (bool)(preg_match('/^\b(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]|[0-9])\b$/', $this->input));
+    }
+
+    /**
+     * Generate default message
+
+     * @param  mixed $name
+     * @param  mixed $value
+     * @return string
+     */
+    public function generateDefaultMessage(mixed $name = null, mixed $value = null): string
+    {
+        $this->message = "The " . (($name !== null) ? "'" . $name . "'" : "value") . " must be a valid IPv4 subnet.";
+
+        return $this->message;
     }
 
 }

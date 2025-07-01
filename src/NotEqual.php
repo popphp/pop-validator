@@ -40,11 +40,27 @@ class NotEqual extends AbstractValidator
         }
 
         // Set the default message
-        if ($this->message === null) {
-            $this->message = 'The value must not be equal to ' . $this->value . '.';
+
+        if (!$this->hasMessage()) {
+            $this->generateDefaultMessage();
         }
 
         return ($this->input != $this->value);
+    }
+
+    /**
+     * Generate default message
+
+     * @param  mixed $name
+     * @param  mixed $value
+     * @return string
+     */
+    public function generateDefaultMessage(mixed $name = null, mixed $value = null): string
+    {
+        $this->message = "The " . (($name !== null) ? "'" . $name . "'" : "value") .
+            " must not be equal to '" . ($value ?? $this->value) . "'.";
+
+        return $this->message;
     }
 
 }

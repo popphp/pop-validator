@@ -41,8 +41,8 @@ class CountNotEqual extends AbstractValidator
         }
 
         // Set the default message
-        if ($this->message === null) {
-            $this->message = 'The count must be equal to ' . $this->value . '.';
+        if (!$this->hasMessage()) {
+            $this->generateDefaultMessage();
         }
 
         if (!is_array($input)) {
@@ -50,6 +50,21 @@ class CountNotEqual extends AbstractValidator
         }
 
         return (count($this->input) != $this->value);
+    }
+
+    /**
+     * Generate default message
+
+     * @param  mixed $name
+     * @param  mixed $value
+     * @return string
+     */
+    public function generateDefaultMessage(mixed $name = null, mixed $value = null): string
+    {
+        $this->message = "The count of " . (($name !== null) ? "'" . $name . "'" : "the value") .
+            " must not be equal to '" . ($value ?? $this->value) . "'.";
+
+        return $this->message;
     }
 
 }

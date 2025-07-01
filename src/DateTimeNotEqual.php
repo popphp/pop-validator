@@ -42,9 +42,12 @@ class DateTimeNotEqual extends NotEqual
         if ($input !== null) {
             $input = strtotime($input);
         }
-        if ($this->value !== null) {
-            $this->message = 'The value must not be equal to ' . $this->getValue() . '.';
+
+        // Set the default message
+        if (!$this->hasMessage()) {
+            $this->generateDefaultMessage(null, $this->getValue());
         }
+
         return parent::evaluate($input);
     }
 

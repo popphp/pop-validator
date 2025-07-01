@@ -42,9 +42,12 @@ class DateTimeLessThanEqual extends LessThanEqual
         if ($input !== null) {
             $input = strtotime($input);
         }
-        if ($this->value !== null) {
-            $this->message = 'The value must be less than or equal to ' . $this->getValue() . '.';
+
+        // Set the default message
+        if (!$this->hasMessage()) {
+            $this->generateDefaultMessage(null, $this->getValue());
         }
+
         return parent::evaluate($input);
     }
 

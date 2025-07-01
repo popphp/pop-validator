@@ -57,8 +57,9 @@ class HasCountLessThanEqual extends AbstractValidator
         $field = array_key_first($this->value);
         $count = reset($this->value);
 
-        if ($this->message === null) {
-            $this->message = "The array must have a field '" . $field . "' with at most " . $count . " item(s).";
+        // Set the default message
+        if (!$this->hasMessage()) {
+            $this->generateDefaultMessage();
         }
 
         if (!str_contains($field, '.')) {
@@ -70,6 +71,32 @@ class HasCountLessThanEqual extends AbstractValidator
 
             return (is_array($value) && (isset($value[0])) && (count($value[0]) <= $count));
         }
+    }
+
+    /**
+     * Generate default message
+
+     * @param  mixed $name
+     * @param  mixed $value
+     * @return string
+     */
+    public function generateDefaultMessage(mixed $name = null, mixed $value = null): string
+    {
+        $field = null;
+        $count = null;
+
+        if (($value !== null) && is_array($value)) {
+            $field = array_key_first($value);
+            $count = reset($value);
+        } else if ($this->value !== null) {
+            $field = array_key_first($this->value);
+            $count = reset($this->value);
+        }
+
+        $this->message = "The " . (($name !== null) ? "'" . $name . "'" : "array") .
+            " must have a field '" . $field . "' with at most " . $count . " item(s).";
+
+        return $this->message;
     }
 
 }

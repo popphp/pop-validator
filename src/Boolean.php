@@ -40,11 +40,26 @@ class Boolean extends AbstractValidator
         }
 
         // Set the default message
-        if ($this->message === null) {
-            $this->message = "The value must a boolean value.";
+        if (!$this->hasMessage()) {
+            $this->generateDefaultMessage();
         }
 
         return in_array($this->input, [true, false, 1, 0, '1', '0'], true);
+    }
+
+    /**
+     * Generate default message
+
+     * @param  mixed $name
+     * @param  mixed $value
+     * @return string
+     */
+    public function generateDefaultMessage(mixed $name = null, mixed $value = null): string
+    {
+        $this->message = "The " . (($name !== null) ? "'" . $name . "'" : "value") .
+            " must be a boolean value.";
+
+        return $this->message;
     }
 
 }

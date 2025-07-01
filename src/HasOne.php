@@ -46,9 +46,8 @@ class HasOne extends AbstractValidator
         }
 
         // Set the default message
-        if ($this->message === null) {
-            $this->message = 'The value must contain at least one item' .
-                (($this->value !== null) ? " of '" . $this->value . "'." : '.');
+        if (!$this->hasMessage()) {
+            $this->generateDefaultMessage();
         }
 
         if (!is_array($input)) {
@@ -66,6 +65,24 @@ class HasOne extends AbstractValidator
             self::traverseData($this->value, $this->input, $value);
             return (is_array($value) && (count($value) > 0));
         }
+    }
+
+    /**
+     * Generate default message
+
+     * @param  mixed $name
+     * @param  mixed $value
+     * @return string
+     */
+    public function generateDefaultMessage(mixed $name = null, mixed $value = null): string
+    {
+        if ($value === null) {
+            $value = $this->value;
+        }
+        $this->message = "The " . (($name !== null) ? "'" . $name . "'" : "value") .
+            " must contain at least one item" . (($value !== null) ? " of '" . $value . "'." : ".");
+
+        return $this->message;
     }
 
 }

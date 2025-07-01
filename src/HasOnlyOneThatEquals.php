@@ -58,9 +58,8 @@ class HasOnlyOneThatEquals extends AbstractValidator
         $requiredValue = reset($this->value);
 
         // Set the default message
-        if ($this->message === null) {
-            $this->message = 'The value must contain only one item' .
-                (($this->value !== null) ? " of '" . $field . "'" : '') . ' with the required value.';
+        if (!$this->hasMessage()) {
+            $this->generateDefaultMessage();
         }
 
         if (!str_contains($field, '.')) {
@@ -84,6 +83,30 @@ class HasOnlyOneThatEquals extends AbstractValidator
         }
 
         return ($count == 1);
+    }
+
+    /**
+     * Generate default message
+
+     * @param  mixed $name
+     * @param  mixed $value
+     * @return string
+     */
+    public function generateDefaultMessage(mixed $name = null, mixed $value = null): string
+    {
+        $field = null;
+
+        if (($value !== null) && is_array($value)) {
+            $field = array_key_first($value);
+        } else if ($this->value !== null) {
+            $field = array_key_first($this->value);
+        }
+
+        $this->message = "The " . (($name !== null) ? "'" . $name . "'" : "value") .
+            " must contain one item" . (($this->value !== null) ? " of '" . $field . "'" : "") .
+            " with the required value.";
+
+        return $this->message;
     }
 
 }

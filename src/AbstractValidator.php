@@ -277,4 +277,13 @@ abstract class AbstractValidator implements ValidatorInterface
      */
     abstract public function evaluate(mixed $input = null): bool;
 
+    /**
+     * Generate default message
+
+     * @param  mixed $name
+     * @param  mixed $value
+     * @return string
+     */
+    abstract public function generateDefaultMessage(mixed $name = null, mixed $value = null): string;
+
 }

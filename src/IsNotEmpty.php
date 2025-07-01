@@ -40,11 +40,24 @@ class IsNotEmpty extends AbstractValidator
         }
 
         // Set the default message
-        if ($this->message === null) {
-            $this->message = 'The value must not be empty.';
+        if (!$this->hasMessage()) {
+            $this->generateDefaultMessage();
         }
 
         return (!empty($this->input));
+    }
+
+    /**
+     * Generate default message
+
+     * @param  mixed $name
+     * @param  mixed $value
+     * @return string
+     */
+    public function generateDefaultMessage(mixed $name = null, mixed $value = null): string
+    {
+        $this->message = "The " . (($name !== null) ? "'" . $name . "'" : "value") . " must not be empty.";
+        return $this->message;
     }
 
 }

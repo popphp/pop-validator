@@ -46,8 +46,9 @@ class Required extends AbstractValidator
         }
 
         // Set the default message
-        if ($this->message === null) {
-            $this->message = "The '" . $this->value . "' field is required." ;
+
+        if (!$this->hasMessage()) {
+            $this->generateDefaultMessage();
         }
 
         if (!is_array($input)) {
@@ -71,6 +72,19 @@ class Required extends AbstractValidator
             }
             return (is_array($parentValues) && is_array($childValues) && (count($parentValues) == count($childValues)));
         }
+    }
+
+    /**
+     * Generate default message
+
+     * @param  mixed $name
+     * @param  mixed $value
+     * @return string
+     */
+    public function generateDefaultMessage(mixed $name = null, mixed $value = null): string
+    {
+        $this->message = "The " . (($name !== null) ? "'" . $name . "'" : "value") . " is required.";
+        return $this->message;
     }
 
 }

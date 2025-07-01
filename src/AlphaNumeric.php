@@ -40,11 +40,26 @@ class AlphaNumeric extends AbstractValidator
         }
 
         // Set the default message
-        if ($this->message === null) {
-            $this->message = 'The value must only contain alphanumeric characters.';
+        if (!$this->hasMessage()) {
+            $this->generateDefaultMessage();
         }
 
         return (bool)(preg_match('/^\w+$/', $this->input));
+    }
+
+    /**
+     * Generate default message
+
+     * @param  mixed $name
+     * @param  mixed $value
+     * @return string
+     */
+    public function generateDefaultMessage(mixed $name = null, mixed $value = null): string
+    {
+        $this->message = "The " . (($name !== null) ? "'" . $name . "'" : "value") .
+            " must only contain alphanumeric characters.";
+
+        return $this->message;
     }
 
 }

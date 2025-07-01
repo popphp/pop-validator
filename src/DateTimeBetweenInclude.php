@@ -42,13 +42,42 @@ class DateTimeBetweenInclude extends BetweenInclude
         if ($input !== null) {
             $input = strtotime($input);
         }
-        if ($this->value !== null) {
-            $values = $this->getValue();
-            if (is_array($values) && (count($values) == 2)) {
-                $this->message = 'The value must be between or equal to ' . $values[0] . ' and ' . $values[1] . '.';
+
+        // Set the default message
+        if (!$this->hasMessage()) {
+            $this->generateDefaultMessage();
+        }
+
+        return parent::evaluate($input);
+    }
+
+    /**
+     * Generate default message
+
+     * @param  mixed  $name
+     * @param  mixed  $value
+     * @return string
+     */
+    public function generateDefaultMessage(mixed $name = null, mixed $value = null): string
+    {
+        $value1 = null;
+        $value2 = null;
+
+        if (($this->value !== null) && is_array($this->value) && (count($this->value) == 2)) {
+            $value1 = $this->value[0];
+            $value2 = $this->value[1];
+
+            if (!empty($this->dateTimeFormat)) {
+                if (is_numeric($value1)) {
+                    $value1 = date($this->dateTimeFormat, $value1);
+                }
+                if (is_numeric($value2)) {
+                    $value1 = date($this->dateTimeFormat, $value2);
+                }
             }
         }
-        return parent::evaluate($input);
+
+        return parent::generateDefaultMessage($name, [$value1, $value2]);
     }
 
 }

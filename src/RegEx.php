@@ -86,8 +86,8 @@ class RegEx extends AbstractValidator
         }
 
         // Set the default message
-        if ($this->message === null) {
-            $this->message = 'The format is not correct.';
+        if (!$this->hasMessage()) {
+            $this->generateDefaultMessage();
         }
 
         if (is_array($this->value)) {
@@ -110,6 +110,19 @@ class RegEx extends AbstractValidator
         } else {
             return (bool)(preg_match($this->value, $this->input));
         }
+    }
+
+    /**
+     * Generate default message
+
+     * @param  mixed $name
+     * @param  mixed $value
+     * @return string
+     */
+    public function generateDefaultMessage(mixed $name = null, mixed $value = null): string
+    {
+        $this->message = "The " . (($name !== null) ? "'" . $name . "'" : "value") . " format is not correct.";
+        return $this->message;
     }
 
 }

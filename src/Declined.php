@@ -44,11 +44,26 @@ class Declined extends AbstractValidator
         }
 
         // Set the default message
-        if ($this->message === null) {
-            $this->message = "The value must a value of either 'no', '0', 0, 'false' or false.";
+        if (!$this->hasMessage()) {
+            $this->generateDefaultMessage();
         }
 
         return in_array($this->input, [0, '0', false, 'false', 'no'], true);
+    }
+
+    /**
+     * Generate default message
+
+     * @param  mixed $name
+     * @param  mixed $value
+     * @return string
+     */
+    public function generateDefaultMessage(mixed $name = null, mixed $value = null): string
+    {
+        $this->message = "The " . (($name !== null) ? "'" . $name . "'" : "value") .
+            " must a value of either 'no', '0', 0, 'false' or false.";
+
+        return $this->message;
     }
 
 }
