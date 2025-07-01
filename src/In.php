@@ -54,7 +54,7 @@ class In extends AbstractValidator
             $result = in_array($needle, $haystack);
         } else if (is_array($needle)) {
             if (is_array($haystack)) {
-                $result = !empty(array_intersect($needle, $haystack));
+                $result = (array_intersect($needle, $haystack) == $needle);
             } else {
                 $result = true;
                 foreach ($needle as $n) {
