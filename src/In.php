@@ -48,7 +48,7 @@ class In extends AbstractValidator
         $needle   = $this->input;
         $haystack = $this->value;
 
-        if (is_string($needle) && is_string($haystack)) {
+        if (!is_array($needle) && !is_array($haystack)) {
             $result = (str_contains($haystack, $needle));
         } else if (!is_array($needle) && is_array($haystack)) {
             $result = in_array($needle, $haystack);
