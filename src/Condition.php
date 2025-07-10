@@ -336,7 +336,8 @@ class Condition
         $this->validatorObject = (str_starts_with($this->validator, 'Has')) ?
             new $class([$this->field => $this->value], $this->message) : new $class($this->value, $this->message);
 
-        return $this->validatorObject->evaluate(($input[$this->field] ?? $input));
+
+        return $this->validatorObject->evaluate((array_key_exists($this->field, $input) ? $input[$this->field] : $input));
     }
 
 }
