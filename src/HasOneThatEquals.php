@@ -66,7 +66,13 @@ class HasOneThatEquals extends AbstractValidator
         } else {
             $value = [];
             self::traverseData($field, $this->input, $value);
-            return ((is_array($value) && in_array($requiredValue, $value)) || ($value == $requiredValue));
+
+            if (is_array($value)) {
+                return (is_array($requiredValue)) ?
+                    !empty(array_intersect($requiredValue, $value)) : in_array($requiredValue, $value);
+            } else {
+                return ($value == $requiredValue);
+            }
         }
     }
 
