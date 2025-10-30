@@ -23,7 +23,7 @@ use Pop\Utils\Str;
  * @author     Nick Sagona, III <dev@noladev.com>
  * @copyright  Copyright (c) 2009-2026 NOLA Interactive, LLC.
  * @license    http://www.popphp.org/license     New BSD License
- * @version    4.5.0
+ * @version    4.6.5
  */
 class Rule
 {
