@@ -61,7 +61,7 @@ class IsNull extends AbstractValidator
      */
     public function generateDefaultMessage(mixed $name = null, mixed $value = null): string
     {
-        $this->message = "The " . (($name !== null) ? "'" . $name . "'" : "value") . " must be null.";
+        $this->message = "The " . (($name !== null) ? "'" . $name . "'" : "input") . " must be null.";
         return $this->message;
     }
 

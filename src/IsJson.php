@@ -56,7 +56,7 @@ class IsJson extends AbstractValidator
      */
     public function generateDefaultMessage(mixed $name = null, mixed $value = null): string
     {
-        $this->message = "The " . (($name !== null) ? "'" . $name . "'" : "value") . " must be a valid JSON string.";
+        $this->message = "The " . (($name !== null) ? "'" . $name . "'" : "input") . " must be a valid JSON string.";
         return $this->message;
     }
 

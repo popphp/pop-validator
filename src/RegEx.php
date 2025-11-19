@@ -121,7 +121,7 @@ class RegEx extends AbstractValidator
      */
     public function generateDefaultMessage(mixed $name = null, mixed $value = null): string
     {
-        $this->message = "The " . (($name !== null) ? "'" . $name . "'" : "value") . " format is not correct.";
+        $this->message = "The " . (($name !== null) ? "'" . $name . "'" : "input") . " format is not correct.";
         return $this->message;
     }
 

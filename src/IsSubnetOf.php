@@ -62,7 +62,7 @@ class IsSubnetOf extends AbstractValidator
      */
     public function generateDefaultMessage(mixed $name = null, mixed $value = null): string
     {
-        $this->message = "The " . (($name !== null) ? "'" . $name . "'" : "value") .
+        $this->message = "The " . (($name !== null) ? "'" . $name . "'" : "input") .
             " must be part of the subnet '" . ($value ?? $this->value) . "'.";
 
         return $this->message;

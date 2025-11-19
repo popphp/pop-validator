@@ -56,7 +56,7 @@ class Url extends AbstractValidator
      */
     public function generateDefaultMessage(mixed $name = null, mixed $value = null): string
     {
-        $this->message = "The " . (($name !== null) ? "'" . $name . "'" : "value") . " is not a valid URL.";
+        $this->message = "The " . (($name !== null) ? "'" . $name . "'" : "input") . " is not a valid URL.";
         return $this->message;
     }
 

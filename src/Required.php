@@ -83,7 +83,7 @@ class Required extends AbstractValidator
      */
     public function generateDefaultMessage(mixed $name = null, mixed $value = null): string
     {
-        $this->message = "The " . (($name !== null) ? "'" . $name . "'" : "value") . " is required.";
+        $this->message = "The " . (($name !== null) ? "'" . $name . "'" : "input") . " is required.";
         return $this->message;
     }
 

@@ -102,7 +102,7 @@ class HasOnlyOneThatEquals extends AbstractValidator
             $field = array_key_first($this->value);
         }
 
-        $this->message = "The " . (($name !== null) ? "'" . $name . "'" : "value") .
+        $this->message = "The " . (($name !== null) ? "'" . $name . "'" : "input") .
             " must contain one item" . (($this->value !== null) ? " of '" . $field . "'" : "") .
             " with the required value.";
 

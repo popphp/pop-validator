@@ -78,7 +78,7 @@ class NotIn extends AbstractValidator
      */
     public function generateDefaultMessage(mixed $name = null, mixed $value = null): string
     {
-        $this->message = "The " . (($name !== null) ? "'" . $name . "'" : "value") .
+        $this->message = "The " . (($name !== null) ? "'" . $name . "'" : "input") .
             " must not be contained in the value.";
 
         return $this->message;

@@ -56,7 +56,7 @@ class IsArray extends AbstractValidator
      */
     public function generateDefaultMessage(mixed $name = null, mixed $value = null): string
     {
-        $this->message = "The " . (($name !== null) ? "'" . $name . "'" : "value") . " must be an array.";
+        $this->message = "The " . (($name !== null) ? "'" . $name . "'" : "input") . " must be an array.";
         return $this->message;
     }
 

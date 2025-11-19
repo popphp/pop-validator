@@ -56,8 +56,15 @@ class GreaterThan extends AbstractValidator
      */
     public function generateDefaultMessage(mixed $name = null, mixed $value = null): string
     {
-        $this->message = "The " . (($name !== null) ? "'" . $name . "'" : "value") .
-            " must be greater than '" . ($value ?? $this->value) . "'.";
+        if ($value !== null) {
+            $valueString = $value;
+        } else if (!empty($this->value) && !is_array($this->value)) {
+            $valueString = $this->value;
+        } else {
+            $valueString = 'the value.';
+        }
+        $this->message = "The " . (($name !== null) ? "'" . $name . "'" : "input") .
+            " must be greater than '" . $valueString . "'.";
 
         return $this->message;
     }

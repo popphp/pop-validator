@@ -61,8 +61,15 @@ class CountLessThan extends AbstractValidator
      */
     public function generateDefaultMessage(mixed $name = null, mixed $value = null): string
     {
-        $this->message = "The count of " . (($name !== null) ? "'" . $name . "'" : "the value") .
-            " must be less than '" . ($value ?? $this->value) . "'.";
+        if ($value !== null) {
+            $valueString = $value;
+        } else if (!empty($this->value) && !is_array($this->value)) {
+            $valueString = $this->value;
+        } else {
+            $valueString = 'the value.';
+        }
+        $this->message = "The count of " . (($name !== null) ? "'" . $name . "'" : "the input") .
+            " must be less than '" . $valueString . "'.";
 
         return $this->message;
     }

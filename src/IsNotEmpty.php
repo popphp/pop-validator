@@ -56,7 +56,7 @@ class IsNotEmpty extends AbstractValidator
      */
     public function generateDefaultMessage(mixed $name = null, mixed $value = null): string
     {
-        $this->message = "The " . (($name !== null) ? "'" . $name . "'" : "value") . " must not be empty.";
+        $this->message = "The " . (($name !== null) ? "'" . $name . "'" : "input") . " must not be empty.";
         return $this->message;
     }
 

@@ -79,7 +79,7 @@ class HasOne extends AbstractValidator
         if ($value === null) {
             $value = $this->value;
         }
-        $this->message = "The " . (($name !== null) ? "'" . $name . "'" : "value") .
+        $this->message = "The " . (($name !== null) ? "'" . $name . "'" : "input") .
             " must contain at least one item" . (($value !== null) ? " of '" . $value . "'." : ".");
 
         return $this->message;

@@ -56,7 +56,7 @@ class Numeric extends AbstractValidator
      */
     public function generateDefaultMessage(mixed $name = null, mixed $value = null): string
     {
-        $this->message = "The " . (($name !== null) ? "'" . $name . "'" : "value") . " must be numeric.";
+        $this->message = "The " . (($name !== null) ? "'" . $name . "'" : "input") . " must be numeric.";
         return $this->message;
     }
 
