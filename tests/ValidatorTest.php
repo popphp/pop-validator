@@ -986,6 +986,154 @@ class ValidatorTest extends TestCase
         $this->assertTrue($validator->evaluate([1]));
     }
 
+    public function testHasOneGreaterThan()
+    {
+        $data1 = [
+            'users' => [
+                ['username' => 'john_doe', 'email' => 'john@doe.com', 'logins' => 10]
+            ]
+        ];
+        $data2 = [
+            'users' => [
+                ['username' => 'bob_doe', 'email' => 'bob@doe.com', 'logins' => 5],
+                ['username' => 'jane_doe', 'email' => 'jane@doe.com', 'logins' => 0]
+            ]
+        ];
+        $validator = new Validator\HasOneGreaterThan(['users.logins' => 5]);
+        $this->assertTrue($validator->evaluate($data1));
+        $this->assertFalse($validator->evaluate($data2));
+    }
+
+    public function testHasOneGreaterThanEqual()
+    {
+        $data1 = [
+            'users' => [
+                ['username' => 'john_doe', 'email' => 'john@doe.com', 'logins' => 10]
+            ]
+        ];
+        $data2 = [
+            'users' => [
+                ['username' => 'bob_doe', 'email' => 'bob@doe.com', 'logins' => 4],
+                ['username' => 'jane_doe', 'email' => 'jane@doe.com', 'logins' => 0]
+            ]
+        ];
+        $validator = new Validator\HasOneGreaterThanEqual(['users.logins' => 5]);
+        $this->assertTrue($validator->evaluate($data1));
+        $this->assertFalse($validator->evaluate($data2));
+    }
+
+    public function testHasOneLessThan()
+    {
+        $data1 = [
+            'users' => [
+                ['username' => 'john_doe', 'email' => 'john@doe.com', 'logins' => 4]
+            ]
+        ];
+        $data2 = [
+            'users' => [
+                ['username' => 'bob_doe', 'email' => 'bob@doe.com', 'logins' => 5],
+                ['username' => 'jane_doe', 'email' => 'jane@doe.com', 'logins' => 6]
+            ]
+        ];
+        $validator = new Validator\HasOneLessThan(['users.logins' => 5]);
+        $this->assertTrue($validator->evaluate($data1));
+        $this->assertFalse($validator->evaluate($data2));
+    }
+
+    public function testHasOneLessThanEqual()
+    {
+        $data1 = [
+            'users' => [
+                ['username' => 'john_doe', 'email' => 'john@doe.com', 'logins' => 4]
+            ]
+        ];
+        $data2 = [
+            'users' => [
+                ['username' => 'bob_doe', 'email' => 'bob@doe.com', 'logins' => 7],
+                ['username' => 'jane_doe', 'email' => 'jane@doe.com', 'logins' => 6]
+            ]
+        ];
+        $validator = new Validator\HasOneLessThanEqual(['users.logins' => 5]);
+        $this->assertTrue($validator->evaluate($data1));
+        $this->assertFalse($validator->evaluate($data2));
+    }
+
+    public function testHasOnlyOneGreaterThan()
+    {
+        $data1 = [
+            'users' => [
+                ['username' => 'john_doe', 'email' => 'john@doe.com', 'logins' => 10],
+                ['username' => 'john_doe2', 'email' => 'john@doe2.com', 'logins' => 4]
+            ]
+        ];
+        $data2 = [
+            'users' => [
+                ['username' => 'bob_doe', 'email' => 'bob@doe.com', 'logins' => 6],
+                ['username' => 'jane_doe', 'email' => 'jane@doe.com', 'logins' => 7]
+            ]
+        ];
+        $validator = new Validator\HasOnlyOneGreaterThan(['users.logins' => 5]);
+        $this->assertTrue($validator->evaluate($data1));
+        $this->assertFalse($validator->evaluate($data2));
+    }
+
+    public function testHasOnlyOneGreaterThanEqual()
+    {
+        $data1 = [
+            'users' => [
+                ['username' => 'john_doe', 'email' => 'john@doe.com', 'logins' => 10],
+                ['username' => 'john_doe2', 'email' => 'john@doe2.com', 'logins' => 4]
+            ]
+        ];
+        $data2 = [
+            'users' => [
+                ['username' => 'bob_doe', 'email' => 'bob@doe.com', 'logins' => 6],
+                ['username' => 'jane_doe', 'email' => 'jane@doe.com', 'logins' => 7]
+            ]
+        ];
+        $validator = new Validator\HasOnlyOneGreaterThanEqual(['users.logins' => 5]);
+        $this->assertTrue($validator->evaluate($data1));
+        $this->assertFalse($validator->evaluate($data2));
+    }
+
+    public function testHasOnlyOneLessThan()
+    {
+        $data1 = [
+            'users' => [
+                ['username' => 'john_doe', 'email' => 'john@doe.com', 'logins' => 10],
+                ['username' => 'john_doe2', 'email' => 'john@doe2.com', 'logins' => 4]
+            ]
+        ];
+        $data2 = [
+            'users' => [
+                ['username' => 'bob_doe', 'email' => 'bob@doe.com', 'logins' => 6],
+                ['username' => 'jane_doe', 'email' => 'jane@doe.com', 'logins' => 7]
+            ]
+        ];
+        $validator = new Validator\HasOnlyOneLessThan(['users.logins' => 5]);
+        $this->assertTrue($validator->evaluate($data1));
+        $this->assertFalse($validator->evaluate($data2));
+    }
+
+    public function testHasOnlyOneLessThanEqual()
+    {
+        $data1 = [
+            'users' => [
+                ['username' => 'john_doe', 'email' => 'john@doe.com', 'logins' => 10],
+                ['username' => 'john_doe2', 'email' => 'john@doe2.com', 'logins' => 4]
+            ]
+        ];
+        $data2 = [
+            'users' => [
+                ['username' => 'bob_doe', 'email' => 'bob@doe.com', 'logins' => 6],
+                ['username' => 'jane_doe', 'email' => 'jane@doe.com', 'logins' => 7]
+            ]
+        ];
+        $validator = new Validator\HasOnlyOneLessThanEqual(['users.logins' => 5]);
+        $this->assertTrue($validator->evaluate($data1));
+        $this->assertFalse($validator->evaluate($data2));
+    }
+
     public function testIsArray()
     {
         $validator = new Validator\IsArray();
