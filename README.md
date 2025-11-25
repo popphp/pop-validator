@@ -43,33 +43,35 @@ Quickstart
 
 Here's a list of the available built-in validators, all under the namespace `Pop\Validator\`:
 
-|                          | Built-in Validators      |                        |
-|--------------------------|--------------------------|------------------------|
-| Accepted                 | Equal                    | IsSubnetOf             |
-| AlphaNumeric             | GreaterThanEqual         | LengthBetweenInclude   |
-| Alpha                    | GreaterThan              | LengthBetween          |
-| BetweenInclude           | HasAtLeast               | LengthGreaterThanEqual |
-| Between                  | HasAtMost                | LengthGreaterThan      |
-| Boolean                  | HasCountEqual            | LengthLessThanEqual    |
-| Contains                 | HasCountGreaterThanEqual | LengthLessThan         |
-| CountEqual               | HasCountGreaterThan      | Length                 |
-| CountGreaterThanEqual    | HasCountLessThanEqual    | LessThanEqual          |
-| CountGreaterThan         | HasCountLessThan         | LessThan               |
-| CountLessThanEqual       | HasCountNotEqual         | NotContains            |
-| CountLessThan            | HasOne                   | NotEmpty               |
-| CountNotEqual            | HasOneThatEquals         | NotEndsWith            |
-| CreditCard               | HasOnlyOne               | NotEqual               |
-| DateTimeBetweenInclude   | HasOnlyOneThatEquals     | NotInArray             |
-| DateTimeBetween          | InArray                  | NotIn                  |
-| DateTimeEqual            | In                       | NotStartsWith          |
-| DateTimeGreaterThanEqual | Ipv4                     | Numeric                |
-| DateTimeGreaterThan      | Ipv6                     | RegEx                  |
-| DateTimeLessThanEqual    | IsArray                  | Required               |
-| DateTimeLessThan         | IsEmpty                  | StartsWith             |
-| DateTimeNotEqual         | IsJson                   | Subnet                 |
-| Declined                 | IsNotEmpty               | Url                    |
-| Email                    | IsNotNull                |                        |
-| EndsWith                 | IsNull                   |                        |
+|                          | Built-in Validators        |                        |
+|--------------------------|----------------------------|------------------------|
+| Accepted                 | GreaterThan                | IsJson                 |
+| AlphaNumeric             | HasAtLeast                 | IsNotEmpty             |
+| Alpha                    | HasAtMost                  | IsNotNull              |
+| BetweenInclude           | HasCountEqual              | IsNull                 |
+| Between                  | HasCountGreaterThan        | IsSubnetOf             |
+| Boolean                  | HasCountGreaterThanEqual   | LengthBetweenInclude   |
+| Contains                 | HasCountLessThan           | LengthBetween          |
+| CountEqual               | HasCountLessThanEqual      | LengthGreaterThanEqual |
+| CountGreaterThanEqual    | HasCountNotEqual           | LengthGreaterThan      |
+| CountGreaterThan         | HasOne                     | LengthLessThanEqual    |
+| CountLessThanEqual       | HasOneGreaterThan          | LengthLessThan         |
+| CountLessThan            | HasOneGreaterThanEqual     | Length                 |
+| CountNotEqual            | HasOneLessThan             | LessThanEqual          |
+| CreditCard               | HasOneLessThanEqual        | LessThan               |
+| DateTimeBetweenInclude   | HasOneThatEquals           | NotContains            |
+| DateTimeBetween          | HasOnlyOne                 | NotEmpty               |
+| DateTimeEqual            | HasOnlyOneGreaterThan      | NotEndsWith            |
+| DateTimeGreaterThanEqual | HasOnlyOneGreaterThanEqual | NotEqual               |
+| DateTimeGreaterThan      | HasOnlyOneLessThan         | NotInArray             |
+| DateTimeLessThanEqual    | HasOnlyOneLessThanEqual    | NotIn                  |
+| DateTimeLessThan         | HasOnlyOneThatEquals       | NotStartsWith          |
+| DateTimeNotEqual         | InArray                    | Numeric                |
+| Declined                 | In                         | RegEx                  |
+| Email                    | Ipv4                       | Required               |
+| EndsWith                 | Ipv6                       | StartsWith             |
+| Equal                    | IsArray                    | Subnet                 |
+| GreaterThanEqual         | IsEmpty                    | Url                    |
 
 ### Check an email value
 
