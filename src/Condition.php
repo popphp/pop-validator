@@ -331,11 +331,10 @@ class Condition
             }
         }
 
-        $class            = $this->prefix . $this->validator;
-        $isFormattedArray = (is_array($this->value) && array_key_exists($this->field, $this->value) &&
-            is_array($this->value[$this->field]));
+        $class       = $this->prefix . $this->validator;
+        $isFormatted = (is_array($this->value) && array_key_exists($this->field, $this->value));
 
-        $this->validatorObject = (str_starts_with($this->validator, 'Has') && (!$isFormattedArray)) ?
+        $this->validatorObject = (str_starts_with($this->validator, 'Has') && (!$isFormatted)) ?
             new $class([$this->field => $this->value], $this->message) : new $class($this->value, $this->message);
 
         return $this->validatorObject->evaluate((array_key_exists($this->field, $input) ? $input[$this->field] : $input));
