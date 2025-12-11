@@ -14,7 +14,7 @@
 namespace Pop\Validator;
 
 /**
- * Has one in validator class
+ * Has one in validator class (alias class)
  *
  * @category   Pop
  * @package    Pop\Validator
