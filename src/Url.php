@@ -44,7 +44,9 @@ class Url extends AbstractValidator
             $this->generateDefaultMessage();
         }
 
-        return (filter_var($this->input, FILTER_VALIDATE_URL) !== false);
+        $inputValue = ($this->hasKeyField()) ? $this->getKeyFieldValue() : $this->input;
+
+        return (filter_var($inputValue, FILTER_VALIDATE_URL) !== false);
     }
 
     /**

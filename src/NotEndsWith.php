@@ -44,7 +44,9 @@ class NotEndsWith extends AbstractValidator
             $this->generateDefaultMessage();
         }
 
-        return !str_ends_with($this->input, $this->value);
+        $inputValue = ($this->hasKeyField()) ? $this->getKeyFieldValue() : $this->input;
+
+        return !str_ends_with($inputValue, $this->value);
     }
 
     /**

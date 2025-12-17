@@ -48,7 +48,10 @@ class Accepted extends AbstractValidator
             $this->generateDefaultMessage();
         }
 
-        return in_array($this->input, [1, '1', true, 'true', 'yes'], true);
+        $inputValue = ($this->hasKeyField()) ? $this->getKeyFieldValue() : $this->input;
+
+        return in_array($inputValue, [1, '1', true, 'true', 'yes'], true);
+
     }
 
     /**

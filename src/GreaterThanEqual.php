@@ -44,7 +44,9 @@ class GreaterThanEqual extends AbstractValidator
             $this->generateDefaultMessage();
         }
 
-        return ($this->input >= $this->value);
+        $inputValue = ($this->hasKeyField()) ? $this->getKeyFieldValue() : $this->input;
+
+        return ($inputValue >= $this->value);
     }
 
     /**

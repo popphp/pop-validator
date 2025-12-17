@@ -60,9 +60,13 @@ class HasOneThatEquals extends AbstractValidator
             $this->generateDefaultMessage();
         }
 
-        if (!str_contains($field, '.')) {
+        if (!str_contains($field, '.') && (!$this->hasField())) {
             return (array_key_exists($field, $this->input) &&
                 !is_array($this->input[$field]) && ($this->input[$field] == $requiredValue));
+        } else if ($this->hasKeyField()) {
+            ['key' => $key, 'field' => $field] = $this->getField();
+            return (array_key_exists($key, $this->input) && array_key_exists($field, $this->input[$key]) &&
+                ($this->input[$key][$field] == $requiredValue));
         } else {
             $value = [];
             self::traverseData($field, $this->input, $value);

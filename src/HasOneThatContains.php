@@ -60,8 +60,11 @@ class HasOneThatContains extends AbstractValidator
             $this->generateDefaultMessage();
         }
 
-        if (!str_contains($field, '.')) {
+        if (!str_contains($field, '.') && (!$this->hasField())) {
             $value = (array_key_exists($field, $this->input) && !is_array($this->input[$field])) ? $this->input[$field] : null;
+        } else if ($this->hasKeyField()) {
+            ['key' => $key, 'field' => $field] = $this->getField();
+            $value = $this->input[$key][$field] ?? null;
         } else {
             $value = [];
             self::traverseData($field, $this->input, $value);

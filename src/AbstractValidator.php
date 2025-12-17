@@ -51,6 +51,12 @@ abstract class AbstractValidator implements ValidatorInterface
     protected mixed $input = null;
 
     /**
+     * Input field
+     * @var ?string
+     */
+    protected ?string $field = null;
+
+    /**
      * Validator message
      *  - The message provided when the validation fails
      * @var ?string
@@ -140,6 +146,41 @@ abstract class AbstractValidator implements ValidatorInterface
     }
 
     /**
+     * Get the validator field
+     *
+     * @param  bool $parse
+     * @return string|array|null
+     */
+    public function getField(bool $parse = true): string|array|null
+    {
+        if (str_contains($this->field, '[') && str_ends_with($this->field, ']')) {
+            $key   = substr($this->field, 0, strpos($this->field, '['));
+            $field = substr($this->field, strpos($this->field, '[') + 1, -1);
+
+            return ['key' => $key, 'field' => $field];
+        } else {
+            return $this->field;
+        }
+    }
+
+    /**
+     * Get the validator key field value
+     *
+     * @return mixed
+     */
+    public function getKeyFieldValue(): mixed
+    {
+        $inputValue = null;
+
+        ['key' => $key, 'field' => $field] = $this->getField();
+        if (!empty($key) && !empty($field) && isset($this->input[$key][$field])) {
+            $inputValue = $this->input[$key][$field];
+        }
+
+        return $inputValue;
+    }
+
+    /**
      * Get the validator results
      *
      * @return mixed
@@ -197,6 +238,26 @@ abstract class AbstractValidator implements ValidatorInterface
     public function hasInput(): bool
     {
         return ($this->input !== null);
+    }
+
+    /**
+     * Has validator field
+     *
+     * @return bool
+     */
+    public function hasField(): bool
+    {
+        return ($this->field !== null);
+    }
+
+    /**
+     * Has validator key field
+     *
+     * @return bool
+     */
+    public function hasKeyField(): bool
+    {
+        return (($this->field !== null) && str_contains($this->field, '[') && is_array($this->input));
     }
 
     /**
@@ -266,6 +327,18 @@ abstract class AbstractValidator implements ValidatorInterface
     public function setInput(mixed $input = null): AbstractValidator
     {
         $this->input = $input;
+        return $this;
+    }
+
+    /**
+     * Set the validator field
+     *
+     * @param  ?string $field
+     * @return AbstractValidator
+     */
+    public function setField(?string $field = null): AbstractValidator
+    {
+        $this->field = $field;
         return $this;
     }
 

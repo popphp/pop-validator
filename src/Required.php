@@ -54,12 +54,15 @@ class Required extends AbstractValidator
         if (!is_array($input)) {
             throw new Exception('Error: The evaluated input must be an array.');
         }
-        if (empty($this->value)) {
+        if (empty($this->value) && (!$this->hasField())) {
             throw new Exception('Error: The evaluated value cannot be empty.');
         }
 
-        if (!str_contains($this->value, '.')) {
+        if (!str_contains($this->value, '.') && (!$this->hasField())) {
             return (array_key_exists($this->value, $this->input));
+        } else if ($this->hasKeyField()) {
+            ['key' => $key, 'field' => $field] = $this->getField();
+            return (array_key_exists($key, $this->input) && array_key_exists($field, $this->input[$key]));
         } else {
             $parentValues = [];
             $childValues  = [];

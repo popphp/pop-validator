@@ -90,11 +90,13 @@ class RegEx extends AbstractValidator
             $this->generateDefaultMessage();
         }
 
+        $inputValue = ($this->hasKeyField()) ? $this->getKeyFieldValue() : $this->input;
+
         if (is_array($this->value)) {
             if ((int)$this->numberToSatisfy == 0) {
                 $result = true;
                 foreach ($this->value as $value) {
-                    if (!preg_match($value, $this->input)) {
+                    if (!preg_match($value, $inputValue)) {
                         $result = false;
                         break;
                     }
@@ -103,12 +105,12 @@ class RegEx extends AbstractValidator
             } else {
                 $satisfied = 0;
                 foreach ($this->value as $value) {
-                    $satisfied += (int)preg_match($value, $this->input);
+                    $satisfied += (int)preg_match($value, $inputValue);
                 }
                 return ($satisfied >= (int)$this->numberToSatisfy);
             }
         } else {
-            return (bool)(preg_match($this->value, $this->input));
+            return (bool)(preg_match($this->value, $inputValue));
         }
     }
 

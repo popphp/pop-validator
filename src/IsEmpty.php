@@ -44,7 +44,9 @@ class IsEmpty extends AbstractValidator
             $this->generateDefaultMessage();
         }
 
-        return (empty($this->input));
+        $inputValue = ($this->hasKeyField()) ? $this->getKeyFieldValue() : $this->input;
+
+        return (empty($inputValue));
     }
 
     /**

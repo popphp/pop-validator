@@ -319,7 +319,7 @@ class Condition
             throw new Exception('Error: The condition class does not exist.');
         }
 
-        if (!str_contains($this->field, '.') && !array_key_exists($this->field, $input))  {
+        if (!str_contains($this->field, '.') && !str_contains($this->field, '[') && !array_key_exists($this->field, $input))  {
             throw new Exception("Error: The input data does not contain a '" . $this->field . "' field value.");
         }
 
@@ -336,6 +336,10 @@ class Condition
 
         $this->validatorObject = (str_starts_with($this->validator, 'Has') && (!$isFormatted)) ?
             new $class([$this->field => $this->value], $this->message) : new $class($this->value, $this->message);
+
+        if (!empty($this->field)) {
+            $this->validatorObject->setField($this->field);
+        }
 
         return $this->validatorObject->evaluate((array_key_exists($this->field, $input) ? $input[$this->field] : $input));
     }

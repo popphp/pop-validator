@@ -44,7 +44,9 @@ class NotStartsWith extends AbstractValidator
             $this->generateDefaultMessage();
         }
 
-        return !str_starts_with($this->input, $this->value);
+        $inputValue = ($this->hasKeyField()) ? $this->getKeyFieldValue() : $this->input;
+
+        return !str_starts_with($inputValue, $this->value);
     }
 
     /**

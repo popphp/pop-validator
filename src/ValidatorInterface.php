@@ -62,6 +62,21 @@ interface ValidatorInterface
     public function getInput(): mixed;
 
     /**
+     * Get the validator field
+     *
+     * @param  bool $parse
+     * @return string|array|null
+     */
+    public function getField(bool $parse = true): string|array|null;
+
+    /**
+     * Get the validator key field value
+     *
+     * @return mixed
+     */
+    public function getKeyFieldValue(): mixed;
+
+    /**
      * Get the validator results
      *
      * @return mixed
@@ -102,6 +117,20 @@ interface ValidatorInterface
      * @return bool
      */
     public function hasInput(): bool;
+
+    /**
+     * Has validator field
+     *
+     * @return bool
+     */
+    public function hasField(): bool;
+
+    /**
+     * Has validator key field
+     *
+     * @return bool
+     */
+    public function hasKeyField(): bool;
 
     /**
      * Has validator results
@@ -149,6 +178,14 @@ interface ValidatorInterface
      * @return ValidatorInterface
      */
     public function setInput(mixed $input = null): ValidatorInterface;
+
+    /**
+     * Set the validator field
+     *
+     * @param  ?string $field
+     * @return AbstractValidator
+     */
+    public function setField(?string $field = null): ValidatorInterface;
 
     /**
      * Evaluate

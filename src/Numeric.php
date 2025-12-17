@@ -44,7 +44,9 @@ class Numeric extends AbstractValidator
             $this->generateDefaultMessage();
         }
 
-        return (is_numeric($this->input));
+        $inputValue = ($this->hasKeyField()) ? $this->getKeyFieldValue() : $this->input;
+
+        return (is_numeric($inputValue));
     }
 
     /**

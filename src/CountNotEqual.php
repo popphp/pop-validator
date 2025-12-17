@@ -49,7 +49,9 @@ class CountNotEqual extends AbstractValidator
             throw new Exception('Error: The evaluated input must be an array.');
         }
 
-        return (count($this->input) != $this->value);
+        $inputValue = ($this->hasKeyField()) ? $this->getKeyFieldValue() : $this->input;
+
+        return (count($inputValue) != $this->value);
     }
 
     /**

@@ -50,7 +50,9 @@ class IsSubnetOf extends AbstractValidator
             $this->generateDefaultMessage();
         }
 
-        return (substr((string)$this->input, 0, strrpos((string)$this->input, '.')) == $this->value);
+        $inputValue = ($this->hasKeyField()) ? $this->getKeyFieldValue() : $this->input;
+
+        return (substr((string)$inputValue, 0, strrpos((string)$inputValue, '.')) == $this->value);
     }
 
     /**

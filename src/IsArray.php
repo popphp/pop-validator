@@ -44,7 +44,9 @@ class IsArray extends AbstractValidator
             $this->generateDefaultMessage();
         }
 
-        return is_array($this->input);
+        $inputValue = ($this->hasKeyField()) ? $this->getKeyFieldValue() : $this->input;
+
+        return is_array($inputValue);
     }
 
     /**

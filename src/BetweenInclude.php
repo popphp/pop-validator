@@ -51,7 +51,9 @@ class BetweenInclude extends AbstractValidator
             $this->generateDefaultMessage();
         }
 
-        return (($this->input >= $this->value[0]) && ($this->input <= $this->value[1]));
+        $inputValue = ($this->hasKeyField()) ? $this->getKeyFieldValue() : $this->input;
+
+        return (($inputValue >= $this->value[0]) && ($inputValue <= $this->value[1]));
     }
 
     /**

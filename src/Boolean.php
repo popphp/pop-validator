@@ -44,7 +44,9 @@ class Boolean extends AbstractValidator
             $this->generateDefaultMessage();
         }
 
-        return in_array($this->input, [true, false, 1, 0, '1', '0'], true);
+        $inputValue = ($this->hasKeyField()) ? $this->getKeyFieldValue() : $this->input;
+
+        return in_array($inputValue, [true, false, 1, 0, '1', '0'], true);
     }
 
     /**

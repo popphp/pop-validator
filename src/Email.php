@@ -44,7 +44,9 @@ class Email extends AbstractValidator
             $this->generateDefaultMessage();
         }
 
-        return (bool)(preg_match('/[a-zA-Z0-9\.\-\_+%]+@[a-zA-Z0-9\-\_\.]+\.[a-zA-Z]{2,4}/', $this->input));
+        $inputValue = ($this->hasKeyField()) ? $this->getKeyFieldValue() : $this->input;
+
+        return (bool)(preg_match('/[a-zA-Z0-9\.\-\_+%]+@[a-zA-Z0-9\-\_\.]+\.[a-zA-Z]{2,4}/', $inputValue));
     }
 
     /**

@@ -1134,6 +1134,63 @@ class ValidatorTest extends TestCase
         $this->assertFalse($validator->evaluate($data2));
     }
 
+    public function testHasOneNotEmpty()
+    {
+        $data1 = [
+            'client_services' => [
+                ['service_id' => null, 'name' => 'Two Owner'],
+                ['service_id' => 1, 'name' => 'Two'],
+            ],
+        ];
+        $data2 = [
+            'client_services' => [
+                ['service_id' => null, 'name' => 'Two Owner'],
+                ['service_id' => null, 'name' => 'Two'],
+            ],
+        ];
+        $validator = new Validator\HasOneNotEmpty('client_services.service_id');
+        $this->assertTrue($validator->evaluate($data1));
+        $this->assertFalse($validator->evaluate($data2));
+    }
+
+    public function testHasOneThatContains()
+    {
+        $data1 = [
+            'client_services' => [
+                ['service_id' => null, 'name' => 'Two Owner'],
+                ['service_id' => 1, 'name' => 'Current Owner'],
+            ],
+        ];
+        $data2 = [
+            'client_services' => [
+                ['service_id' => null, 'name' => 'Current Owner'],
+                ['service_id' => null, 'name' => 'Update'],
+            ],
+        ];
+        $validator = new Validator\HasOneThatContains(['client_services.name' => 'Two']);
+        $this->assertTrue($validator->evaluate($data1));
+        $this->assertFalse($validator->evaluate($data2));
+    }
+
+    public function testHasOnlyOneThatContains()
+    {
+        $data1 = [
+            'client_services' => [
+                ['service_id' => null, 'name' => 'Two Owner'],
+                ['service_id' => 1, 'name' => 'Current Owner'],
+            ],
+        ];
+        $data2 = [
+            'client_services' => [
+                ['service_id' => null, 'name' => 'Two Owner'],
+                ['service_id' => null, 'name' => 'Two Owner'],
+            ],
+        ];
+        $validator = new Validator\HasOnlyOneThatContains(['client_services.name' => 'Two']);
+        $this->assertTrue($validator->evaluate($data1));
+        $this->assertFalse($validator->evaluate($data2));
+    }
+
     public function testIsArray()
     {
         $validator = new Validator\IsArray();

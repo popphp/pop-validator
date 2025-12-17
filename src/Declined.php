@@ -48,7 +48,9 @@ class Declined extends AbstractValidator
             $this->generateDefaultMessage();
         }
 
-        return in_array($this->input, [0, '0', false, 'false', 'no'], true);
+        $inputValue = ($this->hasKeyField()) ? $this->getKeyFieldValue() : $this->input;
+
+        return in_array($inputValue, [0, '0', false, 'false', 'no'], true);
     }
 
     /**

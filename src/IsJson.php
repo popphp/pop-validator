@@ -44,7 +44,9 @@ class IsJson extends AbstractValidator
             $this->generateDefaultMessage();
         }
 
-        return ((@json_decode($this->input, true) !== false) && json_last_error() === JSON_ERROR_NONE);
+        $inputValue = ($this->hasKeyField()) ? $this->getKeyFieldValue() : $this->input;
+
+        return ((@json_decode($inputValue, true) !== false) && json_last_error() === JSON_ERROR_NONE);
     }
 
     /**

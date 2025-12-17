@@ -57,9 +57,13 @@ class HasOnlyOne extends AbstractValidator
             $this->generateDefaultMessage();
         }
 
-        if (!str_contains($this->value, '.')) {
+        if (!str_contains($this->value, '.') && (!$this->hasField())) {
             return (array_key_exists($this->value, $this->input) &&
                 is_array($this->input[$this->value]) && count($this->input[$this->value]) == 1);
+        } else if ($this->hasKeyField()) {
+            ['key' => $key, 'field' => $field] = $this->getField();
+            return (array_key_exists($key, $this->input) && array_key_exists($field, $this->input[$key]) &&
+                is_array($this->input[$key][$field]) && (count($this->input[$key][$field]) == 1));
         } else {
             $value = [];
             self::traverseData($this->value, $this->input, $value);

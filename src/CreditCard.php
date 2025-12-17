@@ -50,8 +50,10 @@ class CreditCard extends AbstractValidator
             $this->generateDefaultMessage();
         }
 
+        $inputValue = ($this->hasKeyField()) ? $this->getKeyFieldValue() : $this->input;
+
         // Evaluate the input against the validator
-        $nums   = str_split((string)$this->input);
+        $nums   = str_split((string)$inputValue);
         $check  = $nums[count($nums) - 1];
         $start  = count($nums) - 2;
         $sum    = 0;

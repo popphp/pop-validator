@@ -49,7 +49,9 @@ class IsNotNull extends AbstractValidator
             $this->generateDefaultMessage();
         }
 
-        return ($this->input !== null);
+        $inputValue = ($this->hasKeyField()) ? $this->getKeyFieldValue() : $this->input;
+
+        return ($inputValue !== null);
     }
 
     /**

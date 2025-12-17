@@ -45,7 +45,7 @@ class NotIn extends AbstractValidator
         }
 
         $result   = false;
-        $needle   = $this->input;
+        $needle   = ($this->hasKeyField()) ? $this->getKeyFieldValue() : $this->input;
         $haystack = $this->value;
 
         if (!is_array($needle) && !is_array($haystack)) {

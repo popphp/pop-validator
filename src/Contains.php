@@ -46,7 +46,7 @@ class Contains extends AbstractValidator
 
         $result   = false;
         $needle   = $this->value;
-        $haystack = $this->input;
+        $haystack = ($this->hasKeyField()) ? $this->getKeyFieldValue() : $this->input;
 
         if (!is_array($needle) && !is_array($haystack)) {
             $result = (str_contains($haystack, $needle));
