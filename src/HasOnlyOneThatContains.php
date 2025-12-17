@@ -14,7 +14,7 @@
 namespace Pop\Validator;
 
 /**
- * Has one that contains than validator class
+ * Has only one that contains than validator class
  *
  * @category   Pop
  * @package    Pop\Validator
@@ -23,7 +23,7 @@ namespace Pop\Validator;
  * @license    http://www.popphp.org/license     New BSD License
  * @version    4.6.5
  */
-class HasOneThatContains extends AbstractValidator
+class HasOnlyOneThatContains extends AbstractValidator
 {
 
     /**
@@ -54,6 +54,7 @@ class HasOneThatContains extends AbstractValidator
 
         $field         = array_key_first($this->value);
         $requiredValue = reset($this->value);
+        $count         = 0;
 
         // Set the default message
         if (!$this->hasMessage()) {
@@ -68,59 +69,48 @@ class HasOneThatContains extends AbstractValidator
         }
 
         if (is_array($value)) {
-            $result = false;
             foreach ($value as $val) {
                 $needle   = $requiredValue;
                 $haystack = $val;
 
-                if (!is_array($needle) && !is_array($haystack)) {
-                    $result = (str_contains($haystack, $needle));
-                } else if (!is_array($needle) && is_array($haystack)) {
-                    $result = in_array($needle, $haystack);
+                if (!is_array($needle) && !is_array($haystack) && str_contains($haystack, $needle)) {
+                    $count++;
+                } else if (!is_array($needle) && is_array($haystack) && in_array($needle, $haystack)) {
+                    $count++;
                 } else if (is_array($needle)) {
                     foreach ($needle as $n) {
                         if (is_array($haystack)) {
                             if (in_array($n, $haystack)) {
-                                $result = true;
-                                break;
+                                $count++;
                             }
                         } else if (str_contains((string)$haystack, $n)) {
-                            $result = true;
-                            break;
+                            $count++;
                         }
                     }
                 }
-                if ($result) {
-                    return true;
-                }
             }
-            return $result;
         } else {
-            $result   = false;
             $needle   = $requiredValue;
             $haystack = $value;
 
-            if (!is_array($needle) && !is_array($haystack)) {
-                $result = (str_contains($haystack, $needle));
-            } else if (!is_array($needle) && is_array($haystack)) {
-                $result = in_array($needle, $haystack);
+            if (!is_array($needle) && !is_array($haystack) && str_contains($haystack, $needle)) {
+                $count++;
+            } else if (!is_array($needle) && is_array($haystack) && in_array($needle, $haystack)) {
+                $count++;
             } else if (is_array($needle)) {
-                $result = true;
                 foreach ($needle as $n) {
                     if (is_array($haystack)) {
-                        if (!in_array($n, $haystack)) {
-                            $result = false;
-                            break;
+                        if (in_array($n, $haystack)) {
+                            $count++;
                         }
-                    } else if (!str_contains((string)$haystack, $n)) {
-                        $result = false;
-                        break;
+                    } else if (str_contains((string)$haystack, $n)) {
+                        $count++;
                     }
                 }
             }
-
-            return $result;
         }
+
+        return ($count == 1);
     }
 
     /**
@@ -141,7 +131,7 @@ class HasOneThatContains extends AbstractValidator
         }
 
         $this->message = "The " . (($name !== null) ? "'" . $name . "'" : "input") .
-            " must contain one item" . (($this->value !== null) ? " of '" . $field . "'" : "") .
+            " must have only one item" . (($this->value !== null) ? " of '" . $field . "'" : "") .
             " that contains the required value.";
 
         return $this->message;

@@ -14,7 +14,7 @@
 namespace Pop\Validator;
 
 /**
- * Has one that is less than validator class
+ * Has one not empty validator class
  *
  * @category   Pop
  * @package    Pop\Validator
@@ -23,7 +23,7 @@ namespace Pop\Validator;
  * @license    http://www.popphp.org/license     New BSD License
  * @version    4.6.5
  */
-class HasOnlyOneLessThan extends AbstractValidator
+class HasOneNotEmpty extends AbstractValidator
 {
 
     /**
@@ -45,17 +45,11 @@ class HasOnlyOneLessThan extends AbstractValidator
             $this->input = $input;
         }
 
-        $result = false;
-
         if (!is_array($input)) {
             throw new Exception('Error: The evaluated input must be an array.');
         }
-        if (!is_array($this->value)) {
-            throw new Exception("Error: The evaluated value must be an array of node name and value, e.g. ['node.name' => 3].");
-        }
 
-        $field         = array_key_first($this->value);
-        $requiredValue = reset($this->value);
+        $field = $this->value;
 
         // Set the default message
         if (!$this->hasMessage()) {
@@ -63,26 +57,23 @@ class HasOnlyOneLessThan extends AbstractValidator
         }
 
         if (!str_contains($field, '.')) {
-            throw new Exception("Error: The evaluated value must been an array with a column name, e.g. 'users.username'.");
-        }
+            return (array_key_exists($field, $this->input) &&
+                !is_array($this->input[$field]) && !empty($this->input[$field]));
+        } else {
+            $value = [];
+            self::traverseData($field, $this->input, $value);
 
-        $parent = substr($field, 0, strrpos($field, '.'));
-        $child  = substr($field, (strrpos($field, '.') + 1));
-        $value  = [];
-        $count  = 0;
-        self::traverseData($parent, $this->input, $value);
-
-        foreach ($value as $val) {
-            if (is_array($val)) {
-                foreach ($val as $item) {
-                    if (is_array($item) && isset($item[$child]) && ($item[$child] < $requiredValue)) {
-                        $count++;
+            if (is_array($value)) {
+                foreach ($value as $val) {
+                    if (!empty($val)) {
+                        return true;
                     }
                 }
+                return false;
+            } else {
+                return !empty($value);
             }
         }
-
-        return ($count == 1);
     }
 
     /**
@@ -94,17 +85,11 @@ class HasOnlyOneLessThan extends AbstractValidator
      */
     public function generateDefaultMessage(mixed $name = null, mixed $value = null): string
     {
-        $field = null;
-
-        if (($value !== null) && is_array($value)) {
-            $field = array_key_first($value);
-        } else if ($this->value !== null) {
-            $field = array_key_first($this->value);
-        }
+        $field = $value ?? $this->value;
 
         $this->message = "The " . (($name !== null) ? "'" . $name . "'" : "input") .
-            " must contain only one item" . (($this->value !== null) ? " of '" . $field . "'" : "") .
-            " less than the required value.";
+            " must contain one item" . (($this->value !== null) ? " of '" . $field . "'" : "") .
+            " that is not empty.";
 
         return $this->message;
     }

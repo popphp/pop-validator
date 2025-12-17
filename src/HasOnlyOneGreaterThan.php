@@ -103,7 +103,7 @@ class HasOnlyOneGreaterThan extends AbstractValidator
         }
 
         $this->message = "The " . (($name !== null) ? "'" . $name . "'" : "input") .
-            " must contain one item" . (($this->value !== null) ? " of '" . $field . "'" : "") .
+            " must contain only one item" . (($this->value !== null) ? " of '" . $field . "'" : "") .
             " greater than the required value.";
 
         return $this->message;

@@ -67,7 +67,7 @@ class MessageTest extends TestCase
     public function testHasOnlyOneThatEqualsMessage()
     {
         $this->assertEquals(
-            "The 'data_point' must contain one item with the required value.",
+            "The 'data_point' must contain only one item with the required value.",
             (new Validator\HasOnlyOneThatEquals())->generateDefaultMessage('data_point', ['node' => 3])
         );
     }

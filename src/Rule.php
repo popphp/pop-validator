@@ -34,7 +34,8 @@ class Rule
      */
     protected static array $hasClasses = [
         'HasOneThatEquals', 'HasOnlyOneThatEquals', 'HasCountEqual', 'HasCountGreaterThanEqual',
-        'HasCountGreaterThan', 'HasCountLessThanEqual', 'HasCountLessThan', 'HasCountNotEqual'
+        'HasCountGreaterThan', 'HasCountLessThanEqual', 'HasCountLessThan', 'HasCountNotEqual',
+        'HasOneThatContains', 'HasOnlyOneThatContains',
     ];
 
     /**
@@ -42,7 +43,7 @@ class Rule
      * @var array
      */
     protected static array $hasOneClasses = [
-        'HasOne', 'HasOnlyOne'
+        'HasOne', 'HasOnlyOne', 'HasOneNotEmpty',
     ];
 
     /**
