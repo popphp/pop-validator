@@ -35,10 +35,11 @@ class HasOnlyOneThatEquals extends AbstractValidator
      * Method to evaluate the validator
      *
      * @param  mixed $input
-     * @throws Exception
+     * @param  bool  $isDateTime
      * @return bool
+     *@throws Exception
      */
-    public function evaluate(mixed $input = null): bool
+    public function evaluate(mixed $input = null, bool $isDateTime = false): bool
     {
         // Set the input, if passed
         if ($input !== null) {
@@ -75,8 +76,16 @@ class HasOnlyOneThatEquals extends AbstractValidator
         foreach ($value as $val) {
             if (is_array($val)) {
                 foreach ($val as $item) {
-                    if (is_array($item) && isset($item[$child]) && ($item[$child] == $requiredValue)) {
-                        $count++;
+                    if (is_array($item) && isset($item[$child])) {
+                        if ($isDateTime) {
+                            if (strtotime($item[$child]) == strtotime($requiredValue)) {
+                                $count++;
+                            }
+                        } else {
+                            if ($item[$child] == $requiredValue) {
+                                $count++;
+                            }
+                        }
                     }
                 }
             }

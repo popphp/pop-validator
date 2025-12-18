@@ -35,10 +35,11 @@ class HasOneThatEquals extends AbstractValidator
      * Method to evaluate the validator
      *
      * @param  mixed $input
-     * @throws Exception
+     * @param  bool  $isDateTime
      * @return bool
+     *@throws Exception
      */
-    public function evaluate(mixed $input = null): bool
+    public function evaluate(mixed $input = null, bool $isDateTime = false): bool
     {
         // Set the input, if passed
         if ($input !== null) {
@@ -61,12 +62,22 @@ class HasOneThatEquals extends AbstractValidator
         }
 
         if (!str_contains($field, '.') && (!$this->hasField())) {
-            return (array_key_exists($field, $this->input) &&
-                !is_array($this->input[$field]) && ($this->input[$field] == $requiredValue));
+            if ($isDateTime) {
+                return (array_key_exists($field, $this->input) &&
+                    !is_array($this->input[$field]) && (strtotime($this->input[$field]) == strtotime($requiredValue)));
+            } else {
+                return (array_key_exists($field, $this->input) &&
+                    !is_array($this->input[$field]) && ($this->input[$field] == $requiredValue));
+            }
         } else if ($this->hasKeyField()) {
             ['key' => $key, 'field' => $field] = $this->getField();
-            return (array_key_exists($key, $this->input) && array_key_exists($field, $this->input[$key]) &&
-                ($this->input[$key][$field] == $requiredValue));
+            if ($isDateTime) {
+                return (array_key_exists($key, $this->input) && array_key_exists($field, $this->input[$key]) &&
+                    (strtotime($this->input[$key][$field]) == strtotime($requiredValue)));
+            } else {
+                return (array_key_exists($key, $this->input) && array_key_exists($field, $this->input[$key]) &&
+                    ($this->input[$key][$field] == $requiredValue));
+            }
         } else {
             $value = [];
             self::traverseData($field, $this->input, $value);
@@ -75,7 +86,7 @@ class HasOneThatEquals extends AbstractValidator
                 return (is_array($requiredValue)) ?
                     !empty(array_intersect($requiredValue, $value)) : in_array($requiredValue, $value);
             } else {
-                return ($value == $requiredValue);
+                return ($isDateTime) ? (strtotime($value) == strtotime($requiredValue)) : ($value == $requiredValue);
             }
         }
     }

@@ -68,6 +68,8 @@ trait DateTimeTrait
                 $this->detectFormat($value);
                 if ($this->dateTimeFormat !== null) {
                     $value = strtotime($value);
+                } else if (strtotime($value) !== false) {
+                    $value = strtotime($value);
                 }
             }
         }
