@@ -137,6 +137,7 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator\CountGreaterThanEqual(2);
         $this->assertTrue($validator->evaluate([1, 2, 3]));
+        $this->assertTrue($validator->evaluate([1, 2]));
         $this->assertFalse($validator->evaluate([1]));
     }
 
@@ -165,6 +166,7 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator\CountLessThanEqual(4);
         $this->assertTrue($validator->evaluate([1, 2, 3]));
+        $this->assertTrue($validator->evaluate([1, 2, 3, 4]));
         $this->assertFalse($validator->evaluate([1, 2, 3, 4, 5]));
     }
 
@@ -189,6 +191,20 @@ class ValidatorTest extends TestCase
         $this->assertFalse($validator->evaluate(1));
     }
 
+    public function testHasAtLeast()
+    {
+        $validator = new Validator\HasAtLeast(2);
+        $this->assertTrue($validator->evaluate([1, 2, 3]));
+        $this->assertFalse($validator->evaluate([1]));
+    }
+
+    public function testHasAtMost()
+    {
+        $validator = new Validator\HasAtMost(2);
+        $this->assertTrue($validator->evaluate([1, 2]));
+        $this->assertFalse($validator->evaluate([1, 2, 3]));
+    }
+
     public function testCreditCard()
     {
         $validator = new Validator\CreditCard();
@@ -196,6 +212,7 @@ class ValidatorTest extends TestCase
         $this->assertTrue($validator->evaluate('4111-1111-1111-1111'));
         $this->assertTrue($validator->evaluate('4111 1111 1111 1111'));
         $this->assertFalse($validator->evaluate('123456789'));
+        $this->assertFalse($validator->evaluate('not-a-number'));
     }
 
     public function testDateTimeBetween()
@@ -268,6 +285,14 @@ class ValidatorTest extends TestCase
         $this->assertEquals('123456789', $validator->getValue());
     }
 
+    public function testDateTimeUnrecognizedFormatFallsBackToStrtotime()
+    {
+        $validator = new Validator\DateTimeGreaterThan('November 1, 2025');
+        $this->assertIsInt($validator->getValue());
+        $this->assertTrue($validator->evaluate('November 15, 2025'));
+        $this->assertFalse($validator->evaluate('October 15, 2025'));
+    }
+
     public function testDeclined()
     {
         $validator = new Validator\Declined();
@@ -287,7 +312,9 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator\Email();
         $this->assertTrue($validator->evaluate('test@test.com'));
+        $this->assertTrue($validator->evaluate('test@test.technology'));
         $this->assertFalse($validator->evaluate('bademail'));
+        $this->assertFalse($validator->evaluate('this is not an email but has foo@bar.co embedded in it'));
     }
 
     public function testEndsWith()
@@ -309,6 +336,26 @@ class ValidatorTest extends TestCase
         $validator = new Validator\Equal(10);
         $this->assertTrue($validator->evaluate(10));
         $this->assertFalse($validator->evaluate(15));
+    }
+
+    public function testEqualPlainField()
+    {
+        $validator = new Validator\Equal(1);
+        $validator->setField('active');
+        $this->assertEquals('active', $validator->getField());
+        $this->assertFalse($validator->hasKeyField());
+    }
+
+    public function testEqualBracketField()
+    {
+        $validator = new Validator\Equal(1);
+        $validator->setField('user[active]');
+        $this->assertTrue($validator->hasField());
+        $this->assertTrue($validator->evaluate(['user' => ['active' => 1]]));
+        $this->assertTrue($validator->hasKeyField());
+        $this->assertEquals(['key' => 'user', 'field' => 'active'], $validator->getField());
+        $this->assertEquals(1, $validator->getKeyFieldValue());
+        $this->assertFalse($validator->evaluate(['user' => ['active' => 0]]));
     }
 
     public function testHasCountEqual1()
@@ -378,6 +425,14 @@ class ValidatorTest extends TestCase
         $this->assertTrue($validator->evaluate($data1));
     }
 
+    public function testHasCountEqualBracketField()
+    {
+        $validator = new Validator\HasCountEqual(['users' => 2]);
+        $validator->setField('group[users]');
+        $this->assertTrue($validator->evaluate(['group' => ['users' => [1, 2]]]));
+        $this->assertFalse($validator->evaluate(['group' => ['users' => [1]]]));
+    }
+
     public function testHasCountNotEqual1()
     {
         $data1 = [
@@ -443,6 +498,14 @@ class ValidatorTest extends TestCase
         $this->expectException('Pop\Validator\Exception');
         $validator = new Validator\HasCountNotEqual(2);
         $this->assertTrue($validator->evaluate($data1));
+    }
+
+    public function testHasCountNotEqualBracketField()
+    {
+        $validator = new Validator\HasCountNotEqual(['users' => 2]);
+        $validator->setField('group[users]');
+        $this->assertTrue($validator->evaluate(['group' => ['users' => [1, 2, 3]]]));
+        $this->assertFalse($validator->evaluate(['group' => ['users' => [1, 2]]]));
     }
 
     public function testHasCountGreaterThan1()
@@ -512,6 +575,14 @@ class ValidatorTest extends TestCase
         $this->assertTrue($validator->evaluate($data1));
     }
 
+    public function testHasCountGreaterThanBracketField()
+    {
+        $validator = new Validator\HasCountGreaterThan(['users' => 1]);
+        $validator->setField('group[users]');
+        $this->assertTrue($validator->evaluate(['group' => ['users' => [1, 2]]]));
+        $this->assertFalse($validator->evaluate(['group' => ['users' => [1]]]));
+    }
+
     public function testHasCountGreaterThanEqual1()
     {
         $data1 = [
@@ -579,6 +650,14 @@ class ValidatorTest extends TestCase
         $this->assertTrue($validator->evaluate($data1));
     }
 
+    public function testHasCountGreaterThanEqualBracketField()
+    {
+        $validator = new Validator\HasCountGreaterThanEqual(['users' => 2]);
+        $validator->setField('group[users]');
+        $this->assertTrue($validator->evaluate(['group' => ['users' => [1, 2]]]));
+        $this->assertFalse($validator->evaluate(['group' => ['users' => [1]]]));
+    }
+
     public function testHasCountLessThan1()
     {
         $data1 = [
@@ -644,6 +723,14 @@ class ValidatorTest extends TestCase
         $this->expectException('Pop\Validator\Exception');
         $validator = new Validator\HasCountLessThan(1);
         $this->assertTrue($validator->evaluate($data1));
+    }
+
+    public function testHasCountLessThanBracketField()
+    {
+        $validator = new Validator\HasCountLessThan(['users' => 3]);
+        $validator->setField('group[users]');
+        $this->assertTrue($validator->evaluate(['group' => ['users' => [1, 2]]]));
+        $this->assertFalse($validator->evaluate(['group' => ['users' => [1, 2, 3]]]));
     }
 
     public function testHasCountLessThanEqual1()
@@ -717,6 +804,14 @@ class ValidatorTest extends TestCase
         $this->assertTrue($validator->evaluate($data1));
     }
 
+    public function testHasCountLessThanEqualBracketField()
+    {
+        $validator = new Validator\HasCountLessThanEqual(['users' => 2]);
+        $validator->setField('group[users]');
+        $this->assertTrue($validator->evaluate(['group' => ['users' => [1, 2]]]));
+        $this->assertFalse($validator->evaluate(['group' => ['users' => [1, 2, 3]]]));
+    }
+
     public function testHasOne1()
     {
         $data1 = [
@@ -778,6 +873,14 @@ class ValidatorTest extends TestCase
         $this->expectException('Pop\Validator\Exception');
         $validator = new Validator\HasOne('');
         $this->assertTrue($validator->evaluate([1]));
+    }
+
+    public function testHasOneBracketField()
+    {
+        $validator = new Validator\HasOne('users');
+        $validator->setField('group[users]');
+        $this->assertTrue($validator->evaluate(['group' => ['users' => [1, 2]]]));
+        $this->assertFalse($validator->evaluate(['group' => ['users' => []]]));
     }
 
     public function testHasOneThatEquals1()
@@ -856,6 +959,30 @@ class ValidatorTest extends TestCase
         $this->assertTrue($validator->evaluate([1]));
     }
 
+    public function testHasOneThatEqualsBracketField()
+    {
+        $validator = new Validator\HasOneThatEquals(['username' => 'john_doe']);
+        $validator->setField('users[username]');
+        $this->assertTrue($validator->evaluate(['users' => ['username' => 'john_doe']]));
+        $this->assertFalse($validator->evaluate(['users' => ['username' => 'jane_doe']]));
+    }
+
+    public function testHasOneIn()
+    {
+        $validator = new Validator\HasOneIn(['username' => 'john_doe']);
+        $this->assertTrue($validator->evaluate(['username' => 'john_doe']));
+        $this->assertFalse($validator->evaluate(['username' => 'jane_doe']));
+    }
+
+    public function testHasOneDateTimeThatEquals()
+    {
+        $data1 = ['users' => [['username' => 'john_doe', 'joined_at' => '2025-11-10']]];
+        $data2 = ['users' => [['username' => 'bob_doe', 'joined_at' => '2025-11-01']]];
+        $validator = new Validator\HasOneDateTimeThatEquals(['users.joined_at' => '2025-11-10']);
+        $this->assertTrue($validator->evaluate($data1));
+        $this->assertFalse($validator->evaluate($data2));
+    }
+
     public function testHasOnlyOne1()
     {
         $data1 = [
@@ -916,6 +1043,14 @@ class ValidatorTest extends TestCase
         $this->expectException('Pop\Validator\Exception');
         $validator = new Validator\HasOnlyOne('');
         $this->assertTrue($validator->evaluate([1]));
+    }
+
+    public function testHasOnlyOneBracketField()
+    {
+        $validator = new Validator\HasOnlyOne('users');
+        $validator->setField('group[users]');
+        $this->assertTrue($validator->evaluate(['group' => ['users' => [1]]]));
+        $this->assertFalse($validator->evaluate(['group' => ['users' => [1, 2]]]));
     }
 
     public function testHasOnlyOneThatEquals1()
@@ -1004,11 +1139,42 @@ class ValidatorTest extends TestCase
         $this->assertFalse($validator->evaluate($data2));
     }
 
+    public function testHasOneGreaterThanFlatField()
+    {
+        $validator = new Validator\HasOneGreaterThan(['logins' => 5]);
+        $this->assertTrue($validator->evaluate(['logins' => 10]));
+        $this->assertFalse($validator->evaluate(['logins' => 4]));
+    }
+
+    public function testHasOneGreaterThanBracketField()
+    {
+        $validator = new Validator\HasOneGreaterThan(['logins' => 5]);
+        $validator->setField('user[logins]');
+        $this->assertTrue($validator->evaluate(['user' => ['logins' => 10]]));
+        $this->assertFalse($validator->evaluate(['user' => ['logins' => 4]]));
+    }
+
+    public function testHasOneGreaterThanNotAnArrayException()
+    {
+        $this->expectException('Pop\Validator\Exception');
+        $validator = new Validator\HasOneGreaterThan(['logins' => 5]);
+        $validator->evaluate(1);
+    }
+
+    public function testHasOneDateTimeGreaterThan()
+    {
+        $data1 = ['events' => [['name' => 'A', 'occurred_at' => '2025-11-15']]];
+        $data2 = ['events' => [['name' => 'A', 'occurred_at' => '2025-11-01']]];
+        $validator = new Validator\HasOneDateTimeGreaterThan(['events.occurred_at' => '2025-11-10']);
+        $this->assertTrue($validator->evaluate($data1));
+        $this->assertFalse($validator->evaluate($data2));
+    }
+
     public function testHasOneGreaterThanEqual()
     {
         $data1 = [
             'users' => [
-                ['username' => 'john_doe', 'email' => 'john@doe.com', 'logins' => 10]
+                ['username' => 'john_doe', 'email' => 'john@doe.com', 'logins' => 5]
             ]
         ];
         $data2 = [
@@ -1018,6 +1184,37 @@ class ValidatorTest extends TestCase
             ]
         ];
         $validator = new Validator\HasOneGreaterThanEqual(['users.logins' => 5]);
+        $this->assertTrue($validator->evaluate($data1));
+        $this->assertFalse($validator->evaluate($data2));
+    }
+
+    public function testHasOneGreaterThanEqualFlatField()
+    {
+        $validator = new Validator\HasOneGreaterThanEqual(['logins' => 5]);
+        $this->assertTrue($validator->evaluate(['logins' => 5]));
+        $this->assertFalse($validator->evaluate(['logins' => 4]));
+    }
+
+    public function testHasOneGreaterThanEqualBracketField()
+    {
+        $validator = new Validator\HasOneGreaterThanEqual(['logins' => 5]);
+        $validator->setField('user[logins]');
+        $this->assertTrue($validator->evaluate(['user' => ['logins' => 5]]));
+        $this->assertFalse($validator->evaluate(['user' => ['logins' => 4]]));
+    }
+
+    public function testHasOneGreaterThanEqualNotAnArrayException()
+    {
+        $this->expectException('Pop\Validator\Exception');
+        $validator = new Validator\HasOneGreaterThanEqual(['logins' => 5]);
+        $validator->evaluate(1);
+    }
+
+    public function testHasOneDateTimeGreaterThanEqual()
+    {
+        $data1 = ['events' => [['name' => 'A', 'occurred_at' => '2025-11-10']]];
+        $data2 = ['events' => [['name' => 'A', 'occurred_at' => '2025-11-01']]];
+        $validator = new Validator\HasOneDateTimeGreaterThanEqual(['events.occurred_at' => '2025-11-10']);
         $this->assertTrue($validator->evaluate($data1));
         $this->assertFalse($validator->evaluate($data2));
     }
@@ -1040,11 +1237,42 @@ class ValidatorTest extends TestCase
         $this->assertFalse($validator->evaluate($data2));
     }
 
+    public function testHasOneLessThanFlatField()
+    {
+        $validator = new Validator\HasOneLessThan(['logins' => 5]);
+        $this->assertTrue($validator->evaluate(['logins' => 4]));
+        $this->assertFalse($validator->evaluate(['logins' => 6]));
+    }
+
+    public function testHasOneLessThanBracketField()
+    {
+        $validator = new Validator\HasOneLessThan(['logins' => 5]);
+        $validator->setField('user[logins]');
+        $this->assertTrue($validator->evaluate(['user' => ['logins' => 4]]));
+        $this->assertFalse($validator->evaluate(['user' => ['logins' => 6]]));
+    }
+
+    public function testHasOneLessThanNotAnArrayException()
+    {
+        $this->expectException('Pop\Validator\Exception');
+        $validator = new Validator\HasOneLessThan(['logins' => 5]);
+        $validator->evaluate(1);
+    }
+
+    public function testHasOneDateTimeLessThan()
+    {
+        $data1 = ['events' => [['name' => 'A', 'occurred_at' => '2025-11-01']]];
+        $data2 = ['events' => [['name' => 'A', 'occurred_at' => '2025-11-15']]];
+        $validator = new Validator\HasOneDateTimeLessThan(['events.occurred_at' => '2025-11-10']);
+        $this->assertTrue($validator->evaluate($data1));
+        $this->assertFalse($validator->evaluate($data2));
+    }
+
     public function testHasOneLessThanEqual()
     {
         $data1 = [
             'users' => [
-                ['username' => 'john_doe', 'email' => 'john@doe.com', 'logins' => 4]
+                ['username' => 'john_doe', 'email' => 'john@doe.com', 'logins' => 5]
             ]
         ];
         $data2 = [
@@ -1054,6 +1282,37 @@ class ValidatorTest extends TestCase
             ]
         ];
         $validator = new Validator\HasOneLessThanEqual(['users.logins' => 5]);
+        $this->assertTrue($validator->evaluate($data1));
+        $this->assertFalse($validator->evaluate($data2));
+    }
+
+    public function testHasOneLessThanEqualFlatField()
+    {
+        $validator = new Validator\HasOneLessThanEqual(['logins' => 5]);
+        $this->assertTrue($validator->evaluate(['logins' => 5]));
+        $this->assertFalse($validator->evaluate(['logins' => 6]));
+    }
+
+    public function testHasOneLessThanEqualBracketField()
+    {
+        $validator = new Validator\HasOneLessThanEqual(['logins' => 5]);
+        $validator->setField('user[logins]');
+        $this->assertTrue($validator->evaluate(['user' => ['logins' => 5]]));
+        $this->assertFalse($validator->evaluate(['user' => ['logins' => 6]]));
+    }
+
+    public function testHasOneLessThanEqualNotAnArrayException()
+    {
+        $this->expectException('Pop\Validator\Exception');
+        $validator = new Validator\HasOneLessThanEqual(['logins' => 5]);
+        $validator->evaluate(1);
+    }
+
+    public function testHasOneDateTimeLessThanEqual()
+    {
+        $data1 = ['events' => [['name' => 'A', 'occurred_at' => '2025-11-10']]];
+        $data2 = ['events' => [['name' => 'A', 'occurred_at' => '2025-11-15']]];
+        $validator = new Validator\HasOneDateTimeLessThanEqual(['events.occurred_at' => '2025-11-10']);
         $this->assertTrue($validator->evaluate($data1));
         $this->assertFalse($validator->evaluate($data2));
     }
@@ -1077,11 +1336,37 @@ class ValidatorTest extends TestCase
         $this->assertFalse($validator->evaluate($data2));
     }
 
+    public function testHasOnlyOneGreaterThanNoDotException()
+    {
+        $this->expectException('Pop\Validator\Exception');
+        $validator = new Validator\HasOnlyOneGreaterThan(['logins' => 5]);
+        $validator->evaluate(['logins' => 10]);
+    }
+
+    public function testHasOnlyOneDateTimeGreaterThan()
+    {
+        $data1 = [
+            'users' => [
+                ['username' => 'john_doe', 'joined_at' => '2025-11-15'],
+                ['username' => 'john_doe2', 'joined_at' => '2025-10-01']
+            ]
+        ];
+        $data2 = [
+            'users' => [
+                ['username' => 'bob_doe', 'joined_at' => '2025-11-12'],
+                ['username' => 'jane_doe', 'joined_at' => '2025-11-20']
+            ]
+        ];
+        $validator = new Validator\HasOnlyOneDateTimeGreaterThan(['users.joined_at' => '2025-11-10']);
+        $this->assertTrue($validator->evaluate($data1));
+        $this->assertFalse($validator->evaluate($data2));
+    }
+
     public function testHasOnlyOneGreaterThanEqual()
     {
         $data1 = [
             'users' => [
-                ['username' => 'john_doe', 'email' => 'john@doe.com', 'logins' => 10],
+                ['username' => 'john_doe', 'email' => 'john@doe.com', 'logins' => 5],
                 ['username' => 'john_doe2', 'email' => 'john@doe2.com', 'logins' => 4]
             ]
         ];
@@ -1092,6 +1377,32 @@ class ValidatorTest extends TestCase
             ]
         ];
         $validator = new Validator\HasOnlyOneGreaterThanEqual(['users.logins' => 5]);
+        $this->assertTrue($validator->evaluate($data1));
+        $this->assertFalse($validator->evaluate($data2));
+    }
+
+    public function testHasOnlyOneGreaterThanEqualNoDotException()
+    {
+        $this->expectException('Pop\Validator\Exception');
+        $validator = new Validator\HasOnlyOneGreaterThanEqual(['logins' => 5]);
+        $validator->evaluate(['logins' => 10]);
+    }
+
+    public function testHasOnlyOneDateTimeGreaterThanEqual()
+    {
+        $data1 = [
+            'users' => [
+                ['username' => 'john_doe', 'joined_at' => '2025-11-10'],
+                ['username' => 'john_doe2', 'joined_at' => '2025-10-01']
+            ]
+        ];
+        $data2 = [
+            'users' => [
+                ['username' => 'bob_doe', 'joined_at' => '2025-11-10'],
+                ['username' => 'jane_doe', 'joined_at' => '2025-11-20']
+            ]
+        ];
+        $validator = new Validator\HasOnlyOneDateTimeGreaterThanEqual(['users.joined_at' => '2025-11-10']);
         $this->assertTrue($validator->evaluate($data1));
         $this->assertFalse($validator->evaluate($data2));
     }
@@ -1115,12 +1426,38 @@ class ValidatorTest extends TestCase
         $this->assertFalse($validator->evaluate($data2));
     }
 
+    public function testHasOnlyOneLessThanNoDotException()
+    {
+        $this->expectException('Pop\Validator\Exception');
+        $validator = new Validator\HasOnlyOneLessThan(['logins' => 5]);
+        $validator->evaluate(['logins' => 4]);
+    }
+
+    public function testHasOnlyOneDateTimeLessThan()
+    {
+        $data1 = [
+            'users' => [
+                ['username' => 'john_doe', 'joined_at' => '2025-10-01'],
+                ['username' => 'john_doe2', 'joined_at' => '2025-11-15']
+            ]
+        ];
+        $data2 = [
+            'users' => [
+                ['username' => 'bob_doe', 'joined_at' => '2025-11-01'],
+                ['username' => 'jane_doe', 'joined_at' => '2025-11-05']
+            ]
+        ];
+        $validator = new Validator\HasOnlyOneDateTimeLessThan(['users.joined_at' => '2025-11-10']);
+        $this->assertTrue($validator->evaluate($data1));
+        $this->assertFalse($validator->evaluate($data2));
+    }
+
     public function testHasOnlyOneLessThanEqual()
     {
         $data1 = [
             'users' => [
                 ['username' => 'john_doe', 'email' => 'john@doe.com', 'logins' => 10],
-                ['username' => 'john_doe2', 'email' => 'john@doe2.com', 'logins' => 4]
+                ['username' => 'john_doe2', 'email' => 'john@doe2.com', 'logins' => 5]
             ]
         ];
         $data2 = [
@@ -1130,6 +1467,46 @@ class ValidatorTest extends TestCase
             ]
         ];
         $validator = new Validator\HasOnlyOneLessThanEqual(['users.logins' => 5]);
+        $this->assertTrue($validator->evaluate($data1));
+        $this->assertFalse($validator->evaluate($data2));
+    }
+
+    public function testHasOnlyOneLessThanEqualNoDotException()
+    {
+        $this->expectException('Pop\Validator\Exception');
+        $validator = new Validator\HasOnlyOneLessThanEqual(['logins' => 5]);
+        $validator->evaluate(['logins' => 4]);
+    }
+
+    public function testHasOnlyOneDateTimeLessThanEqual()
+    {
+        $data1 = [
+            'users' => [
+                ['username' => 'john_doe', 'joined_at' => '2025-11-15'],
+                ['username' => 'john_doe2', 'joined_at' => '2025-11-10']
+            ]
+        ];
+        $data2 = [
+            'users' => [
+                ['username' => 'bob_doe', 'joined_at' => '2025-11-01'],
+                ['username' => 'jane_doe', 'joined_at' => '2025-11-05']
+            ]
+        ];
+        $validator = new Validator\HasOnlyOneDateTimeLessThanEqual(['users.joined_at' => '2025-11-10']);
+        $this->assertTrue($validator->evaluate($data1));
+        $this->assertFalse($validator->evaluate($data2));
+    }
+
+    public function testHasOnlyOneDateTimeThatEquals()
+    {
+        $data1 = ['users' => [['username' => 'john_doe', 'joined_at' => '2025-11-10']]];
+        $data2 = [
+            'users' => [
+                ['username' => 'bob_doe', 'joined_at' => '2025-11-10'],
+                ['username' => 'jane_doe', 'joined_at' => '2025-11-10']
+            ]
+        ];
+        $validator = new Validator\HasOnlyOneDateTimeThatEquals(['users.joined_at' => '2025-11-10']);
         $this->assertTrue($validator->evaluate($data1));
         $this->assertFalse($validator->evaluate($data2));
     }
@@ -1153,6 +1530,28 @@ class ValidatorTest extends TestCase
         $this->assertFalse($validator->evaluate($data2));
     }
 
+    public function testHasOneNotEmptyFlatField()
+    {
+        $validator = new Validator\HasOneNotEmpty('notes');
+        $this->assertTrue($validator->evaluate(['notes' => 'has content']));
+        $this->assertFalse($validator->evaluate(['notes' => '']));
+    }
+
+    public function testHasOneNotEmptyBracketField()
+    {
+        $validator = new Validator\HasOneNotEmpty('notes');
+        $validator->setField('group[notes]');
+        $this->assertTrue($validator->evaluate(['group' => ['notes' => 'has content']]));
+        $this->assertFalse($validator->evaluate(['group' => ['notes' => '']]));
+    }
+
+    public function testHasOneNotEmptyNotAnArrayException()
+    {
+        $this->expectException('Pop\Validator\Exception');
+        $validator = new Validator\HasOneNotEmpty('notes');
+        $validator->evaluate(1);
+    }
+
     public function testHasOneThatContains()
     {
         $data1 = [
@@ -1172,6 +1571,47 @@ class ValidatorTest extends TestCase
         $this->assertFalse($validator->evaluate($data2));
     }
 
+    public function testHasOneThatContainsFlatField()
+    {
+        $validator = new Validator\HasOneThatContains(['description' => 'red']);
+        $this->assertTrue($validator->evaluate(['description' => 'the quick red fox']));
+        $this->assertFalse($validator->evaluate(['description' => 'the quick brown fox']));
+    }
+
+    public function testHasOneThatContainsBracketField()
+    {
+        $validator = new Validator\HasOneThatContains(['description' => 'red']);
+        $validator->setField('group[description]');
+        $this->assertTrue($validator->evaluate(['group' => ['description' => 'the quick red fox']]));
+        $this->assertFalse($validator->evaluate(['group' => ['description' => 'the quick brown fox']]));
+    }
+
+    public function testHasOneThatContainsArrayNeedle()
+    {
+        $data1 = [
+            'client_services' => [
+                ['service_id' => null, 'name' => 'Owner Two'],
+                ['service_id' => 1, 'name' => 'Current Manager'],
+            ],
+        ];
+        $data2 = [
+            'client_services' => [
+                ['service_id' => null, 'name' => 'Owner One'],
+                ['service_id' => null, 'name' => 'Owner Two'],
+            ],
+        ];
+        $validator = new Validator\HasOneThatContains(['client_services.name' => ['Manager', 'Director']]);
+        $this->assertTrue($validator->evaluate($data1));
+        $this->assertFalse($validator->evaluate($data2));
+    }
+
+    public function testHasOneThatContainsNotAnArrayException()
+    {
+        $this->expectException('Pop\Validator\Exception');
+        $validator = new Validator\HasOneThatContains(['description' => 'red']);
+        $validator->evaluate(1);
+    }
+
     public function testHasOnlyOneThatContains()
     {
         $data1 = [
@@ -1189,6 +1629,39 @@ class ValidatorTest extends TestCase
         $validator = new Validator\HasOnlyOneThatContains(['client_services.name' => 'Two']);
         $this->assertTrue($validator->evaluate($data1));
         $this->assertFalse($validator->evaluate($data2));
+    }
+
+    public function testHasOnlyOneThatContainsFlatField()
+    {
+        $validator = new Validator\HasOnlyOneThatContains(['description' => 'red']);
+        $this->assertTrue($validator->evaluate(['description' => 'the quick red fox']));
+        $this->assertFalse($validator->evaluate(['description' => 'the quick brown fox']));
+    }
+
+    public function testHasOnlyOneThatContainsArrayNeedle()
+    {
+        $data1 = [
+            'client_services' => [
+                ['name' => 'Owner Two'],
+                ['name' => 'Current Manager'],
+            ],
+        ];
+        $data2 = [
+            'client_services' => [
+                ['name' => 'Current Manager'],
+                ['name' => 'Acting Manager'],
+            ],
+        ];
+        $validator = new Validator\HasOnlyOneThatContains(['client_services.name' => ['Manager', 'Director']]);
+        $this->assertTrue($validator->evaluate($data1));
+        $this->assertFalse($validator->evaluate($data2));
+    }
+
+    public function testHasOnlyOneThatContainsNotAnArrayException()
+    {
+        $this->expectException('Pop\Validator\Exception');
+        $validator = new Validator\HasOnlyOneThatContains(['description' => 'red']);
+        $validator->evaluate(1);
     }
 
     public function testIsArray()
@@ -1239,6 +1712,13 @@ class ValidatorTest extends TestCase
         $this->assertFalse($validator->evaluate('test$ing'));
         $this->assertFalse($validator->evaluate('test?ing'));
         $this->assertTrue($validator->evaluate('testing'));
+    }
+
+    public function testNotInArray()
+    {
+        $validator = new Validator\NotInArray([2, 3]);
+        $this->assertFalse($validator->evaluate([1, 2, 3]));
+        $this->assertTrue($validator->evaluate([4, 5]));
     }
 
     public function testNotIn()
@@ -1298,6 +1778,13 @@ class ValidatorTest extends TestCase
         $this->assertFalse($validator->evaluate('testing'));
     }
 
+    public function testInArray()
+    {
+        $validator = new Validator\InArray([2, 3]);
+        $this->assertTrue($validator->evaluate([1, 2, 3]));
+        $this->assertFalse($validator->evaluate([4, 5]));
+    }
+
     public function testIn()
     {
         $validator = new Validator\In('hello');
@@ -1325,6 +1812,8 @@ class ValidatorTest extends TestCase
         $validator = new Validator\Ipv4();
         $this->assertTrue($validator->evaluate('192.168.1.10'));
         $this->assertFalse($validator->evaluate('384.400.500.678'));
+        $this->assertFalse($validator->evaluate('not an ip but 192.168.1.1 is in here'));
+        $this->assertFalse($validator->evaluate('1.2.3.4.5'));
     }
 
     public function testIpv6()
@@ -1540,6 +2029,14 @@ class ValidatorTest extends TestCase
         $this->assertFalse($validator->evaluate($data2));
     }
 
+    public function testRequiredBracketField()
+    {
+        $validator = new Validator\Required('username');
+        $validator->setField('user[username]');
+        $this->assertTrue($validator->evaluate(['user' => ['username' => 'someuser']]));
+        $this->assertFalse($validator->evaluate(['user' => []]));
+    }
+
     public function testRequiredException1()
     {
         $this->expectException('Pop\Validator\Exception');
@@ -1573,6 +2070,7 @@ class ValidatorTest extends TestCase
         $validator = new Validator\Subnet();
         $this->assertTrue($validator->evaluate('192.168.1'));
         $this->assertFalse($validator->evaluate('192.168'));
+        $this->assertFalse($validator->evaluate('garbage 192.168.1 more garbage'));
     }
 
     public function testUrl()

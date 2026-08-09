@@ -9,9 +9,19 @@ pop-validator
 * [Overview](#overview)
 * [Install](#install)
 * [Quickstart](#quickstart)
+  - [Match against multiple patterns](#match-against-multiple-patterns)
+  - [Validate nested or related data](#validate-nested-or-related-data)
+  - [Discover available validators](#discover-available-validators)
 * [Validation Sets](#validation-sets)
+  - [Multiple Validators](#multiple-validators)
+  - [Custom Messaging](#custom-messaging)
+  - [Lazy-Loading vs Eager-Loading](#lazy-loading-vs-eager-loading)
+  - [Strictness](#strictness)
   - [Conditions](#conditions)
   - [Rules](#rules)
+    - [Rule Messages](#rule-messages)
+    - [Referencing Fields](#referencing-fields)
+    - [Referencing Nested Fields](#referencing-nested-fields)
 
 Overview
 --------
@@ -33,7 +43,7 @@ Install `pop-validator` using Composer.
 Or, require it in your composer.json file
 
     "require": {
-        "popphp/pop-validator" : "^4.6.5"
+        "popphp/pop-validator" : "^4.8.1"
     }
 
 [Top](#pop-validator)
@@ -43,35 +53,40 @@ Quickstart
 
 Here's a list of the available built-in validators, all under the namespace `Pop\Validator\`:
 
-|                          | Built-in Validators        |                        |
-|--------------------------|----------------------------|------------------------|
-| Accepted                 | GreaterThan                | IsJson                 |
-| AlphaNumeric             | HasAtLeast                 | IsNotEmpty             |
-| Alpha                    | HasAtMost                  | IsNotNull              |
-| BetweenInclude           | HasCountEqual              | IsNull                 |
-| Between                  | HasCountGreaterThan        | IsSubnetOf             |
-| Boolean                  | HasCountGreaterThanEqual   | LengthBetweenInclude   |
-| Contains                 | HasCountLessThan           | LengthBetween          |
-| CountEqual               | HasCountLessThanEqual      | LengthGreaterThanEqual |
-| CountGreaterThanEqual    | HasCountNotEqual           | LengthGreaterThan      |
-| CountGreaterThan         | HasOne                     | LengthLessThanEqual    |
-| CountLessThanEqual       | HasOneGreaterThan          | LengthLessThan         |
-| CountLessThan            | HasOneGreaterThanEqual     | Length                 |
-| CountNotEqual            | HasOneLessThan             | LessThanEqual          |
-| CreditCard               | HasOneLessThanEqual        | LessThan               |
-| DateTimeBetweenInclude   | HasOneThatEquals           | NotContains            |
-| DateTimeBetween          | HasOnlyOne                 | NotEmpty               |
-| DateTimeEqual            | HasOnlyOneGreaterThan      | NotEndsWith            |
-| DateTimeGreaterThanEqual | HasOnlyOneGreaterThanEqual | NotEqual               |
-| DateTimeGreaterThan      | HasOnlyOneLessThan         | NotInArray             |
-| DateTimeLessThanEqual    | HasOnlyOneLessThanEqual    | NotIn                  |
-| DateTimeLessThan         | HasOnlyOneThatEquals       | NotStartsWith          |
-| DateTimeNotEqual         | InArray                    | Numeric                |
-| Declined                 | In                         | RegEx                  |
-| Email                    | Ipv4                       | Required               |
-| EndsWith                 | Ipv6                       | StartsWith             |
-| Equal                    | IsArray                    | Subnet                 |
-| GreaterThanEqual         | IsEmpty                    | Url                    |
+|                                 | Built-in Validators                |                                |
+|---------------------------------|------------------------------------|--------------------------------|
+| Accepted                        | Alpha                              | AlphaNumeric                   |
+| Between                         | BetweenInclude                     | Boolean                        |
+| Contains                        | CountEqual                         | CountGreaterThan               |
+| CountGreaterThanEqual           | CountLessThan                      | CountLessThanEqual             |
+| CountNotEqual                   | CreditCard                         | DateTimeBetween                |
+| DateTimeBetweenInclude          | DateTimeEqual                      | DateTimeGreaterThan            |
+| DateTimeGreaterThanEqual        | DateTimeLessThan                   | DateTimeLessThanEqual          |
+| DateTimeNotEqual                | Declined                           | Email                          |
+| EndsWith                        | Equal                              | GreaterThan                    |
+| GreaterThanEqual                | HasAtLeast                         | HasAtMost                      |
+| HasCountEqual                   | HasCountGreaterThan                | HasCountGreaterThanEqual       |
+| HasCountLessThan                | HasCountLessThanEqual              | HasCountNotEqual               |
+| HasOne                          | HasOneDateTimeGreaterThan          | HasOneDateTimeGreaterThanEqual |
+| HasOneDateTimeLessThan          | HasOneDateTimeLessThanEqual        | HasOneDateTimeThatEquals       |
+| HasOneGreaterThan               | HasOneGreaterThanEqual             | HasOneIn                       |
+| HasOneLessThan                  | HasOneLessThanEqual                | HasOneNotEmpty                 |
+| HasOneThatContains              | HasOneThatEquals                   | HasOnlyOne                     |
+| HasOnlyOneDateTimeGreaterThan   | HasOnlyOneDateTimeGreaterThanEqual | HasOnlyOneDateTimeLessThan     |
+| HasOnlyOneDateTimeLessThanEqual | HasOnlyOneDateTimeThatEquals       | HasOnlyOneGreaterThan          |
+| HasOnlyOneGreaterThanEqual      | HasOnlyOneLessThan                 | HasOnlyOneLessThanEqual        |
+| HasOnlyOneThatContains          | HasOnlyOneThatEquals               | In                             |
+| InArray                         | Ipv4                               | Ipv6                           |
+| IsArray                         | IsEmpty                            | IsJson                         |
+| IsNotEmpty                      | IsNotNull                          | IsNull                         |
+| IsSubnetOf                      | Length                             | LengthBetween                  |
+| LengthBetweenInclude            | LengthGreaterThan                  | LengthGreaterThanEqual         |
+| LengthLessThan                  | LengthLessThanEqual                | LessThan                       |
+| LessThanEqual                   | NotContains                        | NotEmpty                       |
+| NotEndsWith                     | NotEqual                           | NotIn                          |
+| NotInArray                      | NotStartsWith                      | Numeric                        |
+| RegEx                           | Required                           | StartsWith                     |
+| Subnet                          | Url                                |                                |
 
 ### Check an email value
 
@@ -121,6 +136,70 @@ $validator->setMessage('You must only submit JPG, PNG or GIF images.');
 if ($validator->evaluate('image.jpg')) { } // Returns true
 ```
 
+### Match against multiple patterns
+
+`RegEx` also accepts an array of patterns as its value. By default, every pattern must match. Pass a
+third constructor argument to require only a minimum number of them to match instead:
+
+```php
+// All patterns must match
+$validator = new Pop\Validator\RegEx(['/[A-Z]/', '/[0-9]/']);
+$validator->evaluate('Password1'); // Returns true - contains an uppercase letter and a digit
+$validator->evaluate('password1'); // Returns false - missing the uppercase letter
+
+// At least 1 of the 2 patterns must match
+$validator = new Pop\Validator\RegEx(['/[A-Z]/', '/[0-9]/'], null, 1);
+$validator->evaluate('password'); // Returns false - matches neither pattern
+$validator->evaluate('Password'); // Returns true - matches the uppercase pattern
+```
+
+### Validate nested or related data
+
+The `Has*` family of validators (`HasOne`, `HasOnlyOne`, `HasCountEqual`, `HasOneThatEquals`,
+`HasOneThatContains`, their `DateTime` variants, and others) work differently from the rest of the built-in
+validators. Instead of checking a single value, they're handed the *entire* input array and check for the
+presence, count, or value of a field inside it - including fields nested in sub-arrays, addressed with dot
+notation.
+
+```php
+$validator = new Pop\Validator\HasOne('users');
+
+$data = [
+    'users' => [
+        ['username' => 'john_doe'],
+    ],
+];
+
+$validator->evaluate($data); // Returns true - 'users' exists and has at least one item
+```
+
+Dot notation reaches into nested arrays:
+
+```php
+$validator = new Pop\Validator\HasOneThatEquals(['website_data.users.username' => 'john_doe']);
+
+$data = [
+    'website_data' => [
+        'users' => [
+            ['username' => 'john_doe'],
+            ['username' => 'jane_doe'],
+        ],
+    ],
+];
+
+$validator->evaluate($data); // Returns true - at least one 'username' under website_data.users equals 'john_doe'
+```
+
+### Discover available validators
+
+`ValidatorSet::getAvailableValidators()` returns every built-in validator class name mapped to its
+`snake_case` rule name, which is useful for building dynamic forms or admin UIs:
+
+```php
+$validators = Pop\Validator\ValidatorSet::getAvailableValidators();
+// ['Accepted' => 'accepted', 'Alpha' => 'alpha', 'AlphaNumeric' => 'alpha_numeric', ...]
+```
+
 [Top](#pop-validator)
 
 Validation Sets
@@ -143,7 +222,7 @@ if ($set->evaluate(['username' => 'username_123'])) {
 }
 ```
 
-**Multiple Validators**
+#### Multiple Validators
 
 ```php
 use Pop\Validator\ValidatorSet;
@@ -158,7 +237,7 @@ if ($set->evaluate(['username' => 'username_123'])) {
 }
 ```
 
-**Custom Messaging**
+#### Custom Messaging
 
 ```php
 use Pop\Validator\ValidatorSet;
@@ -329,6 +408,22 @@ if ($set->evaluate($data)) {
 } else {
     print_r($set->getErrors());
 }
+```
+
+#### Referencing Nested Fields
+
+The bracket syntax above is for referencing another field's *value* inside a rule string. That's different
+from pointing a validator at a *nested field to check*, which is done by calling `setField()` directly on a
+validator instance with a `key[field]` bracket pattern: it tells the validator to check `$input[key][field]`
+instead of the top-level field it would normally be handed.
+
+```php
+$validator = new Pop\Validator\Equal(1);
+$validator->setField('user[active]');
+
+$data = ['user' => ['active' => 1]];
+
+$validator->evaluate($data); // Returns true - checks $data['user']['active']
 ```
 
 [Top](#pop-validator)

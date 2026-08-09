@@ -88,4 +88,164 @@ class MessageTest extends TestCase
         );
     }
 
+    public function testEqualMessage()
+    {
+        $this->assertEquals(
+            "The 'data_point' must equal '5'.",
+            (new Validator\Equal())->generateDefaultMessage('data_point', 5)
+        );
+    }
+
+    public function testGreaterThanEqualMessage()
+    {
+        $this->assertEquals(
+            "The 'data_point' must be greater than or equal to '5'.",
+            (new Validator\GreaterThanEqual())->generateDefaultMessage('data_point', 5)
+        );
+    }
+
+    public function testLessThanMessage()
+    {
+        $this->assertEquals(
+            "The 'data_point' must be less than '5'.",
+            (new Validator\LessThan())->generateDefaultMessage('data_point', 5)
+        );
+    }
+
+    public function testLessThanEqualMessage()
+    {
+        $this->assertEquals(
+            "The 'data_point' must be less than or equal to '5'.",
+            (new Validator\LessThanEqual())->generateDefaultMessage('data_point', 5)
+        );
+    }
+
+    public function testNotEqualMessage()
+    {
+        $this->assertEquals(
+            "The 'data_point' must not be equal to '5'.",
+            (new Validator\NotEqual())->generateDefaultMessage('data_point', 5)
+        );
+    }
+
+    public function testCountEqualMessage()
+    {
+        $this->assertEquals(
+            "The count of 'data_point' must be equal to '5'.",
+            (new Validator\CountEqual())->generateDefaultMessage('data_point', 5)
+        );
+    }
+
+    public function testCountGreaterThanMessage()
+    {
+        $this->assertEquals(
+            "The count of 'data_point' must be greater than '5'.",
+            (new Validator\CountGreaterThan())->generateDefaultMessage('data_point', 5)
+        );
+    }
+
+    public function testCountGreaterThanEqualMessage()
+    {
+        $this->assertEquals(
+            "The count of 'data_point' must be greater than or equal to '5'.",
+            (new Validator\CountGreaterThanEqual())->generateDefaultMessage('data_point', 5)
+        );
+    }
+
+    public function testCountLessThanMessage()
+    {
+        $this->assertEquals(
+            "The count of 'data_point' must be less than '5'.",
+            (new Validator\CountLessThan())->generateDefaultMessage('data_point', 5)
+        );
+    }
+
+    public function testCountLessThanEqualMessage()
+    {
+        $this->assertEquals(
+            "The count of 'data_point' must be less than or equal to '5'.",
+            (new Validator\CountLessThanEqual())->generateDefaultMessage('data_point', 5)
+        );
+    }
+
+    public function testCountNotEqualMessage()
+    {
+        $this->assertEquals(
+            "The count of 'data_point' must not be equal to '5'.",
+            (new Validator\CountNotEqual())->generateDefaultMessage('data_point', 5)
+        );
+    }
+
+    public function testLengthMessage()
+    {
+        $this->assertEquals(
+            "The 'data_point' length must be equal to '5'.",
+            (new Validator\Length())->generateDefaultMessage('data_point', 5)
+        );
+    }
+
+    public function testLengthGreaterThanMessage()
+    {
+        $this->assertEquals(
+            "The 'data_point' length must be greater than '5'.",
+            (new Validator\LengthGreaterThan())->generateDefaultMessage('data_point', 5)
+        );
+    }
+
+    public function testLengthGreaterThanEqualMessage()
+    {
+        $this->assertEquals(
+            "The 'data_point' length must be greater than or equal to '5'.",
+            (new Validator\LengthGreaterThanEqual())->generateDefaultMessage('data_point', 5)
+        );
+    }
+
+    public function testLengthLessThanMessage()
+    {
+        $this->assertEquals(
+            "The 'data_point' length must be less than '5'.",
+            (new Validator\LengthLessThan())->generateDefaultMessage('data_point', 5)
+        );
+    }
+
+    public function testLengthLessThanEqualMessage()
+    {
+        $this->assertEquals(
+            "The 'data_point' length must be less than or equal to  '5'.",
+            (new Validator\LengthLessThanEqual())->generateDefaultMessage('data_point', 5)
+        );
+    }
+
+    public function testEndsWithMessage()
+    {
+        $this->assertEquals(
+            "The 'data_point' must end with 'xyz'.",
+            (new Validator\EndsWith())->generateDefaultMessage('data_point', 'xyz')
+        );
+    }
+
+    public function testStartsWithMessage()
+    {
+        $this->assertEquals(
+            "The 'data_point' must start with 'abc'.",
+            (new Validator\StartsWith())->generateDefaultMessage('data_point', 'abc')
+        );
+    }
+
+    public function testNotEndsWithMessage()
+    {
+        $this->assertEquals(
+            "The 'data_point' must not end with 'xyz'.",
+            (new Validator\NotEndsWith())->generateDefaultMessage('data_point', 'xyz')
+        );
+    }
+
+    public function testNotStartsWithMessage()
+    {
+        $this->assertEquals(
+            "The 'data_point' must not start with 'abc'.",
+            (new Validator\NotStartsWith())->generateDefaultMessage('data_point', 'abc')
+        );
+    }
+
 }

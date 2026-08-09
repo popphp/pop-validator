@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@noladev.com>
- * @copyright  Copyright (c) 2009-2026 NOLA Interactive, LLC.
+ * @copyright  Copyright (c) 2009-2027 NOLA Interactive, LLC.
  * @license    http://www.popphp.org/license     New BSD License
  */
 
@@ -19,9 +19,9 @@ namespace Pop\Validator;
  * @category   Pop
  * @package    Pop\Validator
  * @author     Nick Sagona, III <dev@noladev.com>
- * @copyright  Copyright (c) 2009-2026 NOLA Interactive, LLC.
+ * @copyright  Copyright (c) 2009-2027 NOLA Interactive, LLC.
  * @license    http://www.popphp.org/license     New BSD License
- * @version    4.6.5
+ * @version    4.7.0
  */
 class CreditCard extends AbstractValidator
 {
@@ -51,6 +51,10 @@ class CreditCard extends AbstractValidator
         }
 
         $inputValue = ($this->hasKeyField()) ? $this->getKeyFieldValue() : $this->input;
+
+        if (!ctype_digit((string)$inputValue)) {
+            return false;
+        }
 
         // Evaluate the input against the validator
         $nums   = str_split((string)$inputValue);
