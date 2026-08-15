@@ -37,6 +37,20 @@ class ValidatorTest extends TestCase
         $this->assertNull($validator->getResults());
     }
 
+    public function testAlphaNumNonStringInput()
+    {
+        $validator = new Validator\AlphaNumeric();
+        $this->assertTrue($validator->evaluate(123456));
+    }
+
+    public function testAlphaNumBracketField()
+    {
+        $validator = new Validator\AlphaNumeric();
+        $validator->setField('user[username]');
+        $this->assertTrue($validator->evaluate(['user' => ['username' => 'hello123']]));
+        $this->assertFalse($validator->evaluate(['user' => ['username' => '$%^#ascx']]));
+    }
+
     public function testAccepted()
     {
         $validator = new Validator\Accepted();
@@ -324,11 +338,25 @@ class ValidatorTest extends TestCase
         $this->assertFalse($validator->evaluate('abcdefghi'));
     }
 
+    public function testEndsWithNonStringInput()
+    {
+        $validator = new Validator\EndsWith(123);
+        $this->assertTrue($validator->evaluate(45123));
+        $this->assertFalse($validator->evaluate(456));
+    }
+
     public function testNotEndsWith()
     {
         $validator = new Validator\NotEndsWith('xyz');
         $this->assertFalse($validator->evaluate('qrstuvwxyz'));
         $this->assertTrue($validator->evaluate('abcdefghi'));
+    }
+
+    public function testNotEndsWithNonStringInput()
+    {
+        $validator = new Validator\NotEndsWith(123);
+        $this->assertFalse($validator->evaluate(45123));
+        $this->assertTrue($validator->evaluate(456));
     }
 
     public function testEqual()
@@ -1578,6 +1606,22 @@ class ValidatorTest extends TestCase
         $this->assertFalse($validator->evaluate(['description' => 'the quick brown fox']));
     }
 
+    public function testHasOneThatContainsNonStringValue()
+    {
+        $validator = new Validator\HasOneThatContains(['service_id' => 1]);
+        $this->assertTrue($validator->evaluate(['service_id' => 12345]));
+        $this->assertFalse($validator->evaluate(['service_id' => 999]));
+
+        $data = [
+            'client_services' => [
+                ['service_id' => 555],
+                ['service_id' => 12345],
+            ],
+        ];
+        $validator = new Validator\HasOneThatContains(['client_services.service_id' => 1]);
+        $this->assertTrue($validator->evaluate($data));
+    }
+
     public function testHasOneThatContainsBracketField()
     {
         $validator = new Validator\HasOneThatContains(['description' => 'red']);
@@ -1636,6 +1680,22 @@ class ValidatorTest extends TestCase
         $validator = new Validator\HasOnlyOneThatContains(['description' => 'red']);
         $this->assertTrue($validator->evaluate(['description' => 'the quick red fox']));
         $this->assertFalse($validator->evaluate(['description' => 'the quick brown fox']));
+    }
+
+    public function testHasOnlyOneThatContainsNonStringValue()
+    {
+        $validator = new Validator\HasOnlyOneThatContains(['service_id' => 1]);
+        $this->assertTrue($validator->evaluate(['service_id' => 12345]));
+        $this->assertFalse($validator->evaluate(['service_id' => 999]));
+
+        $data = [
+            'client_services' => [
+                ['service_id' => 555],
+                ['service_id' => 12345],
+            ],
+        ];
+        $validator = new Validator\HasOnlyOneThatContains(['client_services.service_id' => 1]);
+        $this->assertTrue($validator->evaluate($data));
     }
 
     public function testHasOnlyOneThatContainsArrayNeedle()
@@ -1714,6 +1774,13 @@ class ValidatorTest extends TestCase
         $this->assertTrue($validator->evaluate('testing'));
     }
 
+    public function testNotContainsNonStringInput()
+    {
+        $validator = new Validator\NotContains(23);
+        $this->assertFalse($validator->evaluate(9123));
+        $this->assertTrue($validator->evaluate(456));
+    }
+
     public function testNotInArray()
     {
         $validator = new Validator\NotInArray([2, 3]);
@@ -1741,6 +1808,13 @@ class ValidatorTest extends TestCase
         $this->assertFalse($validator->evaluate(['$', '?']));
         $this->assertTrue($validator->evaluate(['?', 'testing']));
         $this->assertTrue($validator->evaluate('testing'));
+    }
+
+    public function testNotInNonStringInput()
+    {
+        $validator = new Validator\NotIn(9123);
+        $this->assertFalse($validator->evaluate(23));
+        $this->assertTrue($validator->evaluate(456));
     }
 
     public function testGreaterThan()
@@ -1778,6 +1852,13 @@ class ValidatorTest extends TestCase
         $this->assertFalse($validator->evaluate('testing'));
     }
 
+    public function testContainsNonStringInput()
+    {
+        $validator = new Validator\Contains(23);
+        $this->assertTrue($validator->evaluate(9123));
+        $this->assertFalse($validator->evaluate(456));
+    }
+
     public function testInArray()
     {
         $validator = new Validator\InArray([2, 3]);
@@ -1807,6 +1888,13 @@ class ValidatorTest extends TestCase
         $this->assertFalse($validator->evaluate('testing'));
     }
 
+    public function testInNonStringInput()
+    {
+        $validator = new Validator\In(9123);
+        $this->assertTrue($validator->evaluate(23));
+        $this->assertFalse($validator->evaluate(456));
+    }
+
     public function testIpv4()
     {
         $validator = new Validator\Ipv4();
@@ -1816,11 +1904,23 @@ class ValidatorTest extends TestCase
         $this->assertFalse($validator->evaluate('1.2.3.4.5'));
     }
 
+    public function testIpv4NonStringInput()
+    {
+        $validator = new Validator\Ipv4();
+        $this->assertFalse($validator->evaluate(19216811));
+    }
+
     public function testIpv6()
     {
         $validator = new Validator\Ipv6();
         $this->assertTrue($validator->evaluate('fe80::21a:70ff:fe10:ab13'));
         $this->assertFalse($validator->evaluate('badipv6'));
+    }
+
+    public function testIpv6NonStringInput()
+    {
+        $validator = new Validator\Ipv6();
+        $this->assertFalse($validator->evaluate(123456));
     }
 
     public function testIsSubnetOf()
@@ -1975,6 +2075,18 @@ class ValidatorTest extends TestCase
         $this->assertFalse($validator->evaluate('hello'));
     }
 
+    public function testRegExNonStringInput()
+    {
+        $validator = new Validator\RegEx('/^\d+$/');
+        $this->assertTrue($validator->evaluate(123456));
+
+        $validator = new Validator\RegEx(['/[0-9]/', '/^\d+$/']);
+        $this->assertTrue($validator->evaluate(123456));
+
+        $validator = new Validator\RegEx(['/[0-9]/', '/[a-z]/'], null, 1);
+        $this->assertTrue($validator->evaluate(123456));
+    }
+
     public function testRegEx()
     {
         $validator = new Validator\RegEx('/^\w+$/');
@@ -2058,11 +2170,25 @@ class ValidatorTest extends TestCase
         $this->assertFalse($validator->evaluate('qrstuvwxyz'));
     }
 
+    public function testStartsWithNonStringInput()
+    {
+        $validator = new Validator\StartsWith(123);
+        $this->assertTrue($validator->evaluate(123456));
+        $this->assertFalse($validator->evaluate(456));
+    }
+
     public function testNotStartsWith()
     {
         $validator = new Validator\NotStartsWith('abc');
         $this->assertFalse($validator->evaluate('abcdefghi'));
         $this->assertTrue($validator->evaluate('qrstuvwxyz'));
+    }
+
+    public function testNotStartsWithNonStringInput()
+    {
+        $validator = new Validator\NotStartsWith(123);
+        $this->assertFalse($validator->evaluate(123456));
+        $this->assertTrue($validator->evaluate(456));
     }
 
     public function testSubnet()
@@ -2073,11 +2199,33 @@ class ValidatorTest extends TestCase
         $this->assertFalse($validator->evaluate('garbage 192.168.1 more garbage'));
     }
 
+    public function testSubnetNonStringInput()
+    {
+        $validator = new Validator\Subnet();
+        $this->assertFalse($validator->evaluate(192168));
+    }
+
     public function testUrl()
     {
         $validator = new Validator\Url();
         $this->assertTrue($validator->evaluate('http://www.google.com'));
         $this->assertFalse($validator->evaluate('nourl'));
+    }
+
+    public function testHasOneTraverseTopLevelNumericListNoMatch()
+    {
+        $validator = new Validator\HasOne('a.b');
+        $this->assertFalse($validator->evaluate([1, 2, 3]));
+    }
+
+    public function testHasOneTraverseSkipsPastSiblingNumericList()
+    {
+        $data = [
+            'a'  => ['x', 'y', 'z'],
+            'a2' => ['b' => 'target_value'],
+        ];
+        $validator = new Validator\HasOne('a2.b');
+        $this->assertTrue($validator->evaluate($data));
     }
 
 }

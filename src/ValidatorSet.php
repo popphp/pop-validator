@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Pop PHP Framework (http://www.popphp.org/)
  *
@@ -133,9 +134,9 @@ class ValidatorSet
      * @param  array|string $validators
      * @param  ?string      $field
      * @param  int          $strict
-     * @return ValidatorSet
+     * @return static
      */
-    public static function add(array|string $validators, ?string $field = null, int $strict = 3): ValidatorSet
+    public static function add(array|string $validators, ?string $field = null, int $strict = 3): static
     {
         $validatorSet = new static();
         $validatorSet->setStrict($strict);
@@ -157,9 +158,9 @@ class ValidatorSet
      * @param  array|string $validators
      * @param  ?string      $field
      * @param  int          $strict
-     * @return ValidatorSet
+     * @return static
      */
-    public static function load(array|string $validators, ?string $field = null, int $strict = 3): ValidatorSet
+    public static function load(array|string $validators, ?string $field = null, int $strict = 3): static
     {
         $validatorSet = new static();
         $validatorSet->setStrict($strict);
@@ -181,11 +182,11 @@ class ValidatorSet
      * @param  array|string $rules
      * @param  int          $strict
      * @param  string       $prefix
-     * @return ValidatorSet
+     * @return static
      */
     public static function createFromRules(
         array|string $rules, int $strict = 3, string $prefix = 'Pop\Validator\\'
-    ): ValidatorSet
+    ): static
     {
         $validatorSet = new static();
         $validatorSet->setStrict($strict);
@@ -635,7 +636,7 @@ class ValidatorSet
             $this->validationStatus = self::PASSED_ALL;
         } else if ($numOfPassed > 0) {
             $this->validationStatus = self::PASSED_SOME;
-        } else if ($numOfPassed == 0) {
+        } else {
             $this->validationStatus = self::PASSED_NONE;
         }
 
@@ -680,7 +681,7 @@ class ValidatorSet
     /**
      * Evaluate all conditions over the provided input data
      *
-     * @param  mixed $input
+     * @param  array $input
      * @return bool
      */
     public function evaluateConditions(array $input): bool
@@ -698,7 +699,7 @@ class ValidatorSet
             $this->conditionStatus = self::PASSED_ALL;
         } else if ($numOfPassed > 0) {
             $this->conditionStatus = self::PASSED_SOME;
-        } else if ($numOfPassed == 0) {
+        } else {
             $this->conditionStatus = self::PASSED_NONE;
         }
 
@@ -714,7 +715,7 @@ class ValidatorSet
     /**
      * Evaluate all validators over the provided input data
      *
-     * @param  mixed   $input
+     * @param  array   $input
      * @param  ?string $prefix
      * @return bool
      */

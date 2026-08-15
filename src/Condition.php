@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Pop PHP Framework (http://www.popphp.org/)
  *
@@ -100,9 +101,9 @@ class Condition
      * Create condition from rule
      *
      * @param  string $rule
-     * @return Condition
+     * @return static
      */
-    public static function createFromRule(string $rule, string $prefix = 'Pop\Validator\\'): Condition
+    public static function createFromRule(string $rule, string $prefix = 'Pop\Validator\\'): static
     {
         ['field' => $field, 'validator' => $validator, 'value' => $value, 'message' => $message] = Rule::parse($rule, $prefix);
         return new static($field, $validator, $value, $message, $prefix);
@@ -116,12 +117,12 @@ class Condition
      * @param  mixed   $value
      * @param  ?string $message
      * @param  ?string $prefix
-     * @return Condition
+     * @return static
      */
     public static function create(
         ?string $field = null, ?string $validator = null, mixed $value = null,
         ?string $message = null, ?string $prefix = 'Pop\Validator\\'
-    ): Condition
+    ): static
     {
         return new static($field, $validator, $value, $message, $prefix);
     }
@@ -309,7 +310,7 @@ class Condition
     /**
      * Evaluate the condition
      *
-     * @param  mixed $input
+     * @param  array $input
      * @throws Exception
      * @return bool
      */

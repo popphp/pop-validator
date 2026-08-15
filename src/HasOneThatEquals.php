@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Pop PHP Framework (http://www.popphp.org/)
  *
@@ -82,12 +83,8 @@ class HasOneThatEquals extends AbstractValidator
             $value = [];
             self::traverseData($field, $this->input, $value);
 
-            if (is_array($value)) {
-                return (is_array($requiredValue)) ?
-                    !empty(array_intersect($requiredValue, $value)) : in_array($requiredValue, $value);
-            } else {
-                return ($isDateTime) ? (strtotime($value) == strtotime($requiredValue)) : ($value == $requiredValue);
-            }
+            return (is_array($requiredValue)) ?
+                !empty(array_intersect($requiredValue, $value)) : in_array($requiredValue, $value);
         }
     }
 

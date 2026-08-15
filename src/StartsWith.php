@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Pop PHP Framework (http://www.popphp.org/)
  *
@@ -46,7 +47,7 @@ class StartsWith extends AbstractValidator
 
         $inputValue = ($this->hasKeyField()) ? $this->getKeyFieldValue() : $this->input;
 
-        return str_starts_with($inputValue, $this->value);
+        return str_starts_with((string)$inputValue, (string)$this->value);
     }
 
     /**

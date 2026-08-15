@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Pop PHP Framework (http://www.popphp.org/)
  *
@@ -77,17 +78,17 @@ class HasOneThatContains extends AbstractValidator
                 $haystack = $val;
 
                 if (!is_array($needle) && !is_array($haystack)) {
-                    $result = (str_contains($haystack, $needle));
-                } else if (!is_array($needle) && is_array($haystack)) {
+                    $result = (str_contains((string)$haystack, (string)$needle));
+                } else if (!is_array($needle)) {
                     $result = in_array($needle, $haystack);
-                } else if (is_array($needle)) {
+                } else {
                     foreach ($needle as $n) {
                         if (is_array($haystack)) {
                             if (in_array($n, $haystack)) {
                                 $result = true;
                                 break;
                             }
-                        } else if (str_contains((string)$haystack, $n)) {
+                        } else if (str_contains((string)$haystack, (string)$n)) {
                             $result = true;
                             break;
                         }
@@ -103,19 +104,12 @@ class HasOneThatContains extends AbstractValidator
             $needle   = $requiredValue;
             $haystack = $value;
 
-            if (!is_array($needle) && !is_array($haystack)) {
-                $result = (str_contains($haystack, $needle));
-            } else if (!is_array($needle) && is_array($haystack)) {
-                $result = in_array($needle, $haystack);
-            } else if (is_array($needle)) {
+            if (!is_array($needle)) {
+                $result = (str_contains((string)$haystack, (string)$needle));
+            } else {
                 $result = true;
                 foreach ($needle as $n) {
-                    if (is_array($haystack)) {
-                        if (!in_array($n, $haystack)) {
-                            $result = false;
-                            break;
-                        }
-                    } else if (!str_contains((string)$haystack, $n)) {
+                    if (!str_contains((string)$haystack, (string)$n)) {
                         $result = false;
                         break;
                     }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Pop PHP Framework (http://www.popphp.org/)
  *
@@ -64,9 +65,9 @@ class RegEx extends AbstractValidator
      * Set the number to satisfy
      *
      * @param  int $numberToSatisfy
-     * @return RegEx
+     * @return static
      */
-    public function setNumberToSatisfy(int $numberToSatisfy): Regex
+    public function setNumberToSatisfy(int $numberToSatisfy): static
     {
         $this->numberToSatisfy = $numberToSatisfy;
         return $this;
@@ -96,7 +97,7 @@ class RegEx extends AbstractValidator
             if ((int)$this->numberToSatisfy == 0) {
                 $result = true;
                 foreach ($this->value as $value) {
-                    if (!preg_match($value, $inputValue)) {
+                    if (!preg_match($value, (string)$inputValue)) {
                         $result = false;
                         break;
                     }
@@ -105,12 +106,12 @@ class RegEx extends AbstractValidator
             } else {
                 $satisfied = 0;
                 foreach ($this->value as $value) {
-                    $satisfied += (int)preg_match($value, $inputValue);
+                    $satisfied += (int)preg_match($value, (string)$inputValue);
                 }
                 return ($satisfied >= (int)$this->numberToSatisfy);
             }
         } else {
-            return (bool)(preg_match($this->value, $inputValue));
+            return (bool)(preg_match($this->value, (string)$inputValue));
         }
     }
 

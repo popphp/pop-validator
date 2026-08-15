@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Pop PHP Framework (http://www.popphp.org/)
  *
@@ -65,9 +66,9 @@ class CreditCard extends AbstractValidator
 
         for ($i = $start; $i >= 0; $i--) {
             if ($double) {
-                $num = $nums[$i] * 2;
+                $num = (int)$nums[$i] * 2;
                 if ($num > 9) {
-                    $num = (int)substr($num, 0, 1) + (int)substr($num, 1, 1);
+                    $num = (int)substr((string)$num, 0, 1) + (int)substr((string)$num, 1, 1);
                 }
                 $sum += $num;
                 $double = false;

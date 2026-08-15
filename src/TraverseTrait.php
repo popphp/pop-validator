@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Pop PHP Framework (http://www.popphp.org/)
  *
@@ -52,9 +53,10 @@ trait TraverseTrait
                 $depth++;
                 self::traverseData($targetNode, $datum, $nodeValues, $currentNode, $depth);
                 $depth--;
-                if (str_contains($currentNode, '.') && !is_numeric($key) ||
+                $hasDot = ($currentNode !== null) && str_contains($currentNode, '.');
+                if (($hasDot && !is_numeric($key)) ||
                     (is_numeric($key) && (($key + 1) == count($data)))) {
-                    $currentNode = substr($currentNode, 0, strrpos($currentNode, '.'));
+                    $currentNode = $hasDot ? substr($currentNode, 0, strrpos($currentNode, '.')) : null;
                 } else if ($depth == 0) {
                     $currentNode = null;
                 }

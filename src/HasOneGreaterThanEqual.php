@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Pop PHP Framework (http://www.popphp.org/)
  *
@@ -82,22 +83,18 @@ class HasOneGreaterThanEqual extends AbstractValidator
             $value = [];
             self::traverseData($field, $this->input, $value);
 
-            if (is_array($value)) {
-                foreach ($value as $val) {
-                    if ($isDateTime) {
-                        if (strtotime($val) >= strtotime($requiredValue)) {
-                            return true;
-                        }
-                    } else {
-                        if ($val >= $requiredValue) {
-                            return true;
-                        }
+            foreach ($value as $val) {
+                if ($isDateTime) {
+                    if (strtotime($val) >= strtotime($requiredValue)) {
+                        return true;
+                    }
+                } else {
+                    if ($val >= $requiredValue) {
+                        return true;
                     }
                 }
-                return false;
-            } else {
-                return ($isDateTime) ? (strtotime($value) >= strtotime($requiredValue)) : ($value >= $requiredValue);
             }
+            return false;
         }
     }
 

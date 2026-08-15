@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Pop PHP Framework (http://www.popphp.org/)
  *
@@ -71,7 +72,7 @@ class HasCountGreaterThan extends AbstractValidator
             $value = [];
             self::traverseData($field, $this->input, $value);
 
-            return (is_array($value) && (isset($value[0])) && (count($value[0]) > $count));
+            return (isset($value[0]) && (count($value[0]) > $count));
         }
     }
 

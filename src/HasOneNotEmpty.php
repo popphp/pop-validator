@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Pop PHP Framework (http://www.popphp.org/)
  *
@@ -67,16 +68,12 @@ class HasOneNotEmpty extends AbstractValidator
             $value = [];
             self::traverseData($field, $this->input, $value);
 
-            if (is_array($value)) {
-                foreach ($value as $val) {
-                    if (!empty($val)) {
-                        return true;
-                    }
+            foreach ($value as $val) {
+                if (!empty($val)) {
+                    return true;
                 }
-                return false;
-            } else {
-                return !empty($value);
             }
+            return false;
         }
     }
 

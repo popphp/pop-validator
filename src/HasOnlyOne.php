@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Pop PHP Framework (http://www.popphp.org/)
  *
@@ -67,7 +68,7 @@ class HasOnlyOne extends AbstractValidator
         } else {
             $value = [];
             self::traverseData($this->value, $this->input, $value);
-            return (is_array($value) && (count($value) == 1));
+            return (count($value) == 1);
         }
     }
 

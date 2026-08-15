@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Pop PHP Framework (http://www.popphp.org/)
  *
@@ -49,10 +50,10 @@ class Contains extends AbstractValidator
         $haystack = ($this->hasKeyField()) ? $this->getKeyFieldValue() : $this->input;
 
         if (!is_array($needle) && !is_array($haystack)) {
-            $result = (str_contains($haystack, $needle));
-        } else if (!is_array($needle) && is_array($haystack)) {
+            $result = (str_contains((string)$haystack, (string)$needle));
+        } else if (!is_array($needle)) {
             $result = in_array($needle, $haystack);
-        } else if (is_array($needle)) {
+        } else {
             $result = true;
             foreach ($needle as $n) {
                 if (is_array($haystack)) {

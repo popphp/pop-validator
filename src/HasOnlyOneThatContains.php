@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Pop PHP Framework (http://www.popphp.org/)
  *
@@ -73,7 +74,7 @@ class HasOnlyOneThatContains extends AbstractValidator
                 $needle   = $requiredValue;
                 $haystack = $val;
 
-                if (!is_array($needle) && !is_array($haystack) && str_contains($haystack, $needle)) {
+                if (!is_array($needle) && !is_array($haystack) && str_contains((string)$haystack, (string)$needle)) {
                     $count++;
                 } else if (!is_array($needle) && is_array($haystack) && in_array($needle, $haystack)) {
                     $count++;
@@ -83,7 +84,7 @@ class HasOnlyOneThatContains extends AbstractValidator
                             if (in_array($n, $haystack)) {
                                 $count++;
                             }
-                        } else if (str_contains((string)$haystack, $n)) {
+                        } else if (str_contains((string)$haystack, (string)$n)) {
                             $count++;
                         }
                     }
@@ -93,17 +94,11 @@ class HasOnlyOneThatContains extends AbstractValidator
             $needle   = $requiredValue;
             $haystack = $value;
 
-            if (!is_array($needle) && !is_array($haystack) && str_contains($haystack, $needle)) {
-                $count++;
-            } else if (!is_array($needle) && is_array($haystack) && in_array($needle, $haystack)) {
+            if (!is_array($needle) && str_contains((string)$haystack, (string)$needle)) {
                 $count++;
             } else if (is_array($needle)) {
                 foreach ($needle as $n) {
-                    if (is_array($haystack)) {
-                        if (in_array($n, $haystack)) {
-                            $count++;
-                        }
-                    } else if (str_contains((string)$haystack, $n)) {
+                    if (str_contains((string)$haystack, (string)$n)) {
                         $count++;
                     }
                 }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Pop PHP Framework (http://www.popphp.org/)
  *
@@ -46,7 +47,7 @@ class Alpha extends AbstractValidator
 
         $inputValue = ($this->hasKeyField()) ? $this->getKeyFieldValue() : $this->input;
 
-        return (bool)(preg_match('/^[a-zA-Z]+$/', $inputValue));
+        return (bool)(preg_match('/^[a-zA-Z]+$/', (string)$inputValue));
     }
 
     /**

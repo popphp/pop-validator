@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Pop PHP Framework (http://www.popphp.org/)
  *
@@ -73,7 +74,7 @@ class Required extends AbstractValidator
             if (isset($parentValues[0][0])) {
                 $parentValues = $parentValues[0];
             }
-            return (is_array($parentValues) && is_array($childValues) && (count($parentValues) == count($childValues)));
+            return (is_array($parentValues) && (count($parentValues) == count($childValues)));
         }
     }
 

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Pop PHP Framework (http://www.popphp.org/)
  *
@@ -298,9 +299,9 @@ abstract class AbstractValidator implements ValidatorInterface
      * Set the validator value
      *
      * @param  mixed $value
-     * @return AbstractValidator
+     * @return static
      */
-    public function setValue(mixed $value): AbstractValidator
+    public function setValue(mixed $value): static
     {
         $this->value = $value;
         return $this;

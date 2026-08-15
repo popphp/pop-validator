@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Pop PHP Framework (http://www.popphp.org/)
  *
@@ -46,7 +47,7 @@ class Subnet extends AbstractValidator
 
         $inputValue = ($this->hasKeyField()) ? $this->getKeyFieldValue() : $this->input;
 
-        return (bool)(preg_match('/^\b(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]|[0-9])\b$/', $inputValue));
+        return (bool)(preg_match('/^\b(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]|[0-9])\b$/', (string)$inputValue));
     }
 
     /**

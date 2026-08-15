@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Pop PHP Framework (http://www.popphp.org/)
  *
@@ -49,10 +50,10 @@ class In extends AbstractValidator
         $haystack = $this->value;
 
         if (!is_array($needle) && !is_array($haystack)) {
-            $result = (str_contains($haystack, $needle));
-        } else if (!is_array($needle) && is_array($haystack)) {
+            $result = (str_contains((string)$haystack, (string)$needle));
+        } else if (!is_array($needle)) {
             $result = in_array($needle, $haystack);
-        } else if (is_array($needle)) {
+        } else {
             if (is_array($haystack)) {
                 $result = (array_intersect($needle, $haystack) == $needle);
             } else {
