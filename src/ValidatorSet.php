@@ -109,7 +109,8 @@ class ValidatorSet
                 'Rule.php',
                 'TraverseTrait.php',
                 'ValidatorInterface.php',
-                'ValidatorSet.php'
+                'ValidatorSet.php',
+                'ValueComparisonTrait.php'
             ];
         }
 
@@ -721,7 +722,6 @@ class ValidatorSet
      */
     public function evaluate(array $input, ?string $prefix = 'Pop\Validator\\'): bool
     {
-        $result = $this->evaluateConditions($input);
         // If conditions are met, or there are no conditions
         if (!($this->hasConditions()) || $this->evaluateConditions($input)) {
             if (!$this->isLoaded()) {
@@ -749,7 +749,8 @@ class ValidatorSet
 
                     if ($this->isLoaded($field)) {
                         foreach ($this->loaded[$field] as $validator) {
-                            $result = (isset($input[$field])) ? $validator->evaluate($input[$field]) : $validator->evaluate();
+                            $result = (isset($input[$field]) && !Rule::isHasClass(get_class($validator), true, $prefix)) ?
+                                $validator->evaluate($input[$field]) : $validator->evaluate($input);
                             if (!$result) {
                                 $this->addError($field, $validator->getMessage());
                             }

@@ -47,7 +47,7 @@ class AlphaNumeric extends AbstractValidator
 
         $inputValue = ($this->hasKeyField()) ? $this->getKeyFieldValue() : $this->input;
 
-        return (bool)(preg_match('/^\w+$/', (string)$inputValue));
+        return !is_array($inputValue) && (bool)(preg_match('/^\w+$/', (string)$inputValue));
     }
 
     /**

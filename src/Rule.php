@@ -36,7 +36,13 @@ class Rule
     protected static array $hasClasses = [
         'HasOneThatEquals', 'HasOnlyOneThatEquals', 'HasCountEqual', 'HasCountGreaterThanEqual',
         'HasCountGreaterThan', 'HasCountLessThanEqual', 'HasCountLessThan', 'HasCountNotEqual',
-        'HasOneThatContains', 'HasOnlyOneThatContains',
+        'HasOneThatContains', 'HasOnlyOneThatContains', 'HasOneIn',
+        'HasOneGreaterThan', 'HasOneGreaterThanEqual', 'HasOneLessThan', 'HasOneLessThanEqual',
+        'HasOnlyOneGreaterThan', 'HasOnlyOneGreaterThanEqual', 'HasOnlyOneLessThan', 'HasOnlyOneLessThanEqual',
+        'HasOneDateTimeThatEquals', 'HasOneDateTimeGreaterThan', 'HasOneDateTimeGreaterThanEqual',
+        'HasOneDateTimeLessThan', 'HasOneDateTimeLessThanEqual',
+        'HasOnlyOneDateTimeThatEquals', 'HasOnlyOneDateTimeGreaterThan', 'HasOnlyOneDateTimeGreaterThanEqual',
+        'HasOnlyOneDateTimeLessThan', 'HasOnlyOneDateTimeLessThanEqual',
     ];
 
     /**
@@ -102,6 +108,7 @@ class Rule
      */
     public static function isHasClass(string $class, bool $both = false, ?string $prefix = 'Pop\Validator\\'): bool
     {
+        $prefix ??= 'Pop\Validator\\';
         if (str_starts_with($class, $prefix)) {
             $class = substr($class, strlen($prefix));
         }
@@ -120,6 +127,7 @@ class Rule
      */
     public static function isHasOneClass(string $class, ?string $prefix = 'Pop\Validator\\'): bool
     {
+        $prefix ??= 'Pop\Validator\\';
         if (str_starts_with($class, $prefix)) {
             $class = substr($class, strlen($prefix));
         }

@@ -305,6 +305,27 @@ class SetTest extends TestCase
         $this->assertTrue($set->hasErrors('logins'));
     }
 
+    public function testEvaluatePostLoadWithHasClass()
+    {
+        $input = [
+            'user_id' => 1,
+            'users'   => [
+                ['name' => 'John Doe'],
+                ['name' => 'Jane Doe']
+            ]
+        ];
+
+        $set = new Validator\ValidatorSet();
+        $set->addValidatorsFromRules(['user_id:equal:1']);
+        $set->loadValidators(null, $input);
+        $set->addValidator('users', 'HasCountEqual', ['users' => 2]);
+
+        $result = $set->evaluate($input);
+
+        $this->assertTrue($result);
+        $this->assertFalse($set->hasErrors('users'));
+    }
+
     public function testEvaluateWithConditions()
     {
         $set = new Validator\ValidatorSet();

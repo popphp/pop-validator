@@ -28,6 +28,11 @@ class In extends AbstractValidator
 {
 
     /**
+     * Traits
+     */
+    use ValueComparisonTrait;
+
+    /**
      * Method to evaluate the validator
      *
      * @param  mixed $input
@@ -45,29 +50,7 @@ class In extends AbstractValidator
             $this->generateDefaultMessage();
         }
 
-        $result   = false;
-        $needle   = ($this->hasKeyField()) ? $this->getKeyFieldValue() : $this->input;
-        $haystack = $this->value;
-
-        if (!is_array($needle) && !is_array($haystack)) {
-            $result = (str_contains((string)$haystack, (string)$needle));
-        } else if (!is_array($needle)) {
-            $result = in_array($needle, $haystack);
-        } else {
-            if (is_array($haystack)) {
-                $result = (array_intersect($needle, $haystack) == $needle);
-            } else {
-                $result = true;
-                foreach ($needle as $n) {
-                    if (!str_contains((string)$haystack, $n)) {
-                        $result = false;
-                        break;
-                    }
-                }
-            }
-        }
-
-        return $result;
+        return $this->inMatch($this->resolveInputValue(), $this->value);
     }
 
     /**

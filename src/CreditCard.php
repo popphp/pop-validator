@@ -38,12 +38,6 @@ class CreditCard extends AbstractValidator
         // Set the input, if passed
         if ($input !== null) {
             $this->input = $input;
-            if (str_contains((string)$this->input, ' ')) {
-                $this->input = str_replace(' ', '', $this->input);
-            }
-            if (str_contains((string)$this->input, '-')) {
-                $this->input = str_replace('-', '', $this->input);
-            }
         }
 
         // Set the default message
@@ -52,6 +46,10 @@ class CreditCard extends AbstractValidator
         }
 
         $inputValue = ($this->hasKeyField()) ? $this->getKeyFieldValue() : $this->input;
+
+        if (is_string($inputValue)) {
+            $inputValue = str_replace([' ', '-'], '', $inputValue);
+        }
 
         if (!ctype_digit((string)$inputValue)) {
             return false;

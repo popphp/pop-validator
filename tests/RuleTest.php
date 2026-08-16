@@ -57,4 +57,31 @@ class RuleTest extends TestCase
         $this->assertTrue(Validator\Rule::isHasOneClass('Pop\Validator\HasOne'));
     }
 
+    public function testRuleIsHasClassNullPrefix()
+    {
+        $this->assertTrue(Validator\Rule::isHasClass('HasOneThatEquals', false, null));
+    }
+
+    public function testRuleIsHasOneClassNullPrefix()
+    {
+        $this->assertTrue(Validator\Rule::isHasOneClass('HasOne', null));
+    }
+
+    public function testRuleParseHasOneGreaterThan()
+    {
+        ['field' => $field, 'validator' => $validator, 'value' => $value] = Validator\Rule::parse('scores:has_one_greater_than:10');
+        $this->assertEquals($field, 'scores');
+        $this->assertEquals($validator, 'HasOneGreaterThan');
+        $this->assertEquals($value, ['scores' => '10']);
+    }
+
+    public function testRuleIsHasClassIncludesGreaterThanFamily()
+    {
+        $this->assertTrue(Validator\Rule::isHasClass('HasOneGreaterThan'));
+        $this->assertTrue(Validator\Rule::isHasClass('HasOnlyOneLessThanEqual'));
+        $this->assertTrue(Validator\Rule::isHasClass('HasOneDateTimeThatEquals'));
+        $this->assertTrue(Validator\Rule::isHasClass('HasOnlyOneDateTimeGreaterThan'));
+        $this->assertTrue(Validator\Rule::isHasClass('HasOneIn'));
+    }
+
 }

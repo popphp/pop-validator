@@ -73,7 +73,7 @@ class DateTimeBetweenInclude extends BetweenInclude
                     $value1 = date($this->dateTimeFormat, $value1);
                 }
                 if (is_numeric($value2)) {
-                    $value1 = date($this->dateTimeFormat, $value2);
+                    $value2 = date($this->dateTimeFormat, $value2);
                 }
             }
         }

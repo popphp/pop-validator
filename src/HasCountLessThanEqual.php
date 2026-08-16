@@ -48,7 +48,7 @@ class HasCountLessThanEqual extends AbstractValidator
 
         $result = false;
 
-        if (!is_array($input)) {
+        if (!is_array($this->input)) {
             throw new Exception('Error: The evaluated input must be an array.');
         }
         if (!is_array($this->value) || !is_numeric(reset($this->value))) {
@@ -74,7 +74,7 @@ class HasCountLessThanEqual extends AbstractValidator
             $value = [];
             self::traverseData($field, $this->input, $value);
 
-            return (isset($value[0]) && (count($value[0]) <= $count));
+            return (isset($value[0]) && is_countable($value[0]) && (count($value[0]) <= $count));
         }
     }
 

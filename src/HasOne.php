@@ -51,7 +51,7 @@ class HasOne extends AbstractValidator
             $this->generateDefaultMessage();
         }
 
-        if (!is_array($input)) {
+        if (!is_array($this->input)) {
             throw new Exception('Error: The evaluated input must be an array.');
         }
         if (empty($this->value)) {

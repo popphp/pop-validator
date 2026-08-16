@@ -28,6 +28,11 @@ class Contains extends AbstractValidator
 {
 
     /**
+     * Traits
+     */
+    use ValueComparisonTrait;
+
+    /**
      * Method to evaluate the validator
      *
      * @param  mixed $input
@@ -45,30 +50,7 @@ class Contains extends AbstractValidator
             $this->generateDefaultMessage();
         }
 
-        $result   = false;
-        $needle   = $this->value;
-        $haystack = ($this->hasKeyField()) ? $this->getKeyFieldValue() : $this->input;
-
-        if (!is_array($needle) && !is_array($haystack)) {
-            $result = (str_contains((string)$haystack, (string)$needle));
-        } else if (!is_array($needle)) {
-            $result = in_array($needle, $haystack);
-        } else {
-            $result = true;
-            foreach ($needle as $n) {
-                if (is_array($haystack)) {
-                    if (!in_array($n, $haystack)) {
-                        $result = false;
-                        break;
-                    }
-                } else if (!str_contains((string)$haystack, $n)) {
-                    $result = false;
-                    break;
-                }
-            }
-        }
-
-        return $result;
+        return $this->containsMatch($this->value, $this->resolveInputValue());
     }
 
     /**

@@ -28,6 +28,12 @@ class ValidatorTest extends TestCase
         $this->assertEquals('The value must only contain characters of the alphabet.', $validator->getMessage());
     }
 
+    public function testAlphaArrayInput()
+    {
+        $validator = new Validator\Alpha();
+        $this->assertFalse($validator->evaluate(['x', 'y']));
+    }
+
     public function testAlphaNum()
     {
         $validator = new Validator\AlphaNumeric();
@@ -49,6 +55,12 @@ class ValidatorTest extends TestCase
         $validator->setField('user[username]');
         $this->assertTrue($validator->evaluate(['user' => ['username' => 'hello123']]));
         $this->assertFalse($validator->evaluate(['user' => ['username' => '$%^#ascx']]));
+    }
+
+    public function testAlphaNumArrayInput()
+    {
+        $validator = new Validator\AlphaNumeric();
+        $this->assertFalse($validator->evaluate(['x', 'y']));
     }
 
     public function testAccepted()
@@ -131,6 +143,13 @@ class ValidatorTest extends TestCase
         $this->expectException('Pop\Validator\Exception');
         $validator = new Validator\CountEqual(2);
         $this->assertFalse($validator->evaluate(1));
+    }
+
+    public function testCountEqualWithSetInput()
+    {
+        $validator = new Validator\CountEqual(2);
+        $validator->setInput([1, 2]);
+        $this->assertTrue($validator->evaluate());
     }
 
     public function testCountGreaterThan()
@@ -227,6 +246,15 @@ class ValidatorTest extends TestCase
         $this->assertTrue($validator->evaluate('4111 1111 1111 1111'));
         $this->assertFalse($validator->evaluate('123456789'));
         $this->assertFalse($validator->evaluate('not-a-number'));
+    }
+
+    public function testCreditCardBracketField()
+    {
+        $validator = new Validator\CreditCard();
+        $validator->setField('card[number]');
+        $this->assertTrue($validator->evaluate(['card' => ['number' => '4111 1111 1111 1111']]));
+        $this->assertTrue($validator->evaluate(['card' => ['number' => '4111-1111-1111-1111']]));
+        $this->assertFalse($validator->evaluate(['card' => ['number' => 'not-a-number']]));
     }
 
     public function testDateTimeBetween()
@@ -345,6 +373,12 @@ class ValidatorTest extends TestCase
         $this->assertFalse($validator->evaluate(456));
     }
 
+    public function testEndsWithArrayInput()
+    {
+        $validator = new Validator\EndsWith('Array');
+        $this->assertFalse($validator->evaluate(['x', 'y']));
+    }
+
     public function testNotEndsWith()
     {
         $validator = new Validator\NotEndsWith('xyz');
@@ -357,6 +391,12 @@ class ValidatorTest extends TestCase
         $validator = new Validator\NotEndsWith(123);
         $this->assertFalse($validator->evaluate(45123));
         $this->assertTrue($validator->evaluate(456));
+    }
+
+    public function testNotEndsWithArrayInput()
+    {
+        $validator = new Validator\NotEndsWith('Array');
+        $this->assertTrue($validator->evaluate(['x', 'y']));
     }
 
     public function testEqual()
@@ -459,6 +499,25 @@ class ValidatorTest extends TestCase
         $validator->setField('group[users]');
         $this->assertTrue($validator->evaluate(['group' => ['users' => [1, 2]]]));
         $this->assertFalse($validator->evaluate(['group' => ['users' => [1]]]));
+    }
+
+    public function testHasCountEqualWithSetInput()
+    {
+        $data = [
+            'users' => [
+                ['name' => 'John Doe', 'email' => 'john@doe.com'],
+                ['name' => 'Jane Doe', 'email' => 'jane@doe.com']
+            ]
+        ];
+        $validator = new Validator\HasCountEqual(['users' => 2]);
+        $validator->setInput($data);
+        $this->assertTrue($validator->evaluate());
+    }
+
+    public function testHasCountEqualScalarLeaf()
+    {
+        $validator = new Validator\HasCountEqual(['group.name' => 2]);
+        $this->assertFalse($validator->evaluate(['group' => ['name' => 'bob']]));
     }
 
     public function testHasCountNotEqual1()
@@ -909,6 +968,13 @@ class ValidatorTest extends TestCase
         $validator->setField('group[users]');
         $this->assertTrue($validator->evaluate(['group' => ['users' => [1, 2]]]));
         $this->assertFalse($validator->evaluate(['group' => ['users' => []]]));
+    }
+
+    public function testHasOneWithSetInput()
+    {
+        $validator = new Validator\HasOne('users');
+        $validator->setInput(['users' => [['username' => 'someuser']]]);
+        $this->assertTrue($validator->evaluate());
     }
 
     public function testHasOneThatEquals1()
@@ -2149,6 +2215,13 @@ class ValidatorTest extends TestCase
         $this->assertFalse($validator->evaluate(['user' => []]));
     }
 
+    public function testRequiredWithSetInput()
+    {
+        $validator = new Validator\Required('username');
+        $validator->setInput(['username' => 'someuser']);
+        $this->assertTrue($validator->evaluate());
+    }
+
     public function testRequiredException1()
     {
         $this->expectException('Pop\Validator\Exception');
@@ -2177,6 +2250,12 @@ class ValidatorTest extends TestCase
         $this->assertFalse($validator->evaluate(456));
     }
 
+    public function testStartsWithArrayInput()
+    {
+        $validator = new Validator\StartsWith('Array');
+        $this->assertFalse($validator->evaluate(['x', 'y']));
+    }
+
     public function testNotStartsWith()
     {
         $validator = new Validator\NotStartsWith('abc');
@@ -2189,6 +2268,12 @@ class ValidatorTest extends TestCase
         $validator = new Validator\NotStartsWith(123);
         $this->assertFalse($validator->evaluate(123456));
         $this->assertTrue($validator->evaluate(456));
+    }
+
+    public function testNotStartsWithArrayInput()
+    {
+        $validator = new Validator\NotStartsWith('Array');
+        $this->assertTrue($validator->evaluate(['x', 'y']));
     }
 
     public function testSubnet()

@@ -47,7 +47,7 @@ class Alpha extends AbstractValidator
 
         $inputValue = ($this->hasKeyField()) ? $this->getKeyFieldValue() : $this->input;
 
-        return (bool)(preg_match('/^[a-zA-Z]+$/', (string)$inputValue));
+        return !is_array($inputValue) && (bool)(preg_match('/^[a-zA-Z]+$/', (string)$inputValue));
     }
 
     /**

@@ -88,6 +88,22 @@ class MessageTest extends TestCase
         );
     }
 
+    public function testDateTimeBetweenMessage()
+    {
+        $this->assertEquals(
+            "The 'date_range' must be between '2025-11-01' and '2025-11-30'.",
+            (new Validator\DateTimeBetween(['2025-11-01', '2025-11-30']))->generateDefaultMessage('date_range')
+        );
+    }
+
+    public function testDateTimeBetweenIncludeMessage()
+    {
+        $this->assertEquals(
+            "The 'date_range' must be between or equal to '2025-11-01' and '2025-11-30'.",
+            (new Validator\DateTimeBetweenInclude(['2025-11-01', '2025-11-30']))->generateDefaultMessage('date_range')
+        );
+    }
+
     public function testEqualMessage()
     {
         $this->assertEquals(

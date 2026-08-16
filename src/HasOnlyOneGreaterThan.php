@@ -49,7 +49,7 @@ class HasOnlyOneGreaterThan extends AbstractValidator
 
         $result = false;
 
-        if (!is_array($input)) {
+        if (!is_array($this->input)) {
             throw new Exception('Error: The evaluated input must be an array.');
         }
         if (!is_array($this->value)) {

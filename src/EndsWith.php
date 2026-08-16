@@ -28,6 +28,11 @@ class EndsWith extends AbstractValidator
 {
 
     /**
+     * Traits
+     */
+    use ValueComparisonTrait;
+
+    /**
      * Method to evaluate the validator
      *
      * @param  mixed $input
@@ -45,9 +50,7 @@ class EndsWith extends AbstractValidator
             $this->generateDefaultMessage();
         }
 
-        $inputValue = ($this->hasKeyField()) ? $this->getKeyFieldValue() : $this->input;
-
-        return str_ends_with((string)$inputValue, (string)$this->value);
+        return $this->endsWithMatch($this->resolveInputValue(), $this->value);
     }
 
     /**
@@ -59,13 +62,7 @@ class EndsWith extends AbstractValidator
      */
     public function generateDefaultMessage(mixed $name = null, mixed $value = null): string
     {
-        if ($value !== null) {
-            $valueString = $value;
-        } else if (!empty($this->value) && !is_array($this->value)) {
-            $valueString = $this->value;
-        } else {
-            $valueString = 'the value.';
-        }
+        $valueString = $this->resolveComparisonValueString($value);
         $this->message = "The " . (($name !== null) ? "'" . $name . "'" : "input") .
             " must end with '" . $valueString . "'.";
 
