@@ -228,7 +228,7 @@ if ($set->evaluate(['username' => 'username_123'])) {
 use Pop\Validator\ValidatorSet;
 
 $set = new ValidatorSet();
-$set->addValidators(['username' => ['AlphaNumeric' => null, 'LengthGte' => 8]]);
+$set->addValidators(['username' => ['AlphaNumeric' => null, 'LengthGreaterThanEqual' => 8]]);
 
 if ($set->evaluate(['username' => 'username_123'])) {
     echo 'The username satisfies the requirements.' . PHP_EOL;
@@ -249,7 +249,7 @@ $set->addValidators([
             'value'   => null,
             'message' => 'The username can only contain alphanumeric characters.'
         ],
-        'LengthGte' => 8
+        'LengthGreaterThanEqual' => 8
     ]
 ]);
 
@@ -277,7 +277,7 @@ conditions as well:
 use Pop\Validator\ValidatorSet;
 
 $set = ValidatorSet();
-$set->addValidators(['username' => ['AlphaNumeric' => null, 'LengthGte' => 8]]);
+$set->addValidators(['username' => ['AlphaNumeric' => null, 'LengthGreaterThanEqual' => 8]]);
 $set->setStrict(ValidatorSet::STRICT_NONE);
 
 if ($set->evaluate(['username' => 'someuser_!23'])) {
