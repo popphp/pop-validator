@@ -2,7 +2,7 @@ pop-validator
 =============
 
 [![Build Status](https://github.com/popphp/pop-validator/workflows/phpunit/badge.svg)](https://github.com/popphp/pop-validator/actions)
-[![Coverage Status](http://cc.popphp.org/coverage.php?comp=pop-validator)](http://cc.popphp.org/pop-validator/)
+[![Coverage Status](https://cc.popphp.org/coverage.php?comp=pop-validator)](https://cc.popphp.org/pop-validator/)
 
 [![Join the chat at https://discord.gg/TZjgT74U7E](https://media.popphp.org/img/discord.svg)](https://discord.gg/TZjgT74U7E)
 
@@ -29,7 +29,7 @@ Overview
 The component comes with a set of built-in evaluation objects and also the ability to extend the
 component and build your own.
 
-`pop-validator` is a component of the [Pop PHP Framework](http://www.popphp.org/).
+`pop-validator` is a component of the [Pop PHP Framework](https://www.popphp.org/).
 
 [Top](#pop-validator)
 
