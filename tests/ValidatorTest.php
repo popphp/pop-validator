@@ -2222,6 +2222,13 @@ class ValidatorTest extends TestCase
         $this->assertTrue($validator->evaluate());
     }
 
+    public function testRequiredNullValueWithNonBracketField()
+    {
+        $validator = new Validator\Required();
+        $validator->setField('username');
+        $this->assertFalse($validator->evaluate(['username' => 'someuser']));
+    }
+
     public function testRequiredException1()
     {
         $this->expectException('Pop\Validator\Exception');

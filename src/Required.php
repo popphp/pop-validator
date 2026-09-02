@@ -47,7 +47,6 @@ class Required extends AbstractValidator
         }
 
         // Set the default message
-
         if (!$this->hasMessage()) {
             $this->generateDefaultMessage();
         }
@@ -59,12 +58,12 @@ class Required extends AbstractValidator
             throw new Exception('Error: The evaluated value cannot be empty.');
         }
 
-        if (!str_contains($this->value, '.') && (!$this->hasField())) {
+        if (($this->value !== null) && !str_contains($this->value, '.') && (!$this->hasField())) {
             return (array_key_exists($this->value, $this->input));
         } else if ($this->hasKeyField()) {
             ['key' => $key, 'field' => $field] = $this->getField();
             return (array_key_exists($key, $this->input) && array_key_exists($field, $this->input[$key]));
-        } else {
+        } else if ($this->value !== null) {
             $parentValues = [];
             $childValues  = [];
 
@@ -75,6 +74,8 @@ class Required extends AbstractValidator
                 $parentValues = $parentValues[0];
             }
             return (is_array($parentValues) && (count($parentValues) == count($childValues)));
+        } else {
+            return false;
         }
     }
 
