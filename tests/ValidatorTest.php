@@ -2320,4 +2320,156 @@ class ValidatorTest extends TestCase
         $this->assertTrue($validator->evaluate($data));
     }
 
+    public function testComparisonNonNumericInput()
+    {
+        $this->assertFalse((new Validator\GreaterThan(5))->evaluate('abc'));
+        $this->assertFalse((new Validator\GreaterThan(5))->evaluate([1, 2]));
+        $this->assertFalse((new Validator\GreaterThanEqual(5))->evaluate('abc'));
+        $this->assertFalse((new Validator\GreaterThanEqual(5))->evaluate([1, 2]));
+        $this->assertFalse((new Validator\LessThan(5))->evaluate('abc'));
+        $this->assertFalse((new Validator\LessThan(5))->evaluate([1, 2]));
+        $this->assertFalse((new Validator\LessThanEqual(5))->evaluate('abc'));
+        $this->assertFalse((new Validator\LessThanEqual(5))->evaluate([1, 2]));
+        $this->assertFalse((new Validator\Between([1, 10]))->evaluate('abc'));
+        $this->assertFalse((new Validator\Between([1, 10]))->evaluate([1, 2]));
+        $this->assertFalse((new Validator\BetweenInclude([1, 10]))->evaluate('abc'));
+        $this->assertFalse((new Validator\BetweenInclude([1, 10]))->evaluate([1, 2]));
+        $this->assertTrue((new Validator\GreaterThan(5))->evaluate('6'));
+    }
+
+    public function testRegExArrayInput()
+    {
+        $this->assertFalse((new Validator\RegEx('/a/'))->evaluate(['a']));
+        $this->assertFalse((new Validator\RegEx(['/a/', '/b/']))->evaluate(['a', 'b']));
+    }
+
+    public function testRequiredArrayValueException()
+    {
+        $this->expectException('Pop\Validator\Exception');
+        (new Validator\Required(['x']))->evaluate(['x' => 1]);
+    }
+
+    public function testHasOneNotEmptyArrayValueException()
+    {
+        $this->expectException('Pop\Validator\Exception');
+        (new Validator\HasOneNotEmpty(['x']))->evaluate(['x' => [1]]);
+    }
+
+    public function testHasOneInTopLevelField()
+    {
+        $validator = new Validator\HasOneIn(['status' => ['open', 'new']]);
+        $this->assertTrue($validator->evaluate(['status' => 'open']));
+        $this->assertFalse($validator->evaluate(['status' => 'closed']));
+    }
+
+    protected function hasNoneData(): array
+    {
+        return [
+            'issues' => [
+                ['id' => 1, 'resolved' => 1, 'score' => 5, 'due' => '2026-01-10', 'note' => 'ok'],
+                ['id' => 2, 'resolved' => 1, 'score' => 8, 'due' => '2026-02-10', 'note' => ''],
+            ],
+            'tags'   => [],
+            'status' => 'closed',
+        ];
+    }
+
+    public function testHasNone()
+    {
+        $this->assertTrue((new Validator\HasNone('tags'))->evaluate($this->hasNoneData()));
+        $this->assertTrue((new Validator\HasNone('missing'))->evaluate($this->hasNoneData()));
+        $this->assertFalse((new Validator\HasNone('issues'))->evaluate($this->hasNoneData()));
+    }
+
+    public function testHasNoneNotEmpty()
+    {
+        $this->assertFalse((new Validator\HasNoneNotEmpty('issues.note'))->evaluate($this->hasNoneData()));
+        $this->assertTrue((new Validator\HasNoneNotEmpty('issues.note'))->evaluate(['issues' => [['note' => ''], ['note' => null]]]));
+    }
+
+    public function testHasNoneThatEquals()
+    {
+        $this->assertTrue((new Validator\HasNoneThatEquals(['issues.resolved' => 0]))->evaluate($this->hasNoneData()));
+        $this->assertFalse((new Validator\HasNoneThatEquals(['issues.resolved' => 1]))->evaluate($this->hasNoneData()));
+        $this->assertTrue((new Validator\HasNoneThatEquals(['missing.resolved' => 0]))->evaluate($this->hasNoneData()));
+        $this->assertTrue((new Validator\HasNoneThatEquals(['status' => 'open']))->evaluate($this->hasNoneData()));
+        $this->assertFalse((new Validator\HasNoneThatEquals(['status' => 'closed']))->evaluate($this->hasNoneData()));
+    }
+
+    public function testHasNoneIn()
+    {
+        $this->assertTrue((new Validator\HasNoneIn(['issues.id' => [3, 4]]))->evaluate($this->hasNoneData()));
+        $this->assertFalse((new Validator\HasNoneIn(['issues.id' => [2, 3]]))->evaluate($this->hasNoneData()));
+        $this->assertTrue((new Validator\HasNoneIn(['status' => ['open', 'new']]))->evaluate($this->hasNoneData()));
+        $this->assertFalse((new Validator\HasNoneIn(['status' => ['open', 'closed']]))->evaluate($this->hasNoneData()));
+    }
+
+    public function testHasNoneThatContains()
+    {
+        $this->assertFalse((new Validator\HasNoneThatContains(['issues.note' => 'o']))->evaluate($this->hasNoneData()));
+        $this->assertTrue((new Validator\HasNoneThatContains(['issues.note' => 'x']))->evaluate($this->hasNoneData()));
+    }
+
+    public function testHasNoneOrdering()
+    {
+        $data = $this->hasNoneData();
+        $this->assertTrue((new Validator\HasNoneGreaterThan(['issues.score' => 8]))->evaluate($data));
+        $this->assertFalse((new Validator\HasNoneGreaterThan(['issues.score' => 7]))->evaluate($data));
+        $this->assertTrue((new Validator\HasNoneGreaterThanEqual(['issues.score' => 9]))->evaluate($data));
+        $this->assertFalse((new Validator\HasNoneGreaterThanEqual(['issues.score' => 8]))->evaluate($data));
+        $this->assertTrue((new Validator\HasNoneLessThan(['issues.score' => 5]))->evaluate($data));
+        $this->assertFalse((new Validator\HasNoneLessThan(['issues.score' => 6]))->evaluate($data));
+        $this->assertTrue((new Validator\HasNoneLessThanEqual(['issues.score' => 4]))->evaluate($data));
+        $this->assertFalse((new Validator\HasNoneLessThanEqual(['issues.score' => 5]))->evaluate($data));
+    }
+
+    public function testHasNoneDateTime()
+    {
+        $data = $this->hasNoneData();
+        $this->assertTrue((new Validator\HasNoneDateTimeThatEquals(['issues.due' => '2026-03-01']))->evaluate($data));
+        $this->assertFalse((new Validator\HasNoneDateTimeThatEquals(['issues.due' => '2026-01-10']))->evaluate($data));
+        $this->assertTrue((new Validator\HasNoneDateTimeGreaterThan(['issues.due' => '2026-02-10']))->evaluate($data));
+        $this->assertFalse((new Validator\HasNoneDateTimeGreaterThan(['issues.due' => '2026-01-31']))->evaluate($data));
+        $this->assertTrue((new Validator\HasNoneDateTimeGreaterThanEqual(['issues.due' => '2026-02-11']))->evaluate($data));
+        $this->assertFalse((new Validator\HasNoneDateTimeGreaterThanEqual(['issues.due' => '2026-02-10']))->evaluate($data));
+        $this->assertTrue((new Validator\HasNoneDateTimeLessThan(['issues.due' => '2026-01-10']))->evaluate($data));
+        $this->assertFalse((new Validator\HasNoneDateTimeLessThan(['issues.due' => '2026-01-11']))->evaluate($data));
+        $this->assertTrue((new Validator\HasNoneDateTimeLessThanEqual(['issues.due' => '2026-01-09']))->evaluate($data));
+        $this->assertFalse((new Validator\HasNoneDateTimeLessThanEqual(['issues.due' => '2026-01-10']))->evaluate($data));
+    }
+
+    public function testHasNoneInvalidInputStillThrows()
+    {
+        $this->expectException('Pop\Validator\Exception');
+        (new Validator\HasNoneThatEquals(['issues.resolved' => 0]))->evaluate('not an array');
+    }
+
+    public function testHasNoneDefaultMessages()
+    {
+        $validator = new Validator\HasNoneThatEquals(['issues.resolved' => 1]);
+        $validator->evaluate($this->hasNoneData());
+        $this->assertEquals("The input must not contain any item of 'issues.resolved' with the required value.", $validator->getMessage());
+
+        $validator = new Validator\HasNone('issues');
+        $validator->evaluate($this->hasNoneData());
+        $this->assertEquals("The input must not contain any items of 'issues'.", $validator->getMessage());
+
+        $validator = new Validator\HasNoneDateTimeGreaterThan(['issues.due' => '2026-01-01']);
+        $validator->evaluate($this->hasNoneData());
+        $this->assertEquals("The input must not contain any item of 'issues.due' that is greater than the required value.", $validator->getMessage());
+    }
+
+    public function testHasOneInKeyField()
+    {
+        $validator = new Validator\HasOneIn(['status' => ['open', 'new']]);
+        $validator->setField('order[status]');
+        $this->assertTrue($validator->evaluate(['order' => ['status' => 'open']]));
+        $this->assertFalse($validator->evaluate(['order' => ['status' => 'closed']]));
+
+        $validator = new Validator\HasNoneIn(['status' => ['open', 'new']]);
+        $validator->setField('order[status]');
+        $this->assertFalse($validator->evaluate(['order' => ['status' => 'open']]));
+        $this->assertTrue($validator->evaluate(['order' => ['status' => 'closed']]));
+    }
+
 }

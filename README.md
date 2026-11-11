@@ -43,7 +43,7 @@ Install `pop-validator` using Composer.
 Or, require it in your composer.json file
 
     "require": {
-        "popphp/pop-validator" : "^5.0.0"
+        "popphp/pop-validator" : "^5.1.0"
     }
 
 [Top](#pop-validator)
@@ -53,40 +53,45 @@ Quickstart
 
 Here's a list of the available built-in validators, all under the namespace `Pop\Validator\`:
 
-|                                 | Built-in Validators                |                                |
-|---------------------------------|------------------------------------|--------------------------------|
-| Accepted                        | Alpha                              | AlphaNumeric                   |
-| Between                         | BetweenInclude                     | Boolean                        |
-| Contains                        | CountEqual                         | CountGreaterThan               |
-| CountGreaterThanEqual           | CountLessThan                      | CountLessThanEqual             |
-| CountNotEqual                   | CreditCard                         | DateTimeBetween                |
-| DateTimeBetweenInclude          | DateTimeEqual                      | DateTimeGreaterThan            |
-| DateTimeGreaterThanEqual        | DateTimeLessThan                   | DateTimeLessThanEqual          |
-| DateTimeNotEqual                | Declined                           | Email                          |
-| EndsWith                        | Equal                              | GreaterThan                    |
-| GreaterThanEqual                | HasAtLeast                         | HasAtMost                      |
-| HasCountEqual                   | HasCountGreaterThan                | HasCountGreaterThanEqual       |
-| HasCountLessThan                | HasCountLessThanEqual              | HasCountNotEqual               |
-| HasOne                          | HasOneDateTimeGreaterThan          | HasOneDateTimeGreaterThanEqual |
-| HasOneDateTimeLessThan          | HasOneDateTimeLessThanEqual        | HasOneDateTimeThatEquals       |
-| HasOneGreaterThan               | HasOneGreaterThanEqual             | HasOneIn                       |
-| HasOneLessThan                  | HasOneLessThanEqual                | HasOneNotEmpty                 |
-| HasOneThatContains              | HasOneThatEquals                   | HasOnlyOne                     |
-| HasOnlyOneDateTimeGreaterThan   | HasOnlyOneDateTimeGreaterThanEqual | HasOnlyOneDateTimeLessThan     |
-| HasOnlyOneDateTimeLessThanEqual | HasOnlyOneDateTimeThatEquals       | HasOnlyOneGreaterThan          |
-| HasOnlyOneGreaterThanEqual      | HasOnlyOneLessThan                 | HasOnlyOneLessThanEqual        |
-| HasOnlyOneThatContains          | HasOnlyOneThatEquals               | In                             |
-| InArray                         | Ipv4                               | Ipv6                           |
-| IsArray                         | IsEmpty                            | IsJson                         |
-| IsNotEmpty                      | IsNotNull                          | IsNull                         |
-| IsSubnetOf                      | Length                             | LengthBetween                  |
-| LengthBetweenInclude            | LengthGreaterThan                  | LengthGreaterThanEqual         |
-| LengthLessThan                  | LengthLessThanEqual                | LessThan                       |
-| LessThanEqual                   | NotContains                        | NotEmpty                       |
-| NotEndsWith                     | NotEqual                           | NotIn                          |
-| NotInArray                      | NotStartsWith                      | Numeric                        |
-| RegEx                           | Required                           | StartsWith                     |
-| Subnet                          | Url                                |                                |
+|                                    | Built-in Validators            |                                 |
+|------------------------------------|--------------------------------|---------------------------------|
+| Accepted                           | Alpha                          | AlphaNumeric                    |
+| Between                            | BetweenInclude                 | Boolean                         |
+| Contains                           | CountEqual                     | CountGreaterThan                |
+| CountGreaterThanEqual              | CountLessThan                  | CountLessThanEqual              |
+| CountNotEqual                      | CreditCard                     | DateTimeBetween                 |
+| DateTimeBetweenInclude             | DateTimeEqual                  | DateTimeGreaterThan             |
+| DateTimeGreaterThanEqual           | DateTimeLessThan               | DateTimeLessThanEqual           |
+| DateTimeNotEqual                   | Declined                       | Email                           |
+| EndsWith                           | Equal                          | GreaterThan                     |
+| GreaterThanEqual                   | HasAtLeast                     | HasAtMost                       |
+| HasCountEqual                      | HasCountGreaterThan            | HasCountGreaterThanEqual        |
+| HasCountLessThan                   | HasCountLessThanEqual          | HasCountNotEqual                |
+| HasNone                            | HasNoneDateTimeGreaterThan     | HasNoneDateTimeGreaterThanEqual |
+| HasNoneDateTimeLessThan            | HasNoneDateTimeLessThanEqual   | HasNoneDateTimeThatEquals       |
+| HasNoneGreaterThan                 | HasNoneGreaterThanEqual        | HasNoneIn                       |
+| HasNoneLessThan                    | HasNoneLessThanEqual           | HasNoneNotEmpty                 |
+| HasNoneThatContains                | HasNoneThatEquals              | HasOne                          |
+| HasOneDateTimeGreaterThan          | HasOneDateTimeGreaterThanEqual | HasOneDateTimeLessThan          |
+| HasOneDateTimeLessThanEqual        | HasOneDateTimeThatEquals       | HasOneGreaterThan               |
+| HasOneGreaterThanEqual             | HasOneIn                       | HasOneLessThan                  |
+| HasOneLessThanEqual                | HasOneNotEmpty                 | HasOneThatContains              |
+| HasOneThatEquals                   | HasOnlyOne                     | HasOnlyOneDateTimeGreaterThan   |
+| HasOnlyOneDateTimeGreaterThanEqual | HasOnlyOneDateTimeLessThan     | HasOnlyOneDateTimeLessThanEqual |
+| HasOnlyOneDateTimeThatEquals       | HasOnlyOneGreaterThan          | HasOnlyOneGreaterThanEqual      |
+| HasOnlyOneLessThan                 | HasOnlyOneLessThanEqual        | HasOnlyOneThatContains          |
+| HasOnlyOneThatEquals               | In                             | InArray                         |
+| Ipv4                               | Ipv6                           | IsArray                         |
+| IsEmpty                            | IsJson                         | IsNotEmpty                      |
+| IsNotNull                          | IsNull                         | IsSubnetOf                      |
+| Length                             | LengthBetween                  | LengthBetweenInclude            |
+| LengthGreaterThan                  | LengthGreaterThanEqual         | LengthLessThan                  |
+| LengthLessThanEqual                | LessThan                       | LessThanEqual                   |
+| NotContains                        | NotEmpty                       | NotEndsWith                     |
+| NotEqual                           | NotIn                          | NotInArray                      |
+| NotStartsWith                      | Numeric                        | RegEx                           |
+| Required                           | StartsWith                     | Subnet                          |
+| Url                                |                                |                                 |
 
 ### Check an email value
 
@@ -112,6 +117,9 @@ $validator = new Pop\Validator\LessThan(10);
 
 if ($validator->evaluate(8)) { } // Returns true
 ```
+
+The ordering validators (`GreaterThan`, `GreaterThanEqual`, `LessThan`, `LessThanEqual`, `Between` and
+`BetweenInclude`) return `false` for input that is not numeric, such as `'abc'` or an array.
 
 ### Set a custom message
 
@@ -190,6 +198,31 @@ $data = [
 $validator->evaluate($data); // Returns true - at least one 'username' under website_data.users equals 'john_doe'
 ```
 
+The `HasNone*` validators are the opposite of the matching `HasOne*` validators: they pass when no item matches,
+including when the field is missing or empty. A non-array input or an incorrectly shaped value still throws.
+
+```php
+$validator = new Pop\Validator\HasNoneThatEquals(['issues.resolved' => 0]);
+
+$data = [
+    'issues' => [
+        ['id' => 1, 'resolved' => 1],
+        ['id' => 2, 'resolved' => 1],
+    ],
+];
+
+$validator->evaluate($data); // Returns true - there are no unresolved issues
+```
+
+The same check as a rule is `issues.resolved:has_none_that_equals:0`.
+
+Only these `Has*` validators (and `Required`) can follow a dot-notation field. A `Condition` that uses any other
+validator with a dot-notation field throws an exception.
+
+`HasAtLeast` and `HasAtMost` are not part of this family, despite their names. They are aliases of
+`CountGreaterThanEqual` and `CountLessThanEqual`: they count the items in the field they are given, and do not
+follow a dot-notation path.
+
 ### Discover available validators
 
 `ValidatorSet::getAvailableValidators()` returns every built-in validator class name mapped to its
@@ -199,6 +232,8 @@ $validator->evaluate($data); // Returns true - at least one 'username' under web
 $validators = Pop\Validator\ValidatorSet::getAvailableValidators();
 // ['Accepted' => 'accepted', 'Alpha' => 'alpha', 'AlphaNumeric' => 'alpha_numeric', ...]
 ```
+
+`NotEmpty` is left out of this list because it is an alias of `IsNotEmpty`. It can still be used directly.
 
 [Top](#pop-validator)
 
@@ -259,6 +294,9 @@ if ($set->evaluate(['username' => 'username_123'])) {
     print_r($set->getErrors());
 }
 ```
+
+A validation set keeps its errors and loaded validators after it is evaluated, so create a new set for each
+input array rather than calling `evaluate()` again on the same set.
 
 #### Lazy-Loading vs Eager-Loading
 
@@ -339,6 +377,9 @@ Rules provide a shorthand way to wire up validations and conditions within the v
 colon-separated strings compromised of a `field`, a `validator` and optional `value` and `message` values.
 The validator should be a `snake_case` format of the class string, e.g. `HasOne` class should be written as
 `has_one`.
+
+Because the parts of a rule are separated by colons, a value or message cannot contain a colon. Use the
+validator classes directly for values such as times (`10:30`).
 
 Below is the same example from above, but using rules instead:
 

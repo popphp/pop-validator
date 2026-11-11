@@ -24,7 +24,7 @@ use Pop\Utils\Str;
  * @author     Nick Sagona, III <nick@popphp.org>
  * @copyright  Copyright (c) 2009-2026 Nick Sagona, III
  * @license    https://www.popphp.org/license     New BSD License
- * @version    5.0.0
+ * @version    5.1.0
  */
 class Rule
 {
@@ -43,6 +43,10 @@ class Rule
         'HasOneDateTimeLessThan', 'HasOneDateTimeLessThanEqual',
         'HasOnlyOneDateTimeThatEquals', 'HasOnlyOneDateTimeGreaterThan', 'HasOnlyOneDateTimeGreaterThanEqual',
         'HasOnlyOneDateTimeLessThan', 'HasOnlyOneDateTimeLessThanEqual',
+        'HasNoneThatEquals', 'HasNoneIn', 'HasNoneThatContains',
+        'HasNoneGreaterThan', 'HasNoneGreaterThanEqual', 'HasNoneLessThan', 'HasNoneLessThanEqual',
+        'HasNoneDateTimeThatEquals', 'HasNoneDateTimeGreaterThan', 'HasNoneDateTimeGreaterThanEqual',
+        'HasNoneDateTimeLessThan', 'HasNoneDateTimeLessThanEqual',
     ];
 
     /**
@@ -50,7 +54,7 @@ class Rule
      * @var array
      */
     protected static array $hasOneClasses = [
-        'HasOne', 'HasOnlyOne', 'HasOneNotEmpty',
+        'HasOne', 'HasOnlyOne', 'HasOneNotEmpty', 'Required', 'HasNone', 'HasNoneNotEmpty',
     ];
 
     /**
@@ -73,14 +77,14 @@ class Rule
 
         $field     = $ruleSet[0];
         $validator = Str::snakeCaseToTitleCase($ruleSet[1]);
-        $value     = (!empty($ruleSet[2])) ? $ruleSet[2] : null;
+        $value     = (isset($ruleSet[2]) && ($ruleSet[2] !== '')) ? $ruleSet[2] : null;
         $message   = (!empty($ruleSet[3])) ? $ruleSet[3] : null;
 
         if (!class_exists($prefix . $validator)) {
             throw new \InvalidArgumentException("Error: The validator class '" . $prefix . $validator . "' does not exist.");
         }
 
-        if (str_contains($rule, ',')) {
+        if (is_string($value) && str_contains($value, ',')) {
             $value = array_filter(array_map('trim', explode(',', $value)));
         }
 

@@ -419,4 +419,20 @@ class SetTest extends TestCase
         $this->assertTrue($result);
     }
 
+    public function testGetAvailableValidatorsExcludesTraitAndAlias()
+    {
+        $validators = Validator\ValidatorSet::getAvailableValidators();
+        $this->assertFalse(in_array('date_time_trait', $validators));
+        $this->assertFalse(in_array('not_empty', $validators));
+        $this->assertTrue(in_array('is_not_empty', $validators));
+    }
+
+    public function testGetAvailableValidatorsIncludesHasNone()
+    {
+        $validators = Validator\ValidatorSet::getAvailableValidators();
+        $this->assertTrue(in_array('has_none_that_equals', $validators));
+        $this->assertTrue(in_array('has_none_in', $validators));
+        $this->assertTrue(in_array('has_none_date_time_less_than_equal', $validators));
+    }
+
 }

@@ -22,7 +22,7 @@ namespace Pop\Validator;
  * @author     Nick Sagona, III <nick@popphp.org>
  * @copyright  Copyright (c) 2009-2026 Nick Sagona, III
  * @license    https://www.popphp.org/license     New BSD License
- * @version    5.0.0
+ * @version    5.1.0
  */
 class Required extends AbstractValidator
 {
@@ -44,6 +44,10 @@ class Required extends AbstractValidator
         // Set the input, if passed
         if ($input !== null) {
             $this->input = $input;
+        }
+
+        if (is_array($this->value)) {
+            throw new Exception('Error: The evaluated value must be a field name, not an array.');
         }
 
         // Set the default message

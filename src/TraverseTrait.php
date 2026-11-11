@@ -24,7 +24,7 @@ use Pop\Utils;
  * @author     Nick Sagona, III <nick@popphp.org>
  * @copyright  Copyright (c) 2009-2026 Nick Sagona, III
  * @license    https://www.popphp.org/license     New BSD License
- * @version    5.0.0
+ * @version    5.1.0
  */
 trait TraverseTrait
 {

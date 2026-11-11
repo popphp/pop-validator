@@ -22,7 +22,7 @@ namespace Pop\Validator;
  * @author     Nick Sagona, III <nick@popphp.org>
  * @copyright  Copyright (c) 2009-2026 Nick Sagona, III
  * @license    https://www.popphp.org/license     New BSD License
- * @version    5.0.0
+ * @version    5.1.0
  */
 class Condition
 {
@@ -320,29 +320,48 @@ class Condition
             throw new Exception('Error: The condition class does not exist.');
         }
 
+        if ($this->field === null) {
+            throw new Exception('Error: The condition field has not been set.');
+        }
+
         if (!str_contains($this->field, '.') && !str_contains($this->field, '[') && !array_key_exists($this->field, $input))  {
             throw new Exception("Error: The input data does not contain a '" . $this->field . "' field value.");
         }
 
+        $value = $this->value;
+
         // If the value references a value in the input array
-        if (is_string($this->value) && str_starts_with($this->value, '[') && str_ends_with($this->value, ']')) {
-            $value = substr($this->value, 1, -1);
-            if (array_key_exists($value, $input)) {
-                $this->value = $input[$value];
+        if (is_string($value) && str_starts_with($value, '[') && str_ends_with($value, ']')) {
+            $reference = substr($value, 1, -1);
+            if (array_key_exists($reference, $input)) {
+                $value = $input[$reference];
             }
         }
 
-        $class       = $this->prefix . $this->validator;
-        $isFormatted = (is_array($this->value) && array_key_exists($this->field, $this->value));
+        $class = $this->prefix . $this->validator;
 
-        $this->validatorObject = (str_starts_with($this->validator, 'Has') && (!$isFormatted)) ?
-            new $class([$this->field => $this->value], $this->message) : new $class($this->value, $this->message);
+        if (Rule::isHasOneClass($class, $this->prefix)) {
+            // The field is passed as the value, so it is not also set as the field
+            $this->validatorObject = new $class($this->field, $this->message);
+        } else if (Rule::isHasClass($class, false, $this->prefix)) {
+            $isFormatted = (is_array($value) && array_key_exists($this->field, $value));
+            $this->validatorObject = new $class((($isFormatted) ? $value : [$this->field => $value]), $this->message);
+        } else {
+            if (str_contains($this->field, '.')) {
+                throw new Exception(
+                    "Error: The '" . $this->validator . "' validator does not support a dot-notation field. Use a 'Has' validator instead."
+                );
+            }
+            $this->validatorObject = new $class($value, $this->message);
+        }
 
-        if (!empty($this->field)) {
+        if (!empty($this->field) && !Rule::isHasOneClass($class, $this->prefix)) {
             $this->validatorObject->setField($this->field);
         }
 
-        return $this->validatorObject->evaluate((array_key_exists($this->field, $input) ? $input[$this->field] : $input));
+        return $this->validatorObject->evaluate(
+            ((!Rule::isHasClass($class, true, $this->prefix) && array_key_exists($this->field, $input)) ? $input[$this->field] : $input)
+        );
     }
 
 }

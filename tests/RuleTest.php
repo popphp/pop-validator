@@ -84,4 +84,41 @@ class RuleTest extends TestCase
         $this->assertTrue(Validator\Rule::isHasClass('HasOneIn'));
     }
 
+    public function testRuleParseZeroValue()
+    {
+        ['value' => $value] = Validator\Rule::parse('count:equal:0');
+        $this->assertSame('0', $value);
+    }
+
+    public function testRuleParseCommaInMessageOnly()
+    {
+        ['value' => $value, 'message' => $message] = Validator\Rule::parse('name:equal:bob:Hi, there');
+        $this->assertSame('bob', $value);
+        $this->assertSame('Hi, there', $message);
+    }
+
+    public function testRuleParseRequired()
+    {
+        ['validator' => $validator, 'value' => $value] = Validator\Rule::parse('effective_date:required');
+        $this->assertEquals('Required', $validator);
+        $this->assertEquals('effective_date', $value);
+        $this->assertTrue(Validator\Rule::isHasOneClass('Required'));
+    }
+
+    public function testRuleParseHasNone()
+    {
+        $this->assertEquals(['issues.resolved' => '0'], Validator\Rule::parse('issues.resolved:has_none_that_equals:0')['value']);
+        $this->assertEquals(['issues.id' => ['3', '4']], Validator\Rule::parse('issues.id:has_none_in:3,4')['value']);
+        $this->assertEquals('tags', Validator\Rule::parse('tags:has_none')['value']);
+        $this->assertEquals('issues.note', Validator\Rule::parse('issues.note:has_none_not_empty')['value']);
+
+        foreach (['HasNoneThatEquals', 'HasNoneIn', 'HasNoneThatContains', 'HasNoneGreaterThan', 'HasNoneGreaterThanEqual',
+                  'HasNoneLessThan', 'HasNoneLessThanEqual', 'HasNoneDateTimeThatEquals', 'HasNoneDateTimeGreaterThan',
+                  'HasNoneDateTimeGreaterThanEqual', 'HasNoneDateTimeLessThan', 'HasNoneDateTimeLessThanEqual'] as $class) {
+            $this->assertTrue(Validator\Rule::isHasClass($class), $class);
+        }
+        $this->assertTrue(Validator\Rule::isHasOneClass('HasNone'));
+        $this->assertTrue(Validator\Rule::isHasOneClass('HasNoneNotEmpty'));
+    }
+
 }

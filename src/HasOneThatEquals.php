@@ -22,7 +22,7 @@ namespace Pop\Validator;
  * @author     Nick Sagona, III <nick@popphp.org>
  * @copyright  Copyright (c) 2009-2026 Nick Sagona, III
  * @license    https://www.popphp.org/license     New BSD License
- * @version    5.0.0
+ * @version    5.1.0
  */
 class HasOneThatEquals extends AbstractValidator
 {
@@ -67,8 +67,9 @@ class HasOneThatEquals extends AbstractValidator
                 return (array_key_exists($field, $this->input) &&
                     !is_array($this->input[$field]) && (strtotime($this->input[$field]) == strtotime($requiredValue)));
             } else {
-                return (array_key_exists($field, $this->input) &&
-                    !is_array($this->input[$field]) && ($this->input[$field] == $requiredValue));
+                return (array_key_exists($field, $this->input) && !is_array($this->input[$field]) &&
+                    ((is_array($requiredValue)) ?
+                        in_array($this->input[$field], $requiredValue) : ($this->input[$field] == $requiredValue)));
             }
         } else if ($this->hasKeyField()) {
             ['key' => $key, 'field' => $field] = $this->getField();
@@ -77,7 +78,8 @@ class HasOneThatEquals extends AbstractValidator
                     (strtotime($this->input[$key][$field]) == strtotime($requiredValue)));
             } else {
                 return (array_key_exists($key, $this->input) && array_key_exists($field, $this->input[$key]) &&
-                    ($this->input[$key][$field] == $requiredValue));
+                    ((is_array($requiredValue)) ?
+                        in_array($this->input[$key][$field], $requiredValue) : ($this->input[$key][$field] == $requiredValue)));
             }
         } else {
             $value = [];
